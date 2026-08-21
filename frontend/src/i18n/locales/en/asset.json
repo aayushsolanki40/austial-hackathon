@@ -1,0 +1,21 @@
+{
+  "class_option": {
+    "security": "Security",
+    "real_estate": "Real estate",
+    "commodity": "Commodity",
+    "infrastructure": "Infrastructure",
+    "ip": "Intellectual property"
+  },
+  "field": {
+    "isin": "ISIN / security reference",
+    "issue_size": "Issue size",
+    "property_location": "Property location",
+    "valuation_basis": "Valuation basis",
+    "commodity_type": "Commodity type",
+    "unit_of_measure": "Unit of measure",
+    "project_name": "Project name",
+    "concession_period_years": "Concession period (years)",
+    "ip_type": "IP type (patent, trademark, copyright)",
+    "registration_number": "Registration number"
+  }
+}

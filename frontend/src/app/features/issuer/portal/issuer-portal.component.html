@@ -1,0 +1,209 @@
+<section class="issuer-portal">
+  <h1>{{ 'issuer.portal.title' | t }}</h1>
+
+  @switch (viewState()) {
+    @case ('loading') {
+      <div class="issuer-portal__loading">
+        <mat-spinner diameter="28" />
+        <span>{{ 'issuer.portal.loading' | t }}</span>
+      </div>
+    }
+
+    @case ('create-profile') {
+      <mat-card class="issuer-portal__card">
+        <mat-card-header>
+          <mat-card-title>{{ 'issuer.profile.empty_title' | t }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>{{ 'issuer.profile.empty_description' | t }}</p>
+
+          <form [formGroup]="profileForm" (ngSubmit)="submitProfile()" class="issuer-portal__form">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'issuer.profile.legal_name_label' | t }}</mat-label>
+              <input matInput type="text" formControlName="legal_name" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'issuer.profile.registration_number_label' | t }}</mat-label>
+              <input matInput type="text" formControlName="registration_number" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'issuer.profile.jurisdiction_label' | t }}</mat-label>
+              <mat-select formControlName="jurisdiction">
+                @for (option of jurisdictionOptions; track option.value) {
+                  <mat-option [value]="option.value">{{ option.labelKey | t }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'issuer.profile.contact_email_label' | t }}</mat-label>
+              <input matInput type="email" formControlName="contact_email" />
+            </mat-form-field>
+
+            @if (profileError()) {
+              <p class="issuer-portal__error">{{ profileError() }}</p>
+            }
+
+            <button mat-flat-button color="primary" type="submit" [disabled]="profileForm.invalid || profileSubmitting()">
+              @if (profileSubmitting()) {
+                <mat-spinner diameter="20" />
+              } @else {
+                {{ 'issuer.profile.submit' | t }}
+              }
+            </button>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    @case ('profile') {
+      @if (profile(); as p) {
+        <mat-card class="issuer-portal__card">
+          <mat-card-header>
+            <mat-card-title>{{ 'issuer.profile.view_title' | t }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <dl class="issuer-portal__profile-details">
+              <dt>{{ 'issuer.profile.legal_name_label' | t }}</dt>
+              <dd>{{ p.legal_name }}</dd>
+              <dt>{{ 'issuer.profile.registration_number_label' | t }}</dt>
+              <dd>{{ p.registration_number }}</dd>
+              <dt>{{ 'issuer.profile.jurisdiction_label' | t }}</dt>
+              <dd>{{ p.jurisdiction }}</dd>
+              <dt>{{ 'issuer.profile.contact_email_label' | t }}</dt>
+              <dd>{{ p.contact_email }}</dd>
+              <dt>{{ 'issuer.profile.verification_status_label' | t }}</dt>
+              <dd>{{ ('issuer.verification_status_option.' + p.verification_status.toLowerCase()) | t }}</dd>
+            </dl>
+          </mat-card-content>
+        </mat-card>
+      }
+
+      <mat-card class="issuer-portal__card">
+        <mat-card-header>
+          <mat-card-title>{{ 'issuer.asset_form.title' | t }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>{{ 'issuer.asset_form.description' | t }}</p>
+
+          @if (verifiedCustodians().length === 0) {
+            <p class="issuer-portal__warning">{{ 'issuer.asset_form.no_verified_custodians' | t }}</p>
+          }
+
+          <form [formGroup]="assetForm" (ngSubmit)="submitAsset()" class="issuer-portal__form">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'issuer.asset_form.name_label' | t }}</mat-label>
+              <input matInput type="text" formControlName="name" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'issuer.asset_form.description_label' | t }}</mat-label>
+              <textarea matInput formControlName="description"></textarea>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'issuer.asset_form.asset_class_label' | t }}</mat-label>
+              <mat-select formControlName="asset_class" (selectionChange)="onAssetClassChange($event.value)">
+                @for (option of assetClassOptions; track option.value) {
+                  <mat-option [value]="option.value">{{ option.labelKey | t }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'issuer.asset_form.custodian_label' | t }}</mat-label>
+              <mat-select formControlName="custodian_id">
+                @for (custodian of verifiedCustodians(); track custodian.id) {
+                  <mat-option [value]="custodian.id">{{ custodian.name }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'issuer.asset_form.valuation_amount_label' | t }}</mat-label>
+              <input matInput type="number" formControlName="valuation_amount" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'issuer.asset_form.valuation_currency_label' | t }}</mat-label>
+              <input matInput type="text" formControlName="valuation_currency" />
+            </mat-form-field>
+
+            @for (field of dynamicFields(); track field.key) {
+              <mat-form-field appearance="outline">
+                <mat-label>{{ field.labelKey | t }}</mat-label>
+                <input
+                  matInput
+                  [type]="field.type"
+                  [required]="field.required"
+                  [value]="dynamicFieldValue(field.key)"
+                  (input)="setClassAttribute(field.key, $event)"
+                />
+              </mat-form-field>
+            }
+
+            @if (assetError()) {
+              <p class="issuer-portal__error">{{ assetError() }}</p>
+            }
+
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              [disabled]="assetForm.invalid || verifiedCustodians().length === 0 || assetSubmitting()"
+            >
+              @if (assetSubmitting()) {
+                <mat-spinner diameter="20" />
+              } @else {
+                {{ 'issuer.asset_form.submit' | t }}
+              }
+            </button>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="issuer-portal__card">
+        <mat-card-header>
+          <mat-card-title>{{ 'issuer.assets.title' | t }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (assets().length === 0) {
+            <p>{{ 'issuer.assets.empty' | t }}</p>
+          } @else {
+            <table mat-table [dataSource]="assets()" class="issuer-portal__table">
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>{{ 'issuer.assets.name_column' | t }}</th>
+                <td mat-cell *matCellDef="let asset">{{ asset.name }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="asset_class">
+                <th mat-header-cell *matHeaderCellDef>{{ 'issuer.assets.asset_class_column' | t }}</th>
+                <td mat-cell *matCellDef="let asset">{{ asset.asset_class }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="custodian_id">
+                <th mat-header-cell *matHeaderCellDef>{{ 'issuer.assets.custodian_column' | t }}</th>
+                <td mat-cell *matCellDef="let asset">{{ asset.custodian_id }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="valuation_amount">
+                <th mat-header-cell *matHeaderCellDef>{{ 'issuer.assets.valuation_column' | t }}</th>
+                <td mat-cell *matCellDef="let asset">{{ asset.valuation_amount }} {{ asset.valuation_currency }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="created_at">
+                <th mat-header-cell *matHeaderCellDef>{{ 'issuer.assets.created_at_column' | t }}</th>
+                <td mat-cell *matCellDef="let asset">{{ asset.created_at }}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="assetColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: assetColumns"></tr>
+            </table>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+</section>

@@ -1,5 +1,13 @@
 {
+  "route_prefix": "investors",
   "error": {
-    "kyc_verification_required": "KYC verification is required before you can access this resource."
+    "kyc_verification_required": "KYC verification is required before you can access this resource.",
+    "invalid_investor_type": "investor_type must be one of INDIVIDUAL, INSTITUTIONAL.",
+    "invalid_risk_profile": "risk_profile must be one of CONSERVATIVE, MODERATE, AGGRESSIVE.",
+    "invalid_jurisdiction": "jurisdiction must be a valid ISO 3166-1 alpha-2 country code.",
+    "invalid_chain": "chain must be one of ETHEREUM, POLYGON, PERMISSIONED_DLT.",
+    "profile_already_exists": "An investor profile already exists for this account.",
+    "profile_not_found": "No investor profile exists for this account -- create one first.",
+    "user_not_found": "No user exists with that ID."
   }
 }

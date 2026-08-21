@@ -1,0 +1,28 @@
+<div class="disclosure-step">
+  <h2>{{ 'kyc.disclosure.title' | t }}</h2>
+  <p>{{ 'kyc.disclosure.intro' | t }}</p>
+
+  <ul class="disclosure-step__list">
+    <li>{{ 'kyc.disclosure.market_risk' | t }}</li>
+    <li>{{ 'kyc.disclosure.liquidity_risk' | t }}</li>
+    <li>{{ 'kyc.disclosure.regulatory_risk' | t }}</li>
+    <li>{{ 'kyc.disclosure.custody_risk' | t }}</li>
+    <li>{{ 'kyc.disclosure.no_guarantee' | t }}</li>
+  </ul>
+
+  <mat-checkbox [checked]="acknowledged()" (change)="acknowledged.set($event.checked)">
+    {{ 'kyc.disclosure.acknowledgment_label' | t }}
+  </mat-checkbox>
+
+  @if (errorMessage()) {
+    <p class="disclosure-step__error">{{ errorMessage() }}</p>
+  }
+
+  <button mat-flat-button color="primary" type="button" [disabled]="!acknowledged() || submitting()" (click)="submit()">
+    @if (submitting()) {
+      <mat-spinner diameter="20" />
+    } @else {
+      {{ 'kyc.disclosure.submit' | t }}
+    }
+  </button>
+</div>

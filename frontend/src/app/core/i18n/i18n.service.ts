@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 
 import adminEn from '../../../i18n/locales/en/admin.json';
 import appEn from '../../../i18n/locales/en/app.json';
+import assetEn from '../../../i18n/locales/en/asset.json';
 import authEn from '../../../i18n/locales/en/auth.json';
+import custodianEn from '../../../i18n/locales/en/custodian.json';
 import issuerEn from '../../../i18n/locales/en/issuer.json';
 import kycEn from '../../../i18n/locales/en/kyc.json';
 import marketplaceEn from '../../../i18n/locales/en/marketplace.json';
@@ -31,6 +33,8 @@ const LOCALE_MODULES: Record<string, Record<string, LocaleModule>> = {
     portfolio: portfolioEn,
     wallet: walletEn,
     issuer: issuerEn,
+    asset: assetEn,
+    custodian: custodianEn,
   },
 };
 

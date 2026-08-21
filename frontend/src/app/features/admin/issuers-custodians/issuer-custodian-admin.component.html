@@ -1,0 +1,133 @@
+<section class="issuer-custodian-admin">
+  <h1>{{ 'admin.nav.issuers_custodians' | t }}</h1>
+
+  <section class="issuer-custodian-admin__section">
+    <h2>{{ 'custodian.list.title' | t }}</h2>
+
+    @switch (custodianState()) {
+      @case ('loading') {
+        <app-admin-state state="loading" />
+      }
+      @case ('error') {
+        <app-admin-state state="error" (retry)="loadCustodians()" />
+      }
+      @case ('loaded') {
+        @if (custodians().length === 0) {
+          <p>{{ 'custodian.list.empty' | t }}</p>
+        } @else {
+          <table mat-table [dataSource]="custodians()" class="issuer-custodian-admin__table">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>{{ 'custodian.list.name_column' | t }}</th>
+              <td mat-cell *matCellDef="let c">{{ c.name }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="ifsca_registration_no">
+              <th mat-header-cell *matHeaderCellDef>{{ 'custodian.list.registration_no_column' | t }}</th>
+              <td mat-cell *matCellDef="let c">{{ c.ifsca_registration_no }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="jurisdiction">
+              <th mat-header-cell *matHeaderCellDef>{{ 'custodian.list.jurisdiction_column' | t }}</th>
+              <td mat-cell *matCellDef="let c">{{ c.jurisdiction }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="ifsca_verified">
+              <th mat-header-cell *matHeaderCellDef>{{ 'custodian.list.status_column' | t }}</th>
+              <td mat-cell *matCellDef="let c">
+                {{ (c.ifsca_verified ? 'custodian.status_option.verified' : 'custodian.status_option.unverified') | t }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>{{ 'custodian.list.actions_column' | t }}</th>
+              <td mat-cell *matCellDef="let c">
+                <button
+                  mat-stroked-button
+                  [color]="c.ifsca_verified ? 'warn' : 'primary'"
+                  [disabled]="verifyingId() === c.id"
+                  (click)="toggleVerification(c.id, c.ifsca_verified)"
+                >
+                  {{ (c.ifsca_verified ? 'custodian.action.unverify' : 'custodian.action.verify') | t }}
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="custodianColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: custodianColumns"></tr>
+          </table>
+        }
+      }
+    }
+
+    <form [formGroup]="createCustodianForm" (ngSubmit)="createCustodian()" class="issuer-custodian-admin__create-form">
+      <h3>{{ 'custodian.create_form.title' | t }}</h3>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'custodian.create_form.name_label' | t }}</mat-label>
+        <input matInput type="text" formControlName="name" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'custodian.create_form.registration_no_label' | t }}</mat-label>
+        <input matInput type="text" formControlName="ifsca_registration_no" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'custodian.create_form.jurisdiction_label' | t }}</mat-label>
+        <input matInput type="text" formControlName="jurisdiction" />
+      </mat-form-field>
+
+      @if (createError()) {
+        <p class="issuer-custodian-admin__error">{{ createError() }}</p>
+      }
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="createCustodianForm.invalid || createSubmitting()">
+        {{ 'custodian.create_form.submit' | t }}
+      </button>
+    </form>
+  </section>
+
+  <section class="issuer-custodian-admin__section">
+    <h2>{{ 'admin.issuers.title' | t }}</h2>
+    <p class="issuer-custodian-admin__note">{{ 'admin.issuers.approval_note' | t }}</p>
+
+    @switch (issuerState()) {
+      @case ('loading') {
+        <app-admin-state state="loading" />
+      }
+      @case ('error') {
+        <app-admin-state state="error" (retry)="loadIssuers()" />
+      }
+      @case ('loaded') {
+        @if (issuers().length === 0) {
+          <p>{{ 'admin.issuers.empty' | t }}</p>
+        } @else {
+          <table mat-table [dataSource]="issuers()" class="issuer-custodian-admin__table">
+            <ng-container matColumnDef="legal_name">
+              <th mat-header-cell *matHeaderCellDef>{{ 'admin.issuers.legal_name_column' | t }}</th>
+              <td mat-cell *matCellDef="let issuer">{{ issuer.legal_name }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="registration_number">
+              <th mat-header-cell *matHeaderCellDef>{{ 'admin.issuers.registration_number_column' | t }}</th>
+              <td mat-cell *matCellDef="let issuer">{{ issuer.registration_number }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="jurisdiction">
+              <th mat-header-cell *matHeaderCellDef>{{ 'admin.issuers.jurisdiction_column' | t }}</th>
+              <td mat-cell *matCellDef="let issuer">{{ issuer.jurisdiction }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="verification_status">
+              <th mat-header-cell *matHeaderCellDef>{{ 'admin.issuers.status_column' | t }}</th>
+              <td mat-cell *matCellDef="let issuer">{{ issuer.verification_status }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="issuerColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: issuerColumns"></tr>
+          </table>
+        }
+      }
+    }
+  </section>
+</section>

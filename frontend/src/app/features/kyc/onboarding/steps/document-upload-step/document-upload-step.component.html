@@ -1,0 +1,49 @@
+<div class="document-upload-step">
+  <h2>{{ 'kyc.documents.title' | t }}</h2>
+  <p class="document-upload-step__description">{{ 'kyc.documents.description' | t }}</p>
+
+  @for (slot of slots; track slot.type) {
+    <div class="document-upload-step__slot">
+      <label class="document-upload-step__label">{{ slot.labelKey | t }}</label>
+
+      <div class="document-upload-step__row">
+        <button mat-stroked-button type="button" (click)="fileInput.click()" [disabled]="stateFor(slot.type).status === 'uploading'">
+          <mat-icon>upload_file</mat-icon>
+          {{ (stateFor(slot.type).status === 'uploaded' ? 'kyc.documents.replace_file' : 'kyc.documents.choose_file') | t }}
+        </button>
+        <input
+          #fileInput
+          type="file"
+          hidden
+          accept="image/*,application/pdf"
+          (change)="onFileSelected(slot.type, $event)"
+        />
+
+        <span class="document-upload-step__status" [class.document-upload-step__status--error]="stateFor(slot.type).status === 'error'">
+          @switch (stateFor(slot.type).status) {
+            @case ('uploading') {
+              {{ 'kyc.documents.status_uploading' | t }}
+            }
+            @case ('uploaded') {
+              {{ 'kyc.documents.status_uploaded' | t }} -- {{ stateFor(slot.type).fileName }}
+            }
+            @case ('error') {
+              {{ 'kyc.documents.status_error' | t }}
+            }
+            @default {
+              {{ 'kyc.documents.status_idle' | t }}
+            }
+          }
+        </span>
+      </div>
+
+      @if (stateFor(slot.type).status === 'uploading') {
+        <mat-progress-bar mode="indeterminate" />
+      }
+    </div>
+  }
+
+  <button mat-flat-button color="primary" type="button" [disabled]="!allUploaded()" (click)="continue()">
+    {{ 'kyc.documents.continue' | t }}
+  </button>
+</div>

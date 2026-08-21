@@ -1,0 +1,10 @@
+{
+  "route_prefix": "assets",
+  "error": {
+    "issuer_profile_required": "You must create an issuer profile before submitting an asset.",
+    "not_found": "No asset exists with that ID.",
+    "custodian_already_attached": "This asset already has a custodian attached.",
+    "custodian_not_found": "No custodian exists with that ID.",
+    "custodian_not_verified": "This asset cannot be tokenized -- the selected custodian is not yet IFSCA-verified."
+  }
+}

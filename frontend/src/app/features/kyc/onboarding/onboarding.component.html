@@ -1,0 +1,34 @@
+<section class="onboarding">
+  <h1>{{ 'kyc.onboarding.title' | t }}</h1>
+
+  @if (!ready()) {
+    <p>{{ 'kyc.onboarding.loading' | t }}</p>
+  } @else {
+    <mat-stepper
+      linear
+      [selectedIndex]="selectedIndex()"
+      (selectedIndexChange)="selectedIndex.set($event)"
+      class="onboarding__stepper"
+    >
+      <mat-step [completed]="profileDone()" [label]="'kyc.step.profile' | t">
+        <app-kyc-profile-step (completed)="onProfileCompleted()" />
+      </mat-step>
+
+      <mat-step [completed]="documentsDone()" [label]="'kyc.step.documents' | t">
+        <app-kyc-document-upload-step (completed)="onDocumentsCompleted()" />
+      </mat-step>
+
+      <mat-step [completed]="livenessDone()" [label]="'kyc.step.liveness' | t">
+        <app-kyc-liveness-step (completed)="onLivenessCompleted()" />
+      </mat-step>
+
+      <mat-step [completed]="disclosureDone()" [label]="'kyc.step.disclosure' | t">
+        <app-kyc-risk-disclosure-step (completed)="onDisclosureCompleted()" />
+      </mat-step>
+
+      <mat-step [completed]="disclosureDone()" [label]="'kyc.step.status' | t">
+        <app-kyc-status-step />
+      </mat-step>
+    </mat-stepper>
+  }
+</section>

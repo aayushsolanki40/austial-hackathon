@@ -1,0 +1,36 @@
+<div class="status-step">
+  <h2>{{ 'kyc.status.title' | t }}</h2>
+
+  @if (isVerified()) {
+    <div class="status-step__card status-step__card--verified">
+      <h3>{{ 'kyc.status_verified.title' | t }}</h3>
+      <p>{{ 'kyc.status_verified.message' | t }}</p>
+      <button mat-flat-button color="primary" type="button" (click)="goToDashboard()">
+        {{ 'kyc.status.go_to_dashboard' | t }}
+      </button>
+    </div>
+  } @else if (isRejected()) {
+    <div class="status-step__card status-step__card--rejected">
+      <h3>{{ 'kyc.status_rejected.title' | t }}</h3>
+      <p>{{ 'kyc.status_rejected.message' | t }}</p>
+      @if (submission()?.review_notes) {
+        <p class="status-step__reason">
+          <strong>{{ 'kyc.status_rejected.reason_label' | t }}:</strong> {{ submission()?.review_notes }}
+        </p>
+      }
+    </div>
+  } @else {
+    <div class="status-step__card status-step__card--pending">
+      <h3>{{ 'kyc.status_pending.title' | t }}</h3>
+      <p>{{ 'kyc.status_pending.message' | t }}</p>
+    </div>
+  }
+
+  <button mat-stroked-button type="button" (click)="refresh()" [disabled]="refreshing()">
+    @if (refreshing()) {
+      <mat-spinner diameter="20" />
+    } @else {
+      {{ 'kyc.status.refresh' | t }}
+    }
+  </button>
+</div>

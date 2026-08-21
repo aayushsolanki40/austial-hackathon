@@ -1,0 +1,28 @@
+.issuer-custodian-admin {
+  &__section {
+    margin-bottom: 2.5rem;
+  }
+
+  &__table {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  &__create-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 420px;
+    margin-top: 1.5rem;
+  }
+
+  &__error {
+    color: #b3261e;
+    margin: 0;
+  }
+
+  &__note {
+    color: rgba(0, 0, 0, 0.6);
+    max-width: 640px;
+  }
+}

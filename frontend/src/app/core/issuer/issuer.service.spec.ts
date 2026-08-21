@@ -1,0 +1,127 @@
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+
+import { environment } from '../../../environments/environment';
+import { Asset, IssuerProfile } from './issuer.models';
+import { IssuerService } from './issuer.service';
+
+function issuerProfile(overrides: Partial<IssuerProfile> = {}): IssuerProfile {
+  return {
+    id: 1,
+    legal_name: 'Acme Real Estate LLC',
+    registration_number: 'REG-001',
+    jurisdiction: 'IN',
+    contact_email: 'issuer-contact@example.test',
+    verification_status: 'PENDING',
+    created_at: '2026-01-01T00:00:00Z',
+    updated_at: '2026-01-01T00:00:00Z',
+    ...overrides,
+  };
+}
+
+function asset(overrides: Partial<Asset> = {}): Asset {
+  return {
+    id: 1,
+    issuer_id: 1,
+    custodian_id: 1,
+    name: 'Mumbai Commercial Tower',
+    asset_class: 'REAL_ESTATE',
+    description: 'A commercial office tower.',
+    valuation_amount: 5_000_000,
+    valuation_currency: 'USD',
+    class_attributes: { property_location: 'Mumbai, IN', valuation_basis: 'Independent appraisal' },
+    created_at: '2026-01-01T00:00:00Z',
+    updated_at: '2026-01-01T00:00:00Z',
+    ...overrides,
+  };
+}
+
+describe('IssuerService', () => {
+  let service: IssuerService;
+  let httpMock: HttpTestingController;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
+    service = TestBed.inject(IssuerService);
+    httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpMock.verify();
+  });
+
+  it('starts with no profile and no assets', () => {
+    expect(service.profile()).toBeNull();
+    expect(service.assets()).toEqual([]);
+  });
+
+  it('fetchProfile() stores the returned profile', async () => {
+    const promise = service.fetchProfile();
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/issuers/profile`);
+    expect(req.request.method).toBe('GET');
+    req.flush(issuerProfile());
+
+    const result = await promise;
+    expect(result?.legal_name).toBe('Acme Real Estate LLC');
+    expect(service.profile()?.id).toBe(1);
+  });
+
+  it('fetchProfile() treats a failed request (e.g. 404, no profile yet) as no profile', async () => {
+    const promise = service.fetchProfile();
+    httpMock.expectOne(`${environment.apiBaseUrl}/issuers/profile`).flush('not found', { status: 404, statusText: 'Not Found' });
+
+    const result = await promise;
+    expect(result).toBeNull();
+    expect(service.profile()).toBeNull();
+  });
+
+  it('createProfile() POSTs /issuers/profile and stores the response', async () => {
+    const promise = service.createProfile({
+      legal_name: 'Acme Real Estate LLC',
+      registration_number: 'REG-001',
+      jurisdiction: 'IN',
+      contact_email: 'issuer-contact@example.test',
+    });
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/issuers/profile`);
+    expect(req.request.method).toBe('POST');
+    req.flush(issuerProfile());
+
+    const result = await promise;
+    expect(result.id).toBe(1);
+    expect(service.profile()?.legal_name).toBe('Acme Real Estate LLC');
+  });
+
+  it('listAssets() GETs /assets and stores the result', async () => {
+    const promise = service.listAssets();
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/assets`);
+    expect(req.request.method).toBe('GET');
+    req.flush([asset()]);
+
+    const result = await promise;
+    expect(result.length).toBe(1);
+    expect(service.assets()[0].name).toBe('Mumbai Commercial Tower');
+  });
+
+  it('createAsset() POSTs /assets and prepends the response to the local list', async () => {
+    const promise = service.createAsset({
+      custodian_id: 1,
+      name: 'Mumbai Commercial Tower',
+      asset_class: 'REAL_ESTATE',
+      description: 'A commercial office tower.',
+      valuation_amount: 5_000_000,
+      valuation_currency: 'USD',
+      class_attributes: { property_location: 'Mumbai, IN', valuation_basis: 'Independent appraisal' },
+    });
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/assets`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body.asset_class).toBe('REAL_ESTATE');
+    req.flush(asset());
+
+    const result = await promise;
+    expect(result.id).toBe(1);
+    expect(service.assets().length).toBe(1);
+  });
+});

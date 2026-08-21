@@ -1,0 +1,41 @@
+.document-upload-step {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 560px;
+  padding-top: 1rem;
+
+  &__description {
+    margin: 0 0 0.5rem;
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  &__slot {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__label {
+    font-weight: 500;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__status {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 0.875rem;
+
+    &--error {
+      color: #b3261e;
+    }
+  }
+
+  button[mat-flat-button] {
+    align-self: flex-start;
+  }
+}

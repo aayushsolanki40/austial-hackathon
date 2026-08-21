@@ -1,0 +1,8 @@
+{
+  "route_prefix": "custodians",
+  "error": {
+    "registration_no_already_exists": "A custodian with that IFSCA registration number is already registered.",
+    "not_found": "No custodian exists with that ID.",
+    "already_verified": "This custodian is already IFSCA-verified."
+  }
+}

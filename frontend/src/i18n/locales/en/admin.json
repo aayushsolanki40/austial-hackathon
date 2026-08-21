@@ -28,6 +28,27 @@
     "status_column": "Status",
     "created_at_column": "Created"
   },
+  "kyc_review": {
+    "title": "KYC Review Queue",
+    "investor_id_column": "Investor ID",
+    "legal_name_column": "Legal Name",
+    "nationality_column": "Nationality",
+    "status_column": "Status",
+    "submitted_at_column": "Submitted",
+    "actions_column": "Actions",
+    "approve_action": "Approve",
+    "reject_action": "Reject",
+    "reject_reason_label": "Rejection reason"
+  },
+  "issuers": {
+    "title": "Registered issuers",
+    "empty": "No issuers registered yet.",
+    "legal_name_column": "Legal name",
+    "registration_number_column": "Registration no.",
+    "jurisdiction_column": "Jurisdiction",
+    "status_column": "Verification status",
+    "approval_note": "Issuer approval actions aren't available yet -- the issuers module doesn't expose a distinct approve/reject endpoint beyond self-registration."
+  },
   "state": {
     "loading": "Loading...",
     "error": "Unable to load data -- this endpoint may not be live yet.",
@@ -35,8 +56,6 @@
     "empty": "No records found."
   },
   "placeholder": {
-    "kyc_review": "Coming in Phase 2 -- KYC review queue.",
-    "issuers_custodians": "Coming in Phase 3 -- issuer approval and custodian registry (IFSCA-registry verification).",
     "issuance_pipeline": "Coming in Phase 4 -- issuance kanban, disclosure checklist, and circuit-breaker control.",
     "valuation_oracle": "Coming in Phase 7 -- valuation feed health monitor and anomaly-flagged feeds.",
     "redemptions": "Coming in Phase 7 -- redemption approval queue.",

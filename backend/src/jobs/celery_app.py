@@ -44,7 +44,9 @@ _redis_url = os.environ.get("REDIS_URL", _DEFAULT_REDIS_URL)
 _broker_url = os.environ.get("CELERY_BROKER_URL", _redis_url)
 _result_backend = os.environ.get("CELERY_RESULT_BACKEND", _redis_url)
 
-celery_app = Celery("swadely", broker=_broker_url, backend=_result_backend, include=["src.jobs.tasks"])
+celery_app = Celery(
+    "swadely", broker=_broker_url, backend=_result_backend, include=["src.jobs.tasks", "src.jobs.kyc_tasks"]
+)
 
 celery_app.conf.update(
     task_serializer="json",

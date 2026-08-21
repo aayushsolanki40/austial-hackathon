@@ -1,0 +1,16 @@
+{
+  "route_prefix": "kyc",
+  "error": {
+    "invalid_country_code": "Country code must be a valid ISO 3166-1 alpha-2 code.",
+    "invalid_document_type": "document_type must be one of PASSPORT, NATIONAL_ID, DRIVERS_LICENSE, PROOF_OF_ADDRESS, SELFIE.",
+    "active_submission_exists": "You already have a KYC submission in progress -- wait for it to be verified or rejected before starting a new one.",
+    "documents_locked": "Documents can only be added while the submission is in DRAFT status.",
+    "no_documents": "At least one document must be uploaded before a submission can be submitted.",
+    "invalid_transition": "Cannot move a KYC submission from {current} to {target}.",
+    "investor_profile_required": "You must create an investor profile before starting KYC.",
+    "submission_not_found": "No KYC submission exists with that ID.",
+    "consent_locked": "The risk disclosure can only be acknowledged while the submission is in DRAFT status.",
+    "consent_already_recorded": "You have already acknowledged the risk disclosure for this submission.",
+    "consent_required": "You must acknowledge the risk disclosure before this submission can be submitted."
+  }
+}

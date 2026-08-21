@@ -1,15 +1,30 @@
-import { CanActivateFn } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+
+import { KycService } from '../kyc/kyc.service';
 
 /**
- * Placeholder for the build plan's `kycVerifiedGuard` (Section 3 route
- * map: `{ path: '', canActivate: [authGuard, kycVerifiedGuard], ... }`).
+ * Real implementation of the build plan's `kycVerifiedGuard` (Section 3
+ * route map: `{ path: '', canActivate: [authGuard, kycVerifiedGuard], ... }`).
+ * Replaces the Phase-1 permissive pass-through now that Phase 2's investor
+ * profile/`kyc_status` exists to check against.
  *
- * Phase 2 backend work (`InvestorProfile.kyc_status`, the KYC review
- * pipeline) hasn't shipped yet, so there is no real KYC status to check
- * against. Wired as a permissive pass-through now purely so the route tree
- * in `app.routes.ts` matches Section 3 exactly and doesn't need a routing
- * change when Phase 2 lands -- only this guard's body needs to change, to
- * read the investor's `kyc_status` (via `AuthService`/`ApiService`) and
- * redirect to `/onboarding` when it isn't `VERIFIED`.
+ * Always fetches a fresh profile (rather than trusting a possibly-stale
+ * cached `KycService.profile()` signal) since KYC status can change between
+ * page loads via async backend screening -- this route is exactly the one
+ * place staleness would let an unverified investor slip through. Any
+ * non-`VERIFIED` status (including "no profile yet") redirects to
+ * `/onboarding`, per the build plan's required flow: login -> KYC status
+ * check -> (onboarding if incomplete) -> dashboard.
  */
-export const kycVerifiedGuard: CanActivateFn = () => true;
+export const kycVerifiedGuard: CanActivateFn = async () => {
+  const kyc = inject(KycService);
+  const router = inject(Router);
+
+  const profile = await kyc.fetchProfile();
+  if (profile?.kyc_status === 'VERIFIED') {
+    return true;
+  }
+
+  return router.createUrlTree(['/onboarding']);
+};

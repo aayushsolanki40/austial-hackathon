@@ -1,6 +1,100 @@
 {
   "onboarding": {
     "title": "Identity verification",
-    "placeholder": "Coming in Phase 2 -- KYC onboarding wizard (profile, document upload, liveness capture, risk disclosure with signed consent)."
+    "placeholder": "Coming in Phase 2 -- KYC onboarding wizard (profile, document upload, liveness capture, risk disclosure with signed consent).",
+    "loading": "Loading your verification status..."
+  },
+  "step": {
+    "profile": "Profile",
+    "documents": "Documents",
+    "liveness": "Liveness check",
+    "disclosure": "Risk disclosure",
+    "status": "Status"
+  },
+  "error": {
+    "generic": "Something went wrong. Please try again."
+  },
+  "profile": {
+    "title": "Tell us about you",
+    "description": "This information determines the investor category and jurisdiction rules that apply to your account, and starts your identity verification submission.",
+    "investor_type_label": "Investor type",
+    "jurisdiction_label": "Jurisdiction of residence",
+    "risk_profile_label": "Risk profile",
+    "legal_name_label": "Full legal name",
+    "date_of_birth_label": "Date of birth",
+    "nationality_label": "Nationality",
+    "field_required": "This field is required.",
+    "submit": "Save and continue"
+  },
+  "investor_type_option": {
+    "individual": "Individual",
+    "institutional": "Institutional"
+  },
+  "jurisdiction_option": {
+    "in": "India",
+    "ae": "United Arab Emirates",
+    "sg": "Singapore",
+    "gb": "United Kingdom",
+    "us": "United States"
+  },
+  "risk_profile_option": {
+    "conservative": "Conservative",
+    "moderate": "Moderate",
+    "aggressive": "Aggressive"
+  },
+  "documents": {
+    "title": "Upload identity documents",
+    "description": "We need your passport and a proof of address. Files upload directly to secure storage.",
+    "passport_label": "Passport",
+    "proof_of_address_label": "Proof of address (utility bill or bank statement)",
+    "choose_file": "Choose file",
+    "replace_file": "Replace file",
+    "status_idle": "No file selected yet.",
+    "status_uploading": "Uploading...",
+    "status_uploaded": "Uploaded",
+    "status_error": "Upload failed. Please try again.",
+    "continue": "Continue"
+  },
+  "liveness": {
+    "title": "Liveness check",
+    "description": "Take a live selfie so we can match it against your ID document. This runs against our screening provider automatically -- no photo upload from your device gallery.",
+    "start_camera": "Start camera",
+    "capture": "Capture photo",
+    "retake": "Retake",
+    "submit": "Submit and continue"
+  },
+  "liveness_error": {
+    "camera_unavailable": "Camera capture isn't supported in this browser.",
+    "camera_permission_denied": "Camera access was denied. Please allow camera access to continue.",
+    "submit_failed": "We couldn't submit your liveness capture. Please try again."
+  },
+  "disclosure": {
+    "title": "Risk disclosure",
+    "intro": "Before you can invest through Swadely, please read and acknowledge the following risks. This acknowledgment is recorded against your account with a timestamp.",
+    "market_risk": "Tokenized real-world assets are subject to market risk, including the possibility of losing some or all of your invested capital.",
+    "liquidity_risk": "Secondary markets for tokenized assets may be limited or unavailable, and redemption may be delayed or restricted by the asset's terms.",
+    "regulatory_risk": "The regulatory treatment of asset tokenization under IFSCA is evolving and may change, which could affect your rights or the value of your holdings.",
+    "custody_risk": "Underlying assets are held by a third-party IFSCA-registered custodian; custody arrangements carry their own operational and counterparty risk.",
+    "no_guarantee": "Past performance and projected valuations are not guarantees of future results.",
+    "acknowledgment_label": "I have read and understood the risks described above and consent to proceed.",
+    "submit": "I agree and submit for review"
+  },
+  "status": {
+    "title": "Verification status",
+    "refresh": "Refresh status",
+    "go_to_dashboard": "Go to dashboard"
+  },
+  "status_pending": {
+    "title": "Your application is under review",
+    "message": "We're reviewing your submitted profile, documents, and liveness check. This usually takes a short while -- you'll be able to access the platform as soon as verification completes."
+  },
+  "status_verified": {
+    "title": "You're verified",
+    "message": "Your identity has been verified. You can now access the full platform."
+  },
+  "status_rejected": {
+    "title": "Verification was not successful",
+    "message": "We weren't able to verify your identity with the information provided.",
+    "reason_label": "Reason"
   }
 }

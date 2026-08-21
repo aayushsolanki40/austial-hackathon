@@ -1,0 +1,62 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="profile-step">
+  <h2>{{ 'kyc.profile.title' | t }}</h2>
+  <p class="profile-step__description">{{ 'kyc.profile.description' | t }}</p>
+
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'kyc.profile.investor_type_label' | t }}</mat-label>
+    <mat-select formControlName="investor_type">
+      @for (option of investorTypeOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.labelKey | t }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'kyc.profile.jurisdiction_label' | t }}</mat-label>
+    <mat-select formControlName="jurisdiction">
+      @for (option of jurisdictionOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.labelKey | t }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'kyc.profile.risk_profile_label' | t }}</mat-label>
+    <mat-select formControlName="risk_profile">
+      @for (option of riskProfileOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.labelKey | t }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'kyc.profile.legal_name_label' | t }}</mat-label>
+    <input matInput type="text" formControlName="legal_name" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'kyc.profile.date_of_birth_label' | t }}</mat-label>
+    <input matInput type="date" formControlName="date_of_birth" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'kyc.profile.nationality_label' | t }}</mat-label>
+    <mat-select formControlName="nationality">
+      @for (option of jurisdictionOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.labelKey | t }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  @if (errorMessage()) {
+    <p class="profile-step__error">{{ errorMessage() }}</p>
+  }
+
+  <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting()">
+    @if (submitting()) {
+      <mat-spinner diameter="20" />
+    } @else {
+      {{ 'kyc.profile.submit' | t }}
+    }
+  </button>
+</form>

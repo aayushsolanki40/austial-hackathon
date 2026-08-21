@@ -1,0 +1,10 @@
+{
+  "route_prefix": "issuers",
+  "error": {
+    "invalid_jurisdiction": "registration_jurisdiction must be a valid ISO 3166-1 alpha-2 code.",
+    "profile_already_exists": "You already have an issuer profile -- one issuer organisation per user.",
+    "profile_not_found": "No issuer profile exists for your account.",
+    "user_not_found": "No user exists with that ID.",
+    "invalid_transition": "Cannot move an issuer from {current} to {target}."
+  }
+}

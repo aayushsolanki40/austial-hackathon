@@ -10,10 +10,14 @@ from src.app_service import AppService
 from src.db.entities import ALL_ENTITIES
 from src.jobs.jobs_module import JobsModule
 from src.modules.admin.admin_module import AdminModule
+from src.modules.assets.assets_module import AssetsModule
 from src.modules.auth.auth_module import AuthModule
 from src.modules.compliance.compliance_module import ComplianceModule
+from src.modules.custodians.custodians_module import CustodiansModule
 from src.modules.health.health_module import HealthModule
 from src.modules.investors.investors_module import InvestorsModule
+from src.modules.issuers.issuers_module import IssuersModule
+from src.modules.kyc.kyc_module import KycModule
 from src.storage.storage_module import StorageModule
 
 
@@ -37,6 +41,10 @@ from src.storage.storage_module import StorageModule
         HealthModule,
         AuthModule,
         InvestorsModule,
+        KycModule,
+        IssuersModule,
+        CustodiansModule,
+        AssetsModule,
         ComplianceModule,
         JobsModule,
         StorageModule,

@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from datetime import datetime
+
 from austial.orm import (
     Column,
     CreateDateColumn,
@@ -10,6 +12,7 @@ from austial.orm import (
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 )
+
 from src.modules.holdings.entities.token_holding import TokenHolding
 from src.modules.investors.entities.investor_profile import InvestorProfile
 

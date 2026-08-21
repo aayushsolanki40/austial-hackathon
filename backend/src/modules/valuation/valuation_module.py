@@ -1,5 +1,6 @@
 from austial import Module
 from austial.orm import OrmModule, repository_token
+
 from src.modules.auth.guards.jwt_auth_guard import JwtAuthGuard
 from src.modules.auth.guards.roles_guard import RolesGuard
 from src.modules.issuance.issuance_module import IssuanceModule

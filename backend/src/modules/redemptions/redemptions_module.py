@@ -1,5 +1,6 @@
 from austial import Module
 from austial.orm import OrmModule
+
 from src.modules.auth.guards.jwt_auth_guard import JwtAuthGuard
 from src.modules.auth.guards.kyc_verified_guard import KycVerifiedGuard
 from src.modules.auth.guards.roles_guard import RolesGuard

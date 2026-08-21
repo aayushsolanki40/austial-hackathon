@@ -1,8 +1,11 @@
 from __future__ import annotations
+
 from datetime import UTC, datetime
 from statistics import mean
+
 from austial import ConflictException, Injectable, NotFoundException
 from austial.orm import FindOptions, InjectRepository, Repository
+
 from src.i18n.i18n import t
 from src.modules.compliance.entities.audit_log import AuditLog
 from src.modules.issuance.entities.token_series import TokenSeries

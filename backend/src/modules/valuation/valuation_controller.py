@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from austial import Body, Controller, Get, Param, Post, Query, Req, UseGuards
+
 from src.i18n.i18n import t
 from src.modules.auth.decorators.roles_decorator import Roles
 from src.modules.auth.guards.jwt_auth_guard import JwtAuthGuard

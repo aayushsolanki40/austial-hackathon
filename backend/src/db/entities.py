@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from src.modules.assets.entities.asset import Asset
 from src.modules.auth.entities.refresh_token import RefreshToken
 from src.modules.auth.entities.user import User

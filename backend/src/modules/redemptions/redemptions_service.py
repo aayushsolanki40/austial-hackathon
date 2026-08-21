@@ -1,9 +1,12 @@
 from __future__ import annotations
+
 from datetime import UTC, datetime
 from decimal import ROUND_DOWN, Decimal
 from typing import Any
+
 from austial import ConflictException, Injectable, NotFoundException, UnprocessableEntityException
 from austial.orm import DataSource, FindOptions, InjectRepository, Repository
+
 from src.i18n.i18n import t
 from src.modules.compliance.entities.audit_log import AuditLog
 from src.modules.holdings.entities.token_holding import TokenHolding
@@ -146,6 +149,7 @@ class RedemptionsService:
             .take(take)
             .get_many_and_count()
         )
+        requests = await self._hydrate_holding_series(requests)
         return RedemptionRequestListDto(total=total, items=[_to_request_dto(r) for r in requests])
 
     async def get_my_request(self, user_id: int, request_id: int) -> RedemptionRequestResponseDto:
@@ -172,6 +176,7 @@ class RedemptionsService:
         if status:
             query = query.and_where_eq("r.status", status, cast_text=True)
         requests, total = await query.add_order_by("r.id", "ASC").skip(skip).take(take).get_many_and_count()
+        requests = await self._hydrate_holding_series(requests)
         return RedemptionRequestListDto(total=total, items=[_to_request_dto(r) for r in requests])
 
     async def get_request(self, request_id: int) -> RedemptionRequestResponseDto:
@@ -403,17 +408,23 @@ class RedemptionsService:
 
         async def work(em: Any) -> tuple[int, Decimal]:
             await em.update(Distribution, distribution.id, {"status": "PROCESSING"})
-            running_total = Decimal("0")
+            # `pro_rata_running_total` only accumulates non-last shares -- it exists purely to let
+            # the last holder's share absorb the remainder (`total_amount - pro_rata_running_total`,
+            # see this method's docstring). `total_credited` is the separate running sum of every
+            # share actually credited (including the last), which is what gets returned/reported --
+            # keeping these two sums distinct avoids under-counting the last holder's share.
+            pro_rata_running_total = Decimal("0")
+            total_credited = Decimal("0")
             holder_count = 0
             for index, holding in enumerate(holdings):
                 is_last = index == len(holdings) - 1
                 if is_last:
-                    share = total_amount - running_total
+                    share = total_amount - pro_rata_running_total
                 else:
                     share = (total_amount * Decimal(str(holding.quantity)) / total_outstanding).quantize(
                         _USD_QUANT, rounding=ROUND_DOWN
                     )
-                    running_total += share
+                    pro_rata_running_total += share
                 if share <= 0:
                     continue
                 account = await self.ledger_service.get_or_create_account(holding.investor)
@@ -426,6 +437,7 @@ class RedemptionsService:
                     reference_id=distribution.id,
                     idempotency_key=f"distribution:{distribution.id}:holding:{holding.id}",
                 )
+                total_credited += share
                 holder_count += 1
             now = _now()
             await em.update(
@@ -433,7 +445,7 @@ class RedemptionsService:
                 distribution.id,
                 {"status": "COMPLETED", "processed_at": now, "triggered_by_user_id": officer_id},
             )
-            return holder_count, running_total
+            return holder_count, total_credited
 
         holder_count, total_credited = await self.ds.transaction(work)
         distribution.status = "COMPLETED"
@@ -458,12 +470,33 @@ class RedemptionsService:
     # -- internals ------------------------------------------------------------------------------
 
     def _request_query(self) -> Any:
+        """Only single-hop joins off the root ``r`` alias -- ``austial.orm``'s
+        ``QueryBuilder.left_join_and_select`` resolves every join against the *root* entity, so a
+        second-level join like ``"holding.token_series"`` off the already-joined (non-root)
+        ``"holding"`` alias raises ``RelationNotFoundError`` (confirmed in ``austial-py/packages/
+        orm/src/austial/orm/driver/sqlalchemy_support.py::compile_select``). Same framework gap
+        ``SubscriptionsService.list_marketplace`` documents -- ``holding.token_series`` is instead
+        hydrated by ``_hydrate_holding_series`` below via a second single-hop query."""
         return (
             self.redemption_requests.create_query_builder("r")
             .left_join_and_select("r.investor", "investor")
             .left_join_and_select("r.holding", "holding")
-            .left_join_and_select("holding.token_series", "series")
         )
+
+    async def _hydrate_holding_series(self, requests: list[RedemptionRequest]) -> list[RedemptionRequest]:
+        """Second single-hop query per request, merged in Python -- see ``_request_query``'s
+        docstring. Page sizes here are small (default 50, mirrors ``SubscriptionsService.
+        list_marketplace``'s identical N+1 tradeoff), so this stays a plain loop rather than an
+        unsupported multi-value ``IN (...)`` merge."""
+        for request in requests:
+            holding_with_series = await (
+                self.holdings.create_query_builder("h")
+                .left_join_and_select("h.token_series", "series")
+                .where("h.id = :id", {"id": request.holding.id})
+                .get_one()
+            )
+            request.holding.token_series = holding_with_series.token_series
+        return requests
 
     def _assert_transition(self, current_status: str, target_status: str) -> None:
         if target_status not in ALLOWED_TRANSITIONS.get(current_status, set()):
@@ -517,6 +550,7 @@ class RedemptionsService:
         request = await self._request_query().where("r.id = :id", {"id": request_id}).get_one()
         if request is None:
             raise NotFoundException(t("redemptions.error.request_not_found"))
+        (request,) = await self._hydrate_holding_series([request])
         return request
 
     async def _get_own_request_or_raise(self, request_id: int, investor_id: int) -> RedemptionRequest:

@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from datetime import datetime
+
 from austial.orm import (
     Column,
     CreateDateColumn,
@@ -11,6 +13,7 @@ from austial.orm import (
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 )
+
 from src.modules.issuance.entities.token_series import TokenSeries
 from src.modules.ledger.entities.ledger_account import FREELY_CONVERTIBLE_CURRENCIES
 

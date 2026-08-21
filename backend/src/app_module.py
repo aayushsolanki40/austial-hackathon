@@ -15,11 +15,13 @@ from src.modules.auth.auth_module import AuthModule
 from src.modules.compliance.compliance_module import ComplianceModule
 from src.modules.custodians.custodians_module import CustodiansModule
 from src.modules.health.health_module import HealthModule
+from src.modules.holdings.holdings_module import HoldingsModule
 from src.modules.investors.investors_module import InvestorsModule
 from src.modules.issuance.issuance_module import IssuanceModule
 from src.modules.issuers.issuers_module import IssuersModule
 from src.modules.kyc.kyc_module import KycModule
 from src.modules.ledger.ledger_module import LedgerModule
+from src.modules.subscriptions.subscriptions_module import SubscriptionsModule
 from src.storage.storage_module import StorageModule
 
 
@@ -49,6 +51,8 @@ from src.storage.storage_module import StorageModule
         AssetsModule,
         IssuanceModule,
         LedgerModule,
+        HoldingsModule,
+        SubscriptionsModule,
         ComplianceModule,
         JobsModule,
         StorageModule,

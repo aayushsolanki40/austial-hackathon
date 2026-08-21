@@ -7,9 +7,8 @@ import { Holding, HoldingListResponse } from './holdings.models';
 const HOLDING_PAGE_SIZE = 50;
 
 /**
- * ★ CONTRACT ASSUMPTION -- see `holdings.models.ts` header; every route below is a guess.
- * Signal-based state + `ApiService` calls, mirroring `SubscriptionsService`'s shape. Guessed
- * routes:
+ * Signal-based state + `ApiService` calls, mirroring `SubscriptionsService`'s shape. Real routes
+ * (`holdings_controller.py`):
  *   - `GET /holdings/mine?skip=&take=` -- the investor's own holdings.
  *   - `GET /holdings/mine/:id` -- single lookup, backing `/holdings/:id`.
  */

@@ -7,25 +7,24 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { TPipe } from '../../core/i18n/t.pipe';
 import { MarketplaceService } from '../../core/marketplace/marketplace.service';
-import { DisclosureChecklistComponent } from '../../shared/disclosure-checklist/disclosure-checklist.component';
 
 type LoadState = 'loading' | 'error' | 'loaded';
 
 /**
- * Phase 6 asset detail + prospectus viewer. Reuses `DisclosureChecklistComponent` in
- * read-only mode (`uploadable = false`) for the prospectus/disclosure section, the same
- * component the issuer/compliance screens use for the write side (Phase 4) -- see that
- * component's own docstring for why it lives under `shared/` for exactly this reason.
+ * Phase 6 asset detail. `MarketplaceTokenSeriesDto` is the only investor-facing marketplace
+ * contract the backend exposes -- there's no standalone detail endpoint -- so this loads the
+ * same `GET subscriptions/marketplace` page `MarketplaceComponent` uses and looks the series up
+ * by id client-side (`MarketplaceService.findById`).
  *
- * `disclosures_complete`/`missing_disclosure_types` aren't part of the guessed
- * `MarketplaceListingDetail` shape (only `LAUNCHED` proposals -- already gated complete at
- * launch time -- ever reach the marketplace), so this passes `disclosuresComplete = true` and
- * an empty missing-types list rather than re-deriving completeness client-side.
+ * Known gap: investors have no read access to `issuance/proposals/:id` (that route is
+ * `COMPLIANCE_OFFICER`/`ADMIN`/`ISSUER`-only), so there is currently no backend data source for
+ * an investor-facing prospectus/disclosure viewer. Intentionally omitted here rather than wired
+ * to a nonexistent endpoint.
  */
 @Component({
   selector: 'app-asset-detail',
   standalone: true,
-  imports: [CurrencyPipe, DatePipe, MatButtonModule, MatCardModule, MatProgressSpinnerModule, RouterLink, DisclosureChecklistComponent, TPipe],
+  imports: [CurrencyPipe, DatePipe, MatButtonModule, MatCardModule, MatProgressSpinnerModule, RouterLink, TPipe],
   templateUrl: './asset-detail.component.html',
   styleUrl: './asset-detail.component.scss',
 })
@@ -34,7 +33,7 @@ export default class AssetDetailComponent implements OnInit {
   private readonly marketplace = inject(MarketplaceService);
 
   readonly state = signal<LoadState>('loading');
-  readonly listing = this.marketplace.current;
+  readonly listing = computed(() => this.marketplace.findById(this.listingId));
 
   readonly windowOpen = computed(() => {
     const listing = this.listing();
@@ -56,8 +55,8 @@ export default class AssetDetailComponent implements OnInit {
   load(): void {
     this.state.set('loading');
     this.marketplace
-      .fetchListing(this.listingId)
-      .then(() => this.state.set('loaded'))
+      .listListings()
+      .then(() => this.state.set(this.listing() ? 'loaded' : 'error'))
       .catch(() => this.state.set('error'));
   }
 }

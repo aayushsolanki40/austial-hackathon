@@ -521,9 +521,7 @@ class IssuanceService:
         return issuer
 
     async def _get_proposal_or_raise(self, proposal_id: int) -> TokenizationProposal:
-        proposal = await self.proposals.find_one(
-            FindOptions(where={"id": proposal_id}, relations=["asset", "issuer"])
-        )
+        proposal = await self.proposals.find_one(FindOptions(where={"id": proposal_id}, relations=["asset", "issuer"]))
         if proposal is None:
             raise NotFoundException(t("issuance.error.proposal_not_found"))
         return proposal

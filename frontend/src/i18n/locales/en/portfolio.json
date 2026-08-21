@@ -8,10 +8,10 @@
     "retry": "Retry",
     "holdings_empty": "You don't have any holdings yet.",
     "subscriptions_empty": "You don't have any subscriptions in progress.",
-    "asset_column": "Asset",
     "symbol_column": "Symbol",
     "units_column": "Units",
     "amount_column": "Amount",
+    "avg_cost_column": "Avg. cost",
     "status_column": "Status",
     "created_at_column": "Date",
     "actions_column": "Actions",
@@ -25,10 +25,11 @@
     "error": "Unable to load this holding right now.",
     "retry": "Retry",
     "back_to_portfolio": "Back to portfolio",
-    "asset_label": "Asset",
     "symbol_label": "Token symbol",
     "units_label": "Units held",
-    "subscription_reference_label": "Originating subscription",
+    "avg_cost_label": "Average cost",
+    "status_label": "Status",
+    "custodian_ref_label": "Custodian confirmation reference",
     "acquired_at_label": "Acquired"
   },
   "holding_redeem": {
@@ -42,5 +43,10 @@
     "allocated": "Allocated",
     "refunded": "Refunded",
     "cancelled": "Cancelled"
+  },
+  "holding_status_option": {
+    "active": "Active",
+    "frozen": "Frozen",
+    "redeemed": "Redeemed"
   }
 }

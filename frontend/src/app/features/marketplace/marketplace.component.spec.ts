@@ -4,21 +4,18 @@ import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks } from '@angular/
 import { provideRouter } from '@angular/router';
 
 import { environment } from '../../../environments/environment';
-import { MarketplaceListing } from '../../core/marketplace/marketplace.models';
+import { MarketplaceTokenSeries } from '../../core/marketplace/marketplace.models';
 import MarketplaceComponent from './marketplace.component';
 
-function listing(overrides: Partial<MarketplaceListing> = {}): MarketplaceListing {
+function listing(overrides: Partial<MarketplaceTokenSeries> = {}): MarketplaceTokenSeries {
   return {
     id: 1,
+    symbol: 'MCT',
     asset_id: 1,
     asset_name: 'Mumbai Commercial Tower',
     asset_class: 'REAL_ESTATE',
-    asset_description: 'A commercial office tower.',
     issuer_id: 1,
-    token_series_id: 1,
-    symbol: 'MCT',
-    total_units: 10000,
-    units_subscribed: 0,
+    total_supply: 10000,
     unit_price_usd: 100,
     min_subscription_units: 10,
     subscription_start_at: '2026-01-01T00:00:00Z',
@@ -44,10 +41,10 @@ describe('MarketplaceComponent', () => {
   afterEach(() => httpMock.verify());
 
   function expectListingsReq() {
-    return httpMock.expectOne((r) => r.url === `${environment.apiBaseUrl}/issuance/marketplace`);
+    return httpMock.expectOne((r) => r.url === `${environment.apiBaseUrl}/subscriptions/marketplace`);
   }
 
-  it('loads listings from GET /issuance/marketplace on init', fakeAsync(() => {
+  it('loads listings from GET /subscriptions/marketplace on init', fakeAsync(() => {
     fixture.detectChanges();
     expectListingsReq().flush({ total: 1, items: [listing()] });
     flushMicrotasks();
@@ -64,19 +61,19 @@ describe('MarketplaceComponent', () => {
     expect(fixture.componentInstance.state()).toBe('error');
   }));
 
-  it('setAssetClassFilter() reloads with the asset_class query param', fakeAsync(() => {
+  it('setAssetClassFilter() filters the already-loaded listings client-side, without a refetch', fakeAsync(() => {
     fixture.detectChanges();
-    expectListingsReq().flush({ total: 1, items: [listing()] });
+    expectListingsReq().flush({
+      total: 2,
+      items: [listing({ id: 1, asset_class: 'REAL_ESTATE' }), listing({ id: 2, asset_class: 'COMMODITY' })],
+    });
     flushMicrotasks();
 
     fixture.componentInstance.setAssetClassFilter('COMMODITY');
-    const req = httpMock.expectOne(
-      (r) => r.url === `${environment.apiBaseUrl}/issuance/marketplace` && r.params.get('asset_class') === 'COMMODITY',
-    );
-    req.flush({ total: 0, items: [] });
-    flushMicrotasks();
+    httpMock.expectNone((r) => r.url === `${environment.apiBaseUrl}/subscriptions/marketplace`);
 
     expect(fixture.componentInstance.selectedAssetClass()).toBe('COMMODITY');
-    expect(fixture.componentInstance.listings().length).toBe(0);
+    expect(fixture.componentInstance.listings().length).toBe(1);
+    expect(fixture.componentInstance.listings()[0].id).toBe(2);
   }));
 });

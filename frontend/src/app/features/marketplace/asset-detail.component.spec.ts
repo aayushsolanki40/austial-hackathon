@@ -4,26 +4,22 @@ import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks } from '@angular/
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 
 import { environment } from '../../../environments/environment';
-import { MarketplaceListingDetail } from '../../core/marketplace/marketplace.models';
+import { MarketplaceTokenSeries } from '../../core/marketplace/marketplace.models';
 import AssetDetailComponent from './asset-detail.component';
 
-function listingDetail(overrides: Partial<MarketplaceListingDetail> = {}): MarketplaceListingDetail {
+function listing(overrides: Partial<MarketplaceTokenSeries> = {}): MarketplaceTokenSeries {
   return {
     id: 1,
+    symbol: 'MCT',
     asset_id: 1,
     asset_name: 'Mumbai Commercial Tower',
     asset_class: 'REAL_ESTATE',
-    asset_description: 'A commercial office tower.',
     issuer_id: 1,
-    token_series_id: 1,
-    symbol: 'MCT',
-    total_units: 10000,
-    units_subscribed: 0,
+    total_supply: 10000,
     unit_price_usd: 100,
     min_subscription_units: 10,
     subscription_start_at: '2020-01-01T00:00:00Z',
     subscription_end_at: '2020-12-31T00:00:00Z',
-    disclosures: [],
     ...overrides,
   };
 }
@@ -52,22 +48,30 @@ describe('AssetDetailComponent', () => {
 
   afterEach(() => httpMock.verify());
 
-  it('loads the listing by id from the route via /issuance/marketplace/:id', fakeAsync(() => {
+  it('loads the marketplace list and finds the series by route id', fakeAsync(() => {
     fixture.detectChanges();
-    const req = httpMock.expectOne(`${environment.apiBaseUrl}/issuance/marketplace/1`);
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/subscriptions/marketplace`);
     expect(req.request.method).toBe('GET');
-    req.flush(listingDetail());
+    req.flush({ total: 1, items: [listing()] });
     flushMicrotasks();
 
     expect(fixture.componentInstance.state()).toBe('loaded');
     expect(fixture.componentInstance.listing()?.asset_name).toBe('Mumbai Commercial Tower');
   }));
 
+  it('falls back to the error state when the series id is not in the marketplace list', fakeAsync(() => {
+    fixture.detectChanges();
+    httpMock.expectOne(`${environment.apiBaseUrl}/subscriptions/marketplace`).flush({ total: 0, items: [] });
+    flushMicrotasks();
+
+    expect(fixture.componentInstance.state()).toBe('error');
+  }));
+
   it('windowOpen() is false once the subscription window has closed', fakeAsync(() => {
     fixture.detectChanges();
     httpMock
-      .expectOne(`${environment.apiBaseUrl}/issuance/marketplace/1`)
-      .flush(listingDetail({ subscription_start_at: '2020-01-01T00:00:00Z', subscription_end_at: '2020-12-31T00:00:00Z' }));
+      .expectOne(`${environment.apiBaseUrl}/subscriptions/marketplace`)
+      .flush({ total: 1, items: [listing({ subscription_start_at: '2020-01-01T00:00:00Z', subscription_end_at: '2020-12-31T00:00:00Z' })] });
     flushMicrotasks();
 
     expect(fixture.componentInstance.windowOpen()).toBeFalse();
@@ -76,8 +80,8 @@ describe('AssetDetailComponent', () => {
   it('windowOpen() is true while now falls within the subscription window', fakeAsync(() => {
     fixture.detectChanges();
     httpMock
-      .expectOne(`${environment.apiBaseUrl}/issuance/marketplace/1`)
-      .flush(listingDetail({ subscription_start_at: '2020-01-01T00:00:00Z', subscription_end_at: '2999-12-31T00:00:00Z' }));
+      .expectOne(`${environment.apiBaseUrl}/subscriptions/marketplace`)
+      .flush({ total: 1, items: [listing({ subscription_start_at: '2020-01-01T00:00:00Z', subscription_end_at: '2999-12-31T00:00:00Z' })] });
     flushMicrotasks();
 
     expect(fixture.componentInstance.windowOpen()).toBeTrue();

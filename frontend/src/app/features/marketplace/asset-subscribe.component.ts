@@ -18,21 +18,17 @@ import { SubscriptionsService } from '../../core/subscriptions/subscriptions.ser
 type LoadState = 'loading' | 'error' | 'loaded';
 
 /**
- * Phase 6 subscription flow -- the build plan is explicit that this needs "mandatory risk/fee
- * acknowledgment checkboxes," in the same regulatory-flavored-UX spirit as the Phase 2
- * `RiskDisclosureStepComponent` (persisted, timestamped consent, not just a UI gate the form
- * silently drops). Both checkboxes must be checked before `submit()` will even call
- * `SubscriptionsService.create()` -- see `canSubmit`.
+ * Phase 6 subscription flow -- "mandatory risk/fee acknowledgment checkboxes," matching
+ * `CreateSubscriptionDto`'s `risk_disclosure_accepted`/`fee_disclosure_accepted`, both required
+ * (not optional) and both must be checked before `submit()` calls `SubscriptionsService.create()`
+ * -- see `canSubmit`.
  *
- * Also surfaces the investor's `LedgerAccount.available_balance` (real, reconciled Phase 5
- * contract -- `GET /ledger/account`) alongside the computed subscription amount so the investor
- * can see upfront whether they have enough funds, mirroring `WalletComponent`'s
- * `available_balance`/`locked_balance` display pattern and money formatting
- * (`currency: 'USD' : 'symbol' : '1.2-2'`).
+ * Also surfaces the investor's `LedgerAccount.available_balance` (`GET /ledger/account`)
+ * alongside the computed subscription amount so the investor can see upfront whether they have
+ * enough funds.
  *
- * `MarketplaceListing.id` (loaded via `MarketplaceService.fetchListing`) is what's sent as
- * `CreateSubscriptionRequest.proposal_id` -- see ★ CONTRACT ASSUMPTION comments in
- * `core/subscriptions/subscriptions.models.ts` for why that request shape is a guess.
+ * `MarketplaceTokenSeries.id` (the `TokenSeries` id, looked up via `MarketplaceService.findById`)
+ * is what's sent as `CreateSubscriptionRequest.token_series_id`.
  */
 @Component({
   selector: 'app-asset-subscribe',
@@ -61,7 +57,7 @@ export default class AssetSubscribeComponent implements OnInit {
   private readonly i18n = inject(I18nService);
 
   readonly state = signal<LoadState>('loading');
-  readonly listing = this.marketplace.current;
+  readonly listing = computed(() => this.marketplace.findById(this.listingId));
   readonly account = this.ledger.account;
 
   readonly riskAcknowledged = signal(false);
@@ -71,12 +67,12 @@ export default class AssetSubscribeComponent implements OnInit {
   readonly result = this.subscriptions.current;
 
   readonly unitsForm = this.fb.group({
-    units_requested: this.fb.control<number | null>(null, [Validators.required, Validators.min(1)]),
+    units: this.fb.control<number | null>(null, [Validators.required, Validators.min(1)]),
   });
 
   readonly amountUsd = computed(() => {
     const listing = this.listing();
-    const units = this.unitsForm.controls.units_requested.value;
+    const units = this.unitsForm.controls.units.value;
     if (!listing || !units) {
       return 0;
     }
@@ -111,13 +107,15 @@ export default class AssetSubscribeComponent implements OnInit {
 
   load(): void {
     this.state.set('loading');
-    Promise.all([this.marketplace.fetchListing(this.listingId), this.ledger.fetchAccount()])
+    Promise.all([this.marketplace.listListings(), this.ledger.fetchAccount()])
       .then(() => {
         const listing = this.listing();
-        if (listing) {
-          this.unitsForm.controls.units_requested.setValidators([Validators.required, Validators.min(listing.min_subscription_units)]);
-          this.unitsForm.controls.units_requested.updateValueAndValidity();
+        if (!listing) {
+          this.state.set('error');
+          return;
         }
+        this.unitsForm.controls.units.setValidators([Validators.required, Validators.min(listing.min_subscription_units)]);
+        this.unitsForm.controls.units.updateValueAndValidity();
         this.state.set('loaded');
       })
       .catch(() => this.state.set('error'));
@@ -125,7 +123,7 @@ export default class AssetSubscribeComponent implements OnInit {
 
   async submit(): Promise<void> {
     const listing = this.listing();
-    const units = this.unitsForm.controls.units_requested.value;
+    const units = this.unitsForm.controls.units.value;
     if (!this.canSubmit() || !listing || !units) {
       return;
     }
@@ -134,10 +132,10 @@ export default class AssetSubscribeComponent implements OnInit {
     this.submitError.set(null);
     try {
       await this.subscriptions.create({
-        proposal_id: listing.id,
-        units_requested: units,
-        risk_acknowledged: this.riskAcknowledged(),
-        fee_acknowledged: this.feeAcknowledged(),
+        token_series_id: listing.id,
+        units,
+        risk_disclosure_accepted: this.riskAcknowledged(),
+        fee_disclosure_accepted: this.feeAcknowledged(),
       });
       // Refresh the account so the newly locked funds show up in `available_balance`/
       // `locked_balance` immediately.

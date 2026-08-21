@@ -38,8 +38,8 @@ export default class PortfolioComponent implements OnInit {
     this.subscriptions().filter((s) => IN_FLIGHT_SUBSCRIPTION_STATUSES.includes(s.status)),
   );
 
-  readonly holdingColumns = ['asset_name', 'symbol', 'units', 'created_at', 'actions'];
-  readonly subscriptionColumns = ['asset_name', 'units_requested', 'amount_usd', 'status', 'created_at'];
+  readonly holdingColumns = ['symbol', 'quantity', 'avg_cost_usd', 'status', 'created_at', 'actions'];
+  readonly subscriptionColumns = ['symbol', 'units', 'amount_usd', 'status', 'created_at'];
 
   ngOnInit(): void {
     this.load();

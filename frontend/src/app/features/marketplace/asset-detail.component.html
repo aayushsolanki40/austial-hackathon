@@ -22,21 +22,14 @@
               <dt>{{ 'marketplace.asset_detail.asset_class_label' | t }}</dt>
               <dd>{{ ('asset.class_option.' + l.asset_class.toLowerCase()) | t }}</dd>
 
-              @if (l.asset_description) {
-                <dt>{{ 'marketplace.asset_detail.description_label' | t }}</dt>
-                <dd>{{ l.asset_description }}</dd>
-              }
-
-              @if (l.symbol) {
-                <dt>{{ 'marketplace.asset_detail.symbol_label' | t }}</dt>
-                <dd>{{ l.symbol }}</dd>
-              }
+              <dt>{{ 'marketplace.asset_detail.symbol_label' | t }}</dt>
+              <dd>{{ l.symbol }}</dd>
 
               <dt>{{ 'marketplace.asset_detail.unit_price_label' | t }}</dt>
               <dd>{{ l.unit_price_usd | currency: 'USD' : 'symbol' : '1.2-2' }}</dd>
 
               <dt>{{ 'marketplace.asset_detail.total_units_label' | t }}</dt>
-              <dd>{{ l.total_units }}</dd>
+              <dd>{{ l.total_supply }}</dd>
 
               <dt>{{ 'marketplace.asset_detail.min_subscription_label' | t }}</dt>
               <dd>{{ l.min_subscription_units }}</dd>
@@ -60,13 +53,7 @@
             <mat-card-title>{{ 'marketplace.asset_detail.prospectus_title' | t }}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <app-disclosure-checklist
-              [proposalId]="l.id"
-              [disclosures]="l.disclosures"
-              [missingDisclosureTypes]="[]"
-              [disclosuresComplete]="true"
-              [uploadable]="false"
-            />
+            <p class="asset-detail__hint">{{ 'marketplace.asset_detail.prospectus_unavailable' | t }}</p>
           </mat-card-content>
         </mat-card>
       }

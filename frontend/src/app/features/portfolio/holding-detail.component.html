@@ -14,24 +14,27 @@
     }
     @case ('loaded') {
       @if (holding(); as h) {
-        <h1>{{ h.asset_name }}</h1>
+        <h1>{{ h.symbol }}</h1>
 
         <mat-card class="holding-detail__card">
           <mat-card-content>
             <dl class="holding-detail__details">
-              <dt>{{ 'portfolio.holding_detail.asset_label' | t }}</dt>
-              <dd>{{ h.asset_name }}</dd>
-
-              @if (h.symbol) {
-                <dt>{{ 'portfolio.holding_detail.symbol_label' | t }}</dt>
-                <dd>{{ h.symbol }}</dd>
-              }
+              <dt>{{ 'portfolio.holding_detail.symbol_label' | t }}</dt>
+              <dd>{{ h.symbol }}</dd>
 
               <dt>{{ 'portfolio.holding_detail.units_label' | t }}</dt>
-              <dd>{{ h.units }}</dd>
+              <dd>{{ h.quantity }}</dd>
 
-              <dt>{{ 'portfolio.holding_detail.subscription_reference_label' | t }}</dt>
-              <dd>#{{ h.subscription_id }}</dd>
+              <dt>{{ 'portfolio.holding_detail.avg_cost_label' | t }}</dt>
+              <dd>{{ h.avg_cost_usd | currency: 'USD' : 'symbol' : '1.2-2' }}</dd>
+
+              <dt>{{ 'portfolio.holding_detail.status_label' | t }}</dt>
+              <dd>{{ ('portfolio.holding_status_option.' + h.status.toLowerCase()) | t }}</dd>
+
+              @if (h.custodian_confirmation_ref) {
+                <dt>{{ 'portfolio.holding_detail.custodian_ref_label' | t }}</dt>
+                <dd>{{ h.custodian_confirmation_ref }}</dd>
+              }
 
               <dt>{{ 'portfolio.holding_detail.acquired_at_label' | t }}</dt>
               <dd>{{ h.created_at | date: 'medium' }}</dd>

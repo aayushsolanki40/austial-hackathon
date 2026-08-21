@@ -10,12 +10,14 @@ function holding(overrides: Partial<Holding> = {}): Holding {
   return {
     id: 1,
     investor_id: 1,
-    subscription_id: 1,
     token_series_id: 1,
-    asset_name: 'Mumbai Commercial Tower',
     symbol: 'MCT',
-    units: 10,
+    quantity: 10,
+    avg_cost_usd: 100,
+    status: 'ACTIVE',
+    custodian_confirmation_ref: null,
     created_at: '2026-01-01T00:00:00Z',
+    updated_at: '2026-01-01T00:00:00Z',
     ...overrides,
   };
 }
@@ -47,17 +49,17 @@ describe('HoldingsService', () => {
 
     const result = await promise;
     expect(result.length).toBe(1);
-    expect(service.myHoldings()[0].units).toBe(10);
+    expect(service.myHoldings()[0].quantity).toBe(10);
   });
 
   it('fetchMine() GETs /holdings/mine/:id and sets current', async () => {
     const promise = service.fetchMine(1);
     const req = httpMock.expectOne(`${environment.apiBaseUrl}/holdings/mine/1`);
     expect(req.request.method).toBe('GET');
-    req.flush(holding({ units: 25 }));
+    req.flush(holding({ quantity: 25 }));
 
     const result = await promise;
-    expect(result.units).toBe(25);
-    expect(service.current()?.units).toBe(25);
+    expect(result.quantity).toBe(25);
+    expect(service.current()?.quantity).toBe(25);
   });
 });

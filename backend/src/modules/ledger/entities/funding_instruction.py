@@ -22,9 +22,7 @@ FUNDING_INSTRUCTION_STATUSES = ("PENDING", "CONFIRMED", "EXPIRED")
 @Entity()
 class FundingInstruction:
     id: int = PrimaryGeneratedColumn()
-    investor: InvestorProfile = ManyToOne(
-        lambda: InvestorProfile, inverse_side="funding_instructions", nullable=False
-    )
+    investor: InvestorProfile = ManyToOne(lambda: InvestorProfile, inverse_side="funding_instructions", nullable=False)
 
     # Investor-supplied bank-transfer memo/reference -- the only thing a real banking-partner
     # webhook or an ops officer reconciling a bank statement would have to match this row against.

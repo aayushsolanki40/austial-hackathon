@@ -44,7 +44,7 @@
             <form [formGroup]="unitsForm" (ngSubmit)="submit()" class="asset-subscribe__form">
               <mat-form-field appearance="outline">
                 <mat-label>{{ 'marketplace.asset_subscribe.units_label' | t }}</mat-label>
-                <input matInput type="number" formControlName="units_requested" [min]="l.min_subscription_units" />
+                <input matInput type="number" formControlName="units" [min]="l.min_subscription_units" />
                 <mat-hint>{{ 'marketplace.asset_subscribe.min_units_hint' | t }}: {{ l.min_subscription_units }}</mat-hint>
               </mat-form-field>
 

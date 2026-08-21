@@ -12,15 +12,13 @@ const SUBSCRIPTION_PAGE_SIZE = 50;
 export const IN_FLIGHT_SUBSCRIPTION_STATUSES: readonly Subscription['status'][] = ['PENDING', 'FUNDED', 'CONFIRMED'];
 
 /**
- * ★ CONTRACT ASSUMPTION -- see `subscriptions.models.ts` header; every route below is a guess.
  * Signal-based state + `ApiService` calls, mirroring `LedgerService`/`IssuanceService`'s
- * established shape. Guessed routes:
+ * established shape. Real routes (`subscriptions_controller.py`):
  *   - `POST /subscriptions` -- create, locking funds in `LedgerAccount.locked_balance`
  *     server-side (the Phase 6 state machine's `PENDING` entry point).
  *   - `GET /subscriptions/mine?skip=&take=` -- the caller's own subscriptions.
  *   - `GET /subscriptions/mine/:id` -- single lookup.
- *   - `POST /subscriptions/mine/:id/cancel` -- investor-initiated cancel, presumably gated
- *     server-side to `PENDING` only (not re-implemented client-side here).
+ *   - `POST /subscriptions/mine/:id/cancel` -- investor-initiated cancel.
  */
 @Injectable({ providedIn: 'root' })
 export class SubscriptionsService {

@@ -10,12 +10,16 @@ function subscription(overrides: Partial<Subscription> = {}): Subscription {
   return {
     id: 1,
     investor_id: 1,
-    proposal_id: 1,
-    asset_name: 'Mumbai Commercial Tower',
+    token_series_id: 1,
     symbol: 'MCT',
-    units_requested: 10,
+    units: 10,
     amount_usd: 1000,
+    allocated_units: null,
     status: 'PENDING',
+    risk_disclosure_accepted: true,
+    fee_disclosure_accepted: true,
+    disclosures_acknowledged_at: '2026-01-01T00:00:00Z',
+    processed_by_user_id: null,
     created_at: '2026-01-01T00:00:00Z',
     updated_at: '2026-01-01T00:00:00Z',
     ...overrides,
@@ -43,18 +47,18 @@ describe('SubscriptionsService', () => {
 
   it('create() POSTs /subscriptions with the request body and stores the result', async () => {
     const promise = service.create({
-      proposal_id: 1,
-      units_requested: 10,
-      risk_acknowledged: true,
-      fee_acknowledged: true,
+      token_series_id: 1,
+      units: 10,
+      risk_disclosure_accepted: true,
+      fee_disclosure_accepted: true,
     });
     const req = httpMock.expectOne(`${environment.apiBaseUrl}/subscriptions`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({
-      proposal_id: 1,
-      units_requested: 10,
-      risk_acknowledged: true,
-      fee_acknowledged: true,
+      token_series_id: 1,
+      units: 10,
+      risk_disclosure_accepted: true,
+      fee_disclosure_accepted: true,
     });
     req.flush(subscription());
 
@@ -72,7 +76,7 @@ describe('SubscriptionsService', () => {
 
     const result = await promise;
     expect(result.length).toBe(1);
-    expect(service.mySubscriptions()[0].asset_name).toBe('Mumbai Commercial Tower');
+    expect(service.mySubscriptions()[0].symbol).toBe('MCT');
   });
 
   it('fetchMine() GETs /subscriptions/mine/:id and sets current', async () => {

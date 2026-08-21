@@ -152,9 +152,7 @@ class LedgerService:
 
     # -- compliance-officer/admin-facing: confirmation + payouts -------------------------------
 
-    async def list_funding_instructions(
-        self, *, status: str | None, skip: int, take: int
-    ) -> FundingInstructionListDto:
+    async def list_funding_instructions(self, *, status: str | None, skip: int, take: int) -> FundingInstructionListDto:
         query = self.funding_instructions.create_query_builder("f").left_join_and_select("f.investor", "investor")
         if status:
             query = query.where("f.status = :status", {"status": status})
@@ -330,9 +328,7 @@ class LedgerService:
         await em.update(LedgerAccount, fresh.id, {"available_balance": new_available, "locked_balance": new_locked})
         return fresh
 
-    async def settle_within(
-        self, em: Any, account: LedgerAccount, amount: float, *, reference_id: int
-    ) -> LedgerEntry:
+    async def settle_within(self, em: Any, account: LedgerAccount, amount: float, *, reference_id: int) -> LedgerEntry:
         """Consumes ``locked_balance`` outright, same caller-supplied-``em`` contract -- called
         once a subscription's locked funds are actually spent on an allocated ``TokenHolding``
         (``SubscriptionsService.allocate``). Unlike lock/unlock, this **does** shrink the account's

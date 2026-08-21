@@ -1,0 +1,15 @@
+{
+  "route_prefix": "subscriptions",
+  "error": {
+    "investor_profile_required": "You must create an investor profile before subscribing.",
+    "token_series_not_found": "No token series exists with that ID.",
+    "token_series_paused": "This token series is paused and is not accepting new subscriptions.",
+    "subscription_window_closed": "The subscription window for this token series is not currently open.",
+    "subscription_window_still_open": "The subscription window for this token series has not closed yet.",
+    "below_minimum_subscription": "The requested units are below the minimum subscription for this token series.",
+    "disclosures_not_accepted": "Both the risk disclosure and fee disclosure must be acknowledged to subscribe.",
+    "subscription_not_found": "No subscription exists with that ID.",
+    "invalid_transition": "Cannot move a subscription from {current} to {target}.",
+    "token_series_fully_allocated": "This token series has no remaining supply -- outstanding confirmed subscriptions must be refunded."
+  }
+}

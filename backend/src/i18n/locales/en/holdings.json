@@ -1,0 +1,7 @@
+{
+  "route_prefix": "holdings",
+  "error": {
+    "investor_profile_required": "You must create an investor profile before viewing holdings.",
+    "holding_not_found": "No holding exists with that ID."
+  }
+}

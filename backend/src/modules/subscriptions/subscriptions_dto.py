@@ -35,6 +35,10 @@ class MarketplaceListDto(BaseModel):
 class CreateSubscriptionDto(BaseModel):
     token_series_id: int
     units: float = Field(gt=0)
+    # Mandatory risk/fee acknowledgment checkboxes -- must both be `True`, checked in
+    # `SubscriptionsService.subscribe` (see `Subscription.risk_disclosure_accepted`'s docstring).
+    risk_disclosure_accepted: bool
+    fee_disclosure_accepted: bool
 
 
 class SubscriptionResponseDto(BaseModel):
@@ -46,6 +50,9 @@ class SubscriptionResponseDto(BaseModel):
     amount_usd: float
     allocated_units: float | None
     status: str
+    risk_disclosure_accepted: bool
+    fee_disclosure_accepted: bool
+    disclosures_acknowledged_at: datetime | None
     processed_by_user_id: int | None
     created_at: datetime
     updated_at: datetime

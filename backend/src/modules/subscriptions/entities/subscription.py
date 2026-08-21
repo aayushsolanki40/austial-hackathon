@@ -60,6 +60,14 @@ class Subscription:
 
     status: str = Column(type_=EnumType(values=SUBSCRIPTION_STATUSES), default="PENDING")
 
+    # Persisted, timestamped acknowledgment -- mirrors `RiskDisclosureConsent`'s "a real DB row,
+    # not a client-side flag" rule. Both must be `True` (checked in `SubscriptionsService.
+    # subscribe`) before a subscription is created; `acknowledged_at` is the single timestamp
+    # covering both, since they're captured in the same subscribe request.
+    risk_disclosure_accepted: bool = Column(default=False)
+    fee_disclosure_accepted: bool = Column(default=False)
+    disclosures_acknowledged_at: datetime = Column(nullable=True)
+
     # Single reused field for whichever officer last drove a `FUNDED`/`CONFIRMED`/`REFUNDED`
     # transition -- mirrors `TokenizationProposal.reviewed_by_user_id`'s identical
     # single-field-reused-across-steps convention rather than one column per step.

@@ -1,0 +1,202 @@
+<section class="wallet">
+  <h1>{{ 'wallet.overview.title' | t }}</h1>
+
+  <section class="wallet__section">
+    <h2>{{ 'wallet.balance.title' | t }}</h2>
+
+    @switch (accountState()) {
+      @case ('loading') {
+        <div class="wallet__loading">
+          <mat-spinner diameter="28" />
+          <span>{{ 'wallet.balance.loading' | t }}</span>
+        </div>
+      }
+      @case ('error') {
+        <div class="wallet__error">
+          <p>{{ 'wallet.balance.error' | t }}</p>
+          <button mat-stroked-button (click)="loadAccount()">{{ 'wallet.balance.retry' | t }}</button>
+        </div>
+      }
+      @case ('loaded') {
+        <dl class="wallet__balance">
+          <div class="wallet__balance-item">
+            <dt>{{ 'wallet.balance.available_label' | t }}</dt>
+            <dd>{{ account()!.available_balance_usd | currency: 'USD' : 'symbol' : '1.2-2' }}</dd>
+          </div>
+          <div class="wallet__balance-item">
+            <dt>{{ 'wallet.balance.locked_label' | t }}</dt>
+            <dd>{{ account()!.locked_balance_usd | currency: 'USD' : 'symbol' : '1.2-2' }}</dd>
+          </div>
+        </dl>
+        <p class="wallet__hint">{{ 'wallet.balance.locked_hint' | t }}</p>
+      }
+    }
+  </section>
+
+  <section class="wallet__section">
+    <h2>{{ 'wallet.funding.title' | t }}</h2>
+    <p>{{ 'wallet.funding.intro' | t }}</p>
+
+    <div class="wallet__funding-request">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'wallet.funding.amount_label' | t }}</mat-label>
+        <input matInput type="number" min="0" step="0.01" [value]="expectedAmountInput()" (input)="setExpectedAmount($any($event.target).value)" />
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" [disabled]="requestingFunding()" (click)="requestFundingInstructions()">
+        {{ (requestingFunding() ? 'wallet.funding.requesting' : 'wallet.funding.request_action') | t }}
+      </button>
+    </div>
+
+    @if (requestError()) {
+      <p class="wallet__error-text">{{ requestError() }}</p>
+    }
+
+    <h3>{{ 'wallet.funding.list_title' | t }}</h3>
+
+    @switch (fundingState()) {
+      @case ('loading') {
+        <div class="wallet__loading">
+          <mat-spinner diameter="28" />
+          <span>{{ 'wallet.funding.loading' | t }}</span>
+        </div>
+      }
+      @case ('error') {
+        <div class="wallet__error">
+          <p>{{ 'wallet.funding.load_error' | t }}</p>
+          <button mat-stroked-button (click)="loadFundingInstructions()">{{ 'wallet.funding.retry' | t }}</button>
+        </div>
+      }
+      @case ('loaded') {
+        @if (fundingInstructions().length === 0) {
+          <p>{{ 'wallet.funding.empty' | t }}</p>
+        } @else {
+          <ul class="wallet__funding-list">
+            @for (instruction of fundingInstructions(); track instruction.id) {
+              <li class="wallet__funding-instruction">
+                <div class="wallet__funding-instruction-header">
+                  <strong>{{ 'wallet.funding.reference_code_label' | t }}: {{ instruction.reference_code }}</strong>
+                  <span class="wallet__status-badge">{{ ('wallet.funding_status_option.' + instruction.status.toLowerCase()) | t }}</span>
+                </div>
+                <p class="wallet__hint">{{ 'wallet.funding.reference_code_hint' | t }}</p>
+
+                <dl class="wallet__wire-details">
+                  <div>
+                    <dt>{{ 'wallet.funding.expected_amount_label' | t }}</dt>
+                    <dd>
+                      @if (instruction.expected_amount_usd != null) {
+                        {{ instruction.expected_amount_usd | currency: 'USD' : 'symbol' : '1.2-2' }}
+                      } @else {
+                        {{ 'wallet.funding.expected_amount_not_specified' | t }}
+                      }
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>{{ 'wallet.funding.beneficiary_bank_label' | t }}</dt>
+                    <dd>{{ instruction.beneficiary_bank_name }}</dd>
+                  </div>
+                  <div>
+                    <dt>{{ 'wallet.funding.beneficiary_account_name_label' | t }}</dt>
+                    <dd>{{ instruction.beneficiary_account_name }}</dd>
+                  </div>
+                  <div>
+                    <dt>{{ 'wallet.funding.beneficiary_account_number_label' | t }}</dt>
+                    <dd>{{ instruction.beneficiary_account_number }}</dd>
+                  </div>
+                  <div>
+                    <dt>{{ 'wallet.funding.beneficiary_swift_label' | t }}</dt>
+                    <dd>{{ instruction.beneficiary_swift_bic }}</dd>
+                  </div>
+                  <div>
+                    <dt>{{ 'wallet.funding.beneficiary_address_label' | t }}</dt>
+                    <dd>{{ instruction.beneficiary_bank_address }}</dd>
+                  </div>
+                  @if (instruction.intermediary_bank_swift_bic) {
+                    <div>
+                      <dt>{{ 'wallet.funding.intermediary_swift_label' | t }}</dt>
+                      <dd>{{ instruction.intermediary_bank_swift_bic }}</dd>
+                    </div>
+                  }
+                  <div>
+                    <dt>{{ 'wallet.funding.requested_at_label' | t }}</dt>
+                    <dd>{{ instruction.created_at | date: 'medium' }}</dd>
+                  </div>
+                </dl>
+              </li>
+            }
+          </ul>
+        }
+      }
+    }
+  </section>
+
+  <section class="wallet__section">
+    <h2>{{ 'wallet.history.title' | t }}</h2>
+
+    @switch (entriesState()) {
+      @case ('loading') {
+        <div class="wallet__loading">
+          <mat-spinner diameter="28" />
+          <span>{{ 'wallet.history.loading' | t }}</span>
+        </div>
+      }
+      @case ('error') {
+        <div class="wallet__error">
+          <p>{{ 'wallet.history.error' | t }}</p>
+          <button mat-stroked-button (click)="loadEntries()">{{ 'wallet.history.retry' | t }}</button>
+        </div>
+      }
+      @case ('loaded') {
+        @if (entries().length === 0) {
+          <p>{{ 'wallet.history.empty' | t }}</p>
+        } @else {
+          <table mat-table [dataSource]="entries()" class="wallet__table">
+            <ng-container matColumnDef="created_at">
+              <th mat-header-cell *matHeaderCellDef>{{ 'wallet.history.date_column' | t }}</th>
+              <td mat-cell *matCellDef="let entry">{{ entry.created_at | date: 'medium' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="entry_type">
+              <th mat-header-cell *matHeaderCellDef>{{ 'wallet.history.type_column' | t }}</th>
+              <td mat-cell *matCellDef="let entry">{{ ('wallet.history_entry_type_option.' + entry.entry_type.toLowerCase()) | t }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="direction">
+              <th mat-header-cell *matHeaderCellDef>{{ 'wallet.history.direction_column' | t }}</th>
+              <td mat-cell *matCellDef="let entry">{{ ('wallet.history_direction_option.' + entry.direction.toLowerCase()) | t }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="amount_usd">
+              <th mat-header-cell *matHeaderCellDef>{{ 'wallet.history.amount_column' | t }}</th>
+              <td mat-cell *matCellDef="let entry">{{ entry.amount_usd | currency: 'USD' : 'symbol' : '1.2-2' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="balance_after_usd">
+              <th mat-header-cell *matHeaderCellDef>{{ 'wallet.history.balance_after_column' | t }}</th>
+              <td mat-cell *matCellDef="let entry">{{ entry.balance_after_usd | currency: 'USD' : 'symbol' : '1.2-2' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="reference">
+              <th mat-header-cell *matHeaderCellDef>{{ 'wallet.history.reference_column' | t }}</th>
+              <td mat-cell *matCellDef="let entry">{{ entry.reference ?? '--' }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="entryColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: entryColumns"></tr>
+          </table>
+
+          <div class="wallet__pagination">
+            <span>
+              {{ 'wallet.history.showing_label' | t }} {{ rangeStart }}-{{ rangeEnd }} {{ 'wallet.history.of_label' | t }}
+              {{ entriesTotal() }} {{ 'wallet.history.entries_label' | t }}
+            </span>
+            <div class="wallet__pagination-actions">
+              <button mat-stroked-button [disabled]="!hasPreviousPage" (click)="previousPage()">{{ 'wallet.history.previous_page' | t }}</button>
+              <button mat-stroked-button [disabled]="!hasNextPage" (click)="nextPage()">{{ 'wallet.history.next_page' | t }}</button>
+            </div>
+          </div>
+        }
+      }
+    }
+  </section>
+</section>

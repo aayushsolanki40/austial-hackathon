@@ -26,6 +26,10 @@ from src.modules.issuers.entities.issuer import Issuer
 from src.modules.kyc.entities.kyc_document import KycDocument
 from src.modules.kyc.entities.kyc_submission import KycSubmission
 from src.modules.kyc.entities.risk_disclosure_consent import RiskDisclosureConsent
+from src.modules.ledger.entities.funding_instruction import FundingInstruction
+from src.modules.ledger.entities.ledger_account import LedgerAccount
+from src.modules.ledger.entities.ledger_entry import LedgerEntry
+from src.modules.ledger.entities.payout_instruction import PayoutInstruction
 
 ALL_ENTITIES = [
     User,
@@ -43,4 +47,8 @@ ALL_ENTITIES = [
     DisclosureDocument,
     SmartContractDeployment,
     TokenSeries,
+    LedgerAccount,
+    LedgerEntry,
+    FundingInstruction,
+    PayoutInstruction,
 ]

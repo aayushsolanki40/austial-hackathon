@@ -19,6 +19,7 @@ from src.modules.investors.investors_module import InvestorsModule
 from src.modules.issuance.issuance_module import IssuanceModule
 from src.modules.issuers.issuers_module import IssuersModule
 from src.modules.kyc.kyc_module import KycModule
+from src.modules.ledger.ledger_module import LedgerModule
 from src.storage.storage_module import StorageModule
 
 
@@ -47,6 +48,7 @@ from src.storage.storage_module import StorageModule
         CustodiansModule,
         AssetsModule,
         IssuanceModule,
+        LedgerModule,
         ComplianceModule,
         JobsModule,
         StorageModule,

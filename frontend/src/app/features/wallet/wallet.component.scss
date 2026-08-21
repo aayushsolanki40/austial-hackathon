@@ -1,0 +1,124 @@
+.wallet {
+  padding: 2rem;
+  max-width: 900px;
+
+  &__section {
+    margin-bottom: 2.5rem;
+  }
+
+  &__loading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 0;
+  }
+
+  &__error {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 1rem 0;
+  }
+
+  &__error-text {
+    color: #b3261e;
+    margin: 0.5rem 0;
+  }
+
+  &__hint {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 0.875rem;
+    margin: 0.25rem 0 0;
+  }
+
+  &__balance {
+    display: flex;
+    gap: 2rem;
+    margin: 1rem 0 0;
+  }
+
+  &__balance-item {
+    dt {
+      color: rgba(0, 0, 0, 0.6);
+      font-size: 0.875rem;
+    }
+
+    dd {
+      margin: 0.25rem 0 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+  }
+
+  &__funding-request {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+
+  &__funding-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__funding-instruction {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  &__funding-instruction-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  &__status-badge {
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 999px;
+    padding: 0.15rem 0.75rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+
+  &__wire-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem 1.5rem;
+    margin: 0.75rem 0 0;
+
+    dt {
+      color: rgba(0, 0, 0, 0.6);
+      font-size: 0.8rem;
+    }
+
+    dd {
+      margin: 0.15rem 0 0;
+    }
+  }
+
+  &__table {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  &__pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+    gap: 1rem;
+  }
+
+  &__pagination-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+}

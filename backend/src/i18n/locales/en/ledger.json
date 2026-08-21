@@ -1,0 +1,12 @@
+{
+  "route_prefix": "ledger",
+  "error": {
+    "investor_profile_required": "You must create an investor profile before using the ledger.",
+    "investor_not_found": "No investor profile exists with that ID.",
+    "currency_not_freely_convertible": "This currency is not a supported freely-convertible currency (INR is not accepted for any transaction-level record).",
+    "funding_instruction_not_found": "No funding instruction exists with that ID.",
+    "funding_instruction_not_pending": "This funding instruction is not in PENDING status and cannot be confirmed again.",
+    "idempotency_key_already_used": "This idempotency key has already been used to post a ledger entry -- refusing to double-process.",
+    "insufficient_available_balance": "The ledger account does not have sufficient available balance for this payout."
+  }
+}

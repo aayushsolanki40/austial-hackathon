@@ -13,6 +13,7 @@ backend/htmlcov/
 backend/dist/
 backend/build/
 backend/*.egg-info/
+backend/vendor/*.whl
 
 # --- frontend (Angular) ---
 frontend/dist/
@@ -29,6 +30,14 @@ frontend/coverage/
 frontend/libpeerconnection.log
 frontend/testem.log
 frontend/typings/
+
+# --- infra (Terraform) ---
+infra/terraform/.terraform/
+infra/terraform/terraform.tfstate
+infra/terraform/terraform.tfstate.*
+infra/terraform/terraform.tfvars
+infra/terraform/*.tfplan
+infra/terraform/tfplan.out
 
 # --- IDEs / editors ---
 .idea/

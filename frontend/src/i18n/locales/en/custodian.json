@@ -4,7 +4,6 @@
     "empty": "No custodians registered yet.",
     "name_column": "Name",
     "registration_no_column": "IFSCA registration no.",
-    "jurisdiction_column": "Jurisdiction",
     "status_column": "IFSCA verification",
     "actions_column": "Actions"
   },
@@ -13,14 +12,12 @@
     "unverified": "Not verified"
   },
   "action": {
-    "verify": "Verify",
-    "unverify": "Revoke verification"
+    "verify": "Verify"
   },
   "create_form": {
     "title": "Register a new custodian",
     "name_label": "Name",
     "registration_no_label": "IFSCA registration no.",
-    "jurisdiction_label": "Jurisdiction",
     "submit": "Register custodian"
   },
   "error": {

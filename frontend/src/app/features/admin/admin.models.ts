@@ -46,21 +46,19 @@ export type { KycSubmission as KycReviewQueueItem, KycSubmissionListResponse as 
 
 /**
  * Re-exported the same way as `KycReviewQueueItem` above, for the same reason: this admin
- * screen only *reads* these, the owning domain service (`core/custodian/`) is the source
- * of truth. `GET /custodians` is assumed to be a plain top-level (not `/admin`-nested)
- * module -- see the ★ CONTRACT ASSUMPTION header on `core/custodian/custodian.models.ts`.
+ * screen reads and mutates these through the owning domain service (`core/custodian/`),
+ * which is the source of truth for the shape. `GET /custodians` is a plain top-level (not
+ * `/admin`-nested) module, readable by both `COMPLIANCE_OFFICER` and `ISSUER` -- see
+ * `core/custodian/custodian.models.ts`.
  */
 export type { Custodian } from '../../core/custodian/custodian.models';
 
 /**
- * `GET /issuers` list-all-issuers shape, assumed to be exposed by the same `issuers`
- * module as the issuer's own `GET /issuers/profile` self-service endpoint (mirroring how
- * `GET /kyc/review-queue` lives on the `kyc` module alongside investor-facing endpoints,
- * rather than under a separate `/admin/*` prefix) when called by an
- * `ADMIN`/`COMPLIANCE_OFFICER` caller. There is no confirmed distinct issuer
- * approve/reject action in this version of the backend (the `issuers` module hasn't
- * shipped yet at all) -- the admin screen surfaces this list read-only and says so
- * explicitly (`admin.issuers.approval_note`) rather than inventing one. See the ★
- * CONTRACT ASSUMPTION header on `core/issuer/issuer.models.ts`.
+ * `IssuerProfile` re-exported for the same reason as `Custodian` above: the admin issuer
+ * review screen reads/mutates these via `GET /issuers/review-queue`, `POST
+ * /issuers/:id/approve`, and `POST /issuers/:id/reject` (all `@Roles("COMPLIANCE_OFFICER")`,
+ * confirmed against `backend/src/modules/issuers/issuers_controller.py`), the same real
+ * `IssuersController` the issuer-portal's own-profile self-service endpoints live on. See
+ * `core/issuer/issuer.models.ts` for the full field-by-field docstring.
  */
-export type { IssuerProfile as AdminIssuerListItem } from '../../core/issuer/issuer.models';
+export type { IssuerProfile as AdminIssuerListItem, IssuerReviewQueueResponse } from '../../core/issuer/issuer.models';

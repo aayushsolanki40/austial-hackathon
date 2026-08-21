@@ -1,0 +1,20 @@
+{
+  "route_prefix": "issuance",
+  "error": {
+    "issuer_profile_required": "You must create an issuer profile before creating a tokenization proposal.",
+    "asset_not_found": "No asset exists with that ID for your issuer profile.",
+    "asset_not_tokenization_ready": "This asset cannot be tokenized -- it has no IFSCA-verified custodian attached.",
+    "proposal_not_found": "No tokenization proposal exists with that ID.",
+    "invalid_transition": "Cannot move a proposal from {current} to {target}.",
+    "not_ifsca_approved": "The proposal must be IFSCA_APPROVED before it can be launched.",
+    "disclosures_incomplete": "All six disclosure types (RISK, FEE, LIQUIDITY, CUSTODY, TAX, PROSPECTUS) must be uploaded and current before launch.",
+    "symbol_already_exists": "A token series with that symbol already exists.",
+    "invalid_disclosure_type": "Unknown disclosure type.",
+    "token_series_not_found": "No token series exists with that ID.",
+    "token_series_already_paused": "This token series is already paused.",
+    "token_series_not_paused": "This token series is not paused.",
+    "proposal_terminal": "This proposal is in a terminal state and can no longer be modified.",
+    "subscription_window_invalid": "The subscription end time must be after the subscription start time.",
+    "min_subscription_exceeds_total": "The minimum subscription cannot exceed the total units offered."
+  }
+}

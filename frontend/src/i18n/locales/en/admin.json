@@ -41,13 +41,16 @@
     "reject_reason_label": "Rejection reason"
   },
   "issuers": {
-    "title": "Registered issuers",
-    "empty": "No issuers registered yet.",
+    "title": "Issuer review queue",
+    "empty": "No issuers pending review.",
     "legal_name_column": "Legal name",
     "registration_number_column": "Registration no.",
     "jurisdiction_column": "Jurisdiction",
     "status_column": "Verification status",
-    "approval_note": "Issuer approval actions aren't available yet -- the issuers module doesn't expose a distinct approve/reject endpoint beyond self-registration."
+    "actions_column": "Actions",
+    "approve_action": "Approve",
+    "reject_action": "Reject",
+    "reject_reason_label": "Rejection reason"
   },
   "state": {
     "loading": "Loading...",
@@ -56,7 +59,6 @@
     "empty": "No records found."
   },
   "placeholder": {
-    "issuance_pipeline": "Coming in Phase 4 -- issuance kanban, disclosure checklist, and circuit-breaker control.",
     "valuation_oracle": "Coming in Phase 7 -- valuation feed health monitor and anomaly-flagged feeds.",
     "redemptions": "Coming in Phase 7 -- redemption approval queue.",
     "compliance": "Coming in Phase 8 -- AML alert queue and resolution workflow.",

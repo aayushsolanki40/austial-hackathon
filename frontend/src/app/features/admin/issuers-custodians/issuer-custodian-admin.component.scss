@@ -25,4 +25,15 @@
     color: rgba(0, 0, 0, 0.6);
     max-width: 640px;
   }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+  }
+
+  &__reason {
+    width: 12rem;
+  }
 }

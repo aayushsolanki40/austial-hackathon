@@ -1,10 +1,11 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { environment } from '../../../../environments/environment';
-import { Asset, IssuerProfile } from '../../../core/issuer/issuer.models';
-import { Custodian } from '../../../core/custodian/custodian.models';
+import { Asset, AssetListResponse, IssuerProfile } from '../../../core/issuer/issuer.models';
+import { Custodian, CustodianListResponse } from '../../../core/custodian/custodian.models';
 import IssuerPortalComponent from './issuer-portal.component';
 
 function issuerProfile(overrides: Partial<IssuerProfile> = {}): IssuerProfile {
@@ -12,9 +13,11 @@ function issuerProfile(overrides: Partial<IssuerProfile> = {}): IssuerProfile {
     id: 1,
     legal_name: 'Acme Real Estate LLC',
     registration_number: 'REG-001',
-    jurisdiction: 'IN',
-    contact_email: 'issuer-contact@example.test',
+    registration_jurisdiction: 'IN',
     verification_status: 'PENDING',
+    verified_by_user_id: null,
+    verified_at: null,
+    rejection_reason: null,
     created_at: '2026-01-01T00:00:00Z',
     updated_at: '2026-01-01T00:00:00Z',
     ...overrides,
@@ -26,8 +29,9 @@ function custodian(overrides: Partial<Custodian> = {}): Custodian {
     id: 1,
     name: 'GIFT Custody Partners',
     ifsca_registration_no: 'IFSCA/CUST/0001',
-    jurisdiction: 'IN',
     ifsca_verified: true,
+    verified_by_user_id: 9,
+    verified_at: '2026-01-01T00:00:00Z',
     created_at: '2026-01-01T00:00:00Z',
     updated_at: '2026-01-01T00:00:00Z',
     ...overrides,
@@ -38,17 +42,24 @@ function asset(overrides: Partial<Asset> = {}): Asset {
   return {
     id: 1,
     issuer_id: 1,
-    custodian_id: 1,
+    custodian_id: null,
     name: 'Mumbai Commercial Tower',
     asset_class: 'REAL_ESTATE',
     description: 'A commercial office tower.',
-    valuation_amount: 5_000_000,
-    valuation_currency: 'USD',
-    class_attributes: { property_location: 'Mumbai, IN', valuation_basis: 'Independent appraisal' },
+    custodian_verified: false,
+    tokenization_ready: false,
     created_at: '2026-01-01T00:00:00Z',
     updated_at: '2026-01-01T00:00:00Z',
     ...overrides,
   };
+}
+
+function assetListResponse(items: Asset[]): AssetListResponse {
+  return { total: items.length, items };
+}
+
+function custodianListResponse(items: Custodian[]): CustodianListResponse {
+  return { total: items.length, items };
 }
 
 describe('IssuerPortalComponent', () => {
@@ -58,7 +69,7 @@ describe('IssuerPortalComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [IssuerPortalComponent],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(IssuerPortalComponent);
@@ -66,6 +77,14 @@ describe('IssuerPortalComponent', () => {
   });
 
   afterEach(() => httpMock.verify());
+
+  function expectAssetsReq() {
+    return httpMock.expectOne((r) => r.url === `${environment.apiBaseUrl}/assets`);
+  }
+
+  function expectCustodiansReq() {
+    return httpMock.expectOne((r) => r.url === `${environment.apiBaseUrl}/custodians`);
+  }
 
   it('shows the create-profile form when the issuer has no profile yet', fakeAsync(() => {
     fixture.detectChanges();
@@ -84,8 +103,7 @@ describe('IssuerPortalComponent', () => {
     component.profileForm.setValue({
       legal_name: 'Acme Real Estate LLC',
       registration_number: 'REG-001',
-      jurisdiction: 'IN',
-      contact_email: 'issuer-contact@example.test',
+      registration_jurisdiction: 'IN',
     });
     component.submitProfile();
 
@@ -94,8 +112,8 @@ describe('IssuerPortalComponent', () => {
     postReq.flush(issuerProfile());
     flushMicrotasks();
 
-    httpMock.expectOne(`${environment.apiBaseUrl}/assets`).flush([]);
-    httpMock.expectOne(`${environment.apiBaseUrl}/custodians`).flush([custodian()]);
+    expectAssetsReq().flush(assetListResponse([]));
+    expectCustodiansReq().flush(custodianListResponse([custodian()]));
     flushMicrotasks();
 
     expect(component.viewState()).toBe('profile');
@@ -107,8 +125,8 @@ describe('IssuerPortalComponent', () => {
     httpMock.expectOne(`${environment.apiBaseUrl}/issuers/profile`).flush(issuerProfile());
     flushMicrotasks();
 
-    httpMock.expectOne(`${environment.apiBaseUrl}/assets`).flush([asset()]);
-    httpMock.expectOne(`${environment.apiBaseUrl}/custodians`).flush([custodian({ ifsca_verified: true }), custodian({ id: 2, ifsca_verified: false })]);
+    expectAssetsReq().flush(assetListResponse([asset()]));
+    expectCustodiansReq().flush(custodianListResponse([custodian({ ifsca_verified: true }), custodian({ id: 2, ifsca_verified: false })]));
     flushMicrotasks();
 
     const component = fixture.componentInstance;
@@ -117,34 +135,30 @@ describe('IssuerPortalComponent', () => {
     expect(component.verifiedCustodians().length).toBe(1);
   }));
 
-  it('submitAsset() sends class_attributes for the selected asset class', fakeAsync(() => {
+  it('submitAsset() POSTs /assets with just name/asset_class/description (no class_attributes)', fakeAsync(() => {
     fixture.detectChanges();
     httpMock.expectOne(`${environment.apiBaseUrl}/issuers/profile`).flush(issuerProfile());
     flushMicrotasks();
-    httpMock.expectOne(`${environment.apiBaseUrl}/assets`).flush([]);
-    httpMock.expectOne(`${environment.apiBaseUrl}/custodians`).flush([custodian()]);
+    expectAssetsReq().flush(assetListResponse([]));
+    expectCustodiansReq().flush(custodianListResponse([custodian()]));
     flushMicrotasks();
 
     const component = fixture.componentInstance;
     component.onAssetClassChange('REAL_ESTATE');
-    component.setClassAttribute('property_location', { target: { value: 'Mumbai, IN' } } as unknown as Event);
-    component.setClassAttribute('valuation_basis', { target: { value: 'Independent appraisal' } } as unknown as Event);
 
     component.assetForm.setValue({
       name: 'Mumbai Commercial Tower',
-      description: 'A commercial office tower.',
+      description: 'A commercial office tower in Mumbai.',
       asset_class: 'REAL_ESTATE',
-      custodian_id: 1,
-      valuation_amount: 5_000_000,
-      valuation_currency: 'USD',
     });
     component.submitAsset();
 
     const req = httpMock.expectOne(`${environment.apiBaseUrl}/assets`);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body.class_attributes).toEqual({
-      property_location: 'Mumbai, IN',
-      valuation_basis: 'Independent appraisal',
+    expect(req.request.body).toEqual({
+      name: 'Mumbai Commercial Tower',
+      asset_class: 'REAL_ESTATE',
+      description: 'A commercial office tower in Mumbai.',
     });
     req.flush(asset());
     flushMicrotasks();
@@ -152,27 +166,44 @@ describe('IssuerPortalComponent', () => {
     expect(component.assets().length).toBe(1);
   }));
 
-  it('submitAsset() is blocked while a required dynamic field is missing', fakeAsync(() => {
+  it('submitAsset() is blocked while the form is invalid (e.g. missing description)', fakeAsync(() => {
     fixture.detectChanges();
     httpMock.expectOne(`${environment.apiBaseUrl}/issuers/profile`).flush(issuerProfile());
     flushMicrotasks();
-    httpMock.expectOne(`${environment.apiBaseUrl}/assets`).flush([]);
-    httpMock.expectOne(`${environment.apiBaseUrl}/custodians`).flush([custodian()]);
+    expectAssetsReq().flush(assetListResponse([]));
+    expectCustodiansReq().flush(custodianListResponse([custodian()]));
     flushMicrotasks();
 
     const component = fixture.componentInstance;
-    component.onAssetClassChange('REAL_ESTATE');
     component.assetForm.setValue({
       name: 'Mumbai Commercial Tower',
-      description: 'A commercial office tower.',
+      description: '',
       asset_class: 'REAL_ESTATE',
-      custodian_id: 1,
-      valuation_amount: 5_000_000,
-      valuation_currency: 'USD',
     });
     component.submitAsset();
 
     httpMock.expectNone(`${environment.apiBaseUrl}/assets`);
     expect(component.assets().length).toBe(0);
+  }));
+
+  it('attachCustodian() POSTs /assets/:id/custodian for the selected custodian', fakeAsync(() => {
+    fixture.detectChanges();
+    httpMock.expectOne(`${environment.apiBaseUrl}/issuers/profile`).flush(issuerProfile());
+    flushMicrotasks();
+    expectAssetsReq().flush(assetListResponse([asset()]));
+    expectCustodiansReq().flush(custodianListResponse([custodian({ id: 7 })]));
+    flushMicrotasks();
+
+    const component = fixture.componentInstance;
+    component.setAttachCustodianSelection(1, 7);
+    component.attachCustodian(component.assets()[0]);
+
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/assets/1/custodian`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ custodian_id: 7 });
+    req.flush(asset({ custodian_id: 7, custodian_verified: true, tokenization_ready: true }));
+    flushMicrotasks();
+
+    expect(component.assets()[0].tokenization_ready).toBeTrue();
   }));
 });

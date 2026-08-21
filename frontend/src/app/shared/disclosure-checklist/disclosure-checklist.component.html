@@ -1,0 +1,53 @@
+<div class="disclosure-checklist">
+  <div class="disclosure-checklist__header">
+    <h3>{{ 'issuance.disclosure_checklist.title' | t }}</h3>
+    <span class="disclosure-checklist__progress">{{ completeCount() }} / {{ totalCount }}</span>
+  </div>
+
+  <ul class="disclosure-checklist__list">
+    @for (item of checklist(); track item.type) {
+      <li class="disclosure-checklist__row" [class.disclosure-checklist__row--missing]="item.status === 'missing'">
+        <div class="disclosure-checklist__label">
+          <mat-icon>{{ item.status === 'uploaded' ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+          <span>{{ typeLabel(item.type) }}</span>
+        </div>
+
+        <div class="disclosure-checklist__status">
+          @switch (item.status) {
+            @case ('uploaded') {
+              <span class="disclosure-checklist__badge disclosure-checklist__badge--uploaded">
+                {{ 'issuance.disclosure_checklist.status_uploaded' | t }}
+              </span>
+              @if (item.history.length > 0) {
+                <span class="disclosure-checklist__superseded">
+                  {{ 'issuance.disclosure_checklist.status_superseded_count' | t }}: {{ item.history.length }}
+                </span>
+              }
+            }
+            @default {
+              <span class="disclosure-checklist__badge disclosure-checklist__badge--missing">
+                {{ 'issuance.disclosure_checklist.status_missing' | t }}
+              </span>
+            }
+          }
+
+          @if (uploadable) {
+            <button mat-stroked-button type="button" (click)="fileInput.click()" [disabled]="slotState(item.type) === 'uploading'">
+              <mat-icon>upload_file</mat-icon>
+              {{ (item.status === 'uploaded' ? 'issuance.disclosure_checklist.replace_file' : 'issuance.disclosure_checklist.choose_file') | t }}
+            </button>
+            <input #fileInput type="file" hidden accept="application/pdf,image/*" (change)="onFileSelected(item.type, $event)" />
+
+            @if (slotState(item.type) === 'error') {
+              <span class="disclosure-checklist__error">{{ 'issuance.disclosure_checklist.upload_error' | t }}</span>
+            }
+          }
+        </div>
+
+        @if (uploadable && slotState(item.type) === 'uploading') {
+          <mat-progress-bar mode="indeterminate" />
+        }
+      </li>
+    }
+  </ul>
+</div>

@@ -11,6 +11,13 @@
     gap: 0.75rem;
   }
 
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
   &__card {
     width: 100%;
   }
@@ -50,5 +57,19 @@
 
   &__table {
     width: 100%;
+  }
+
+  &__attach {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__attach-select {
+    width: 10rem;
+  }
+
+  &__hint {
+    color: #7a5c00;
   }
 }

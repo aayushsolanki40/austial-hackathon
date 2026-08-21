@@ -1,0 +1,80 @@
+<section class="proposal-detail">
+  <a [routerLink]="['/issuer', 'proposals']" class="proposal-detail__back">{{ 'issuance.proposal_detail.back_to_list' | t }}</a>
+
+  @switch (state()) {
+    @case ('loading') {
+      <div class="proposal-detail__loading">
+        <mat-spinner diameter="28" />
+        <span>{{ 'issuance.proposal_detail.loading' | t }}</span>
+      </div>
+    }
+    @case ('error') {
+      <p class="proposal-detail__error">{{ 'issuance.proposal_detail.error' | t }}</p>
+      <button mat-stroked-button (click)="load()">{{ 'issuance.proposal_detail.retry' | t }}</button>
+    }
+    @case ('loaded') {
+      @if (proposal(); as p) {
+        <h1>{{ 'issuance.proposal_detail.title' | t }} #{{ p.id }}</h1>
+
+        <mat-card class="proposal-detail__card">
+          <mat-card-content>
+            <dl class="proposal-detail__details">
+              <dt>{{ 'issuance.proposal_detail.status_label' | t }}</dt>
+              <dd>{{ ('issuance.status_option.' + p.status.toLowerCase()) | t }}</dd>
+
+              <dt>{{ 'issuance.proposal_detail.total_units_label' | t }}</dt>
+              <dd>{{ p.total_units }}</dd>
+
+              <dt>{{ 'issuance.proposal_detail.unit_price_usd_label' | t }}</dt>
+              <dd>{{ p.unit_price_usd }}</dd>
+
+              <dt>{{ 'issuance.proposal_detail.min_subscription_label' | t }}</dt>
+              <dd>{{ p.min_subscription_units }}</dd>
+
+              <dt>{{ 'issuance.proposal_detail.subscription_window_label' | t }}</dt>
+              <dd>{{ p.subscription_start_at }} &ndash; {{ p.subscription_end_at }}</dd>
+
+              @if (p.status === 'REJECTED' && p.rejection_reason) {
+                <dt>{{ 'issuance.proposal_detail.rejection_reason_label' | t }}</dt>
+                <dd>{{ p.rejection_reason }}</dd>
+              }
+
+              @if (p.ifsca_filing_reference) {
+                <dt>{{ 'issuance.proposal_detail.ifsca_filing_reference_label' | t }}</dt>
+                <dd>{{ p.ifsca_filing_reference }}</dd>
+              }
+
+              @if (p.ifsca_approval_reference) {
+                <dt>{{ 'issuance.proposal_detail.ifsca_approval_reference_label' | t }}</dt>
+                <dd>{{ p.ifsca_approval_reference }}</dd>
+              }
+            </dl>
+
+            @if (canSubmitForReview()) {
+              <button mat-flat-button color="primary" [disabled]="submitting()" (click)="submitForReview()">
+                @if (submitting()) {
+                  <mat-spinner diameter="20" />
+                } @else {
+                  {{ 'issuance.proposal_detail.submit_for_review_action' | t }}
+                }
+              </button>
+            }
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="proposal-detail__card">
+          <mat-card-content>
+            <app-disclosure-checklist
+              [proposalId]="p.id"
+              [disclosures]="p.disclosures"
+              [missingDisclosureTypes]="p.missing_disclosure_types"
+              [disclosuresComplete]="p.disclosures_complete"
+              [uploadable]="disclosuresEditable()"
+              (uploaded)="onDisclosureUploaded()"
+            />
+          </mat-card-content>
+        </mat-card>
+      }
+    }
+  }
+</section>

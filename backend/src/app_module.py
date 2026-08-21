@@ -16,6 +16,7 @@ from src.modules.compliance.compliance_module import ComplianceModule
 from src.modules.custodians.custodians_module import CustodiansModule
 from src.modules.health.health_module import HealthModule
 from src.modules.investors.investors_module import InvestorsModule
+from src.modules.issuance.issuance_module import IssuanceModule
 from src.modules.issuers.issuers_module import IssuersModule
 from src.modules.kyc.kyc_module import KycModule
 from src.storage.storage_module import StorageModule
@@ -45,6 +46,7 @@ from src.storage.storage_module import StorageModule
         IssuersModule,
         CustodiansModule,
         AssetsModule,
+        IssuanceModule,
         ComplianceModule,
         JobsModule,
         StorageModule,

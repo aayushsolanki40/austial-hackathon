@@ -1,22 +1,23 @@
 {
   "portal": {
     "title": "Issuer portal",
-    "loading": "Loading your issuer profile..."
+    "loading": "Loading your issuer profile...",
+    "view_proposals_link": "View tokenization proposals"
   },
   "profile": {
     "empty_title": "Register as an issuer",
     "empty_description": "Create your issuer profile to start submitting assets for tokenization on Swadely.",
     "legal_name_label": "Legal entity name",
     "registration_number_label": "Company registration number",
-    "jurisdiction_label": "Jurisdiction of incorporation",
-    "contact_email_label": "Contact email",
+    "registration_jurisdiction_label": "Jurisdiction of registration",
     "submit": "Create issuer profile",
     "view_title": "Issuer profile",
-    "verification_status_label": "Verification status"
+    "verification_status_label": "Verification status",
+    "rejection_reason_label": "Rejection reason"
   },
   "verification_status_option": {
     "pending": "Pending review",
-    "approved": "Approved",
+    "verified": "Verified",
     "rejected": "Rejected"
   },
   "assets": {
@@ -24,21 +25,31 @@
     "empty": "You haven't submitted any assets yet.",
     "name_column": "Name",
     "asset_class_column": "Asset class",
-    "custodian_column": "Custodian",
-    "valuation_column": "Valuation",
-    "created_at_column": "Submitted"
+    "status_column": "Tokenization status",
+    "created_at_column": "Submitted",
+    "actions_column": "Actions",
+    "attach_custodian_label": "Custodian",
+    "attach_custodian_action": "Attach custodian"
+  },
+  "asset_status_option": {
+    "tokenization_ready": "Tokenization ready",
+    "pending_custodian": "Awaiting custodian attachment"
   },
   "asset_form": {
     "title": "Submit a new asset",
-    "description": "Selecting an asset class reveals the fields specific to it. Only IFSCA-verified custodians can be selected.",
+    "description": "Selecting an asset class shows a hint for what to cover in the description. Custodian attachment happens after submission, from your assets table below.",
     "name_label": "Asset name",
     "description_label": "Description",
     "asset_class_label": "Asset class",
-    "custodian_label": "Custodian",
-    "no_verified_custodians": "No IFSCA-verified custodians are available yet -- contact compliance before submitting an asset.",
-    "valuation_amount_label": "Valuation amount",
-    "valuation_currency_label": "Valuation currency",
+    "no_verified_custodians": "No IFSCA-verified custodians are available yet -- contact compliance before attaching one to an asset.",
     "submit": "Submit asset"
+  },
+  "asset_form_description_hint": {
+    "security": "Consider including the ISIN/security reference and issue size.",
+    "real_estate": "Consider including the property location and valuation basis.",
+    "commodity": "Consider including the commodity type and unit of measure.",
+    "infrastructure": "Consider including the project name and concession period.",
+    "ip": "Consider including the IP type (patent, trademark, copyright) and registration number."
   },
   "error": {
     "generic": "Something went wrong. Please try again."

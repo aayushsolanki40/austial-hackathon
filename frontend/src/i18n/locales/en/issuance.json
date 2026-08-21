@@ -1,0 +1,116 @@
+{
+  "status_option": {
+    "draft": "Draft",
+    "documentation_review": "Documentation review",
+    "compliance_approved": "Compliance approved",
+    "ifsca_filed": "IFSCA filed",
+    "ifsca_approved": "IFSCA approved",
+    "launched": "Launched",
+    "rejected": "Rejected"
+  },
+  "disclosure_type": {
+    "risk": "Risk disclosure",
+    "fee": "Fee disclosure",
+    "liquidity": "Liquidity disclosure",
+    "custody": "Custody disclosure",
+    "tax": "Tax disclosure",
+    "prospectus": "Prospectus"
+  },
+  "disclosure_checklist": {
+    "title": "Disclosure completeness checklist",
+    "status_uploaded": "Uploaded",
+    "status_missing": "Missing",
+    "status_superseded_count": "Superseded versions",
+    "choose_file": "Upload",
+    "replace_file": "Replace",
+    "upload_error": "Upload failed -- please try again."
+  },
+  "issuer_proposals": {
+    "title": "Tokenization proposals",
+    "loading": "Loading your proposals...",
+    "list_title": "Your proposals",
+    "empty": "You haven't created any tokenization proposals yet.",
+    "asset_column": "Asset",
+    "status_column": "Status",
+    "total_units_column": "Total units",
+    "unit_price_usd_column": "Unit price (USD)",
+    "created_at_column": "Created",
+    "actions_column": "Actions",
+    "view_action": "View"
+  },
+  "proposal_form": {
+    "title": "Create a tokenization proposal",
+    "asset_label": "Asset",
+    "total_units_label": "Total units",
+    "unit_price_usd_label": "Unit price (USD)",
+    "min_subscription_label": "Minimum subscription",
+    "subscription_window_start_label": "Subscription window start",
+    "subscription_window_end_label": "Subscription window end",
+    "submit": "Create proposal",
+    "no_tokenization_ready_assets": "You don't have any tokenization-ready assets yet -- attach a verified custodian to an asset in the issuer portal first."
+  },
+  "proposal_detail": {
+    "title": "Tokenization proposal",
+    "back_to_list": "Back to proposals",
+    "loading": "Loading proposal...",
+    "error": "Unable to load this proposal -- this endpoint may not be live yet.",
+    "retry": "Retry",
+    "status_label": "Status",
+    "total_units_label": "Total units",
+    "unit_price_usd_label": "Unit price (USD)",
+    "min_subscription_label": "Minimum subscription",
+    "subscription_window_label": "Subscription window",
+    "rejection_reason_label": "Rejection reason",
+    "ifsca_filing_reference_label": "IFSCA filing reference",
+    "ifsca_approval_reference_label": "IFSCA approval reference",
+    "submit_for_review_action": "Submit for review"
+  },
+  "token_series": {
+    "title": "Token series",
+    "symbol_label": "Symbol",
+    "supply_label": "Supply",
+    "contract_address_label": "Contract address",
+    "status_label": "Status",
+    "status_active": "Active",
+    "status_paused": "Paused",
+    "not_loaded_hint": "No token series loaded for this proposal in this session.",
+    "lookup_id_label": "Token series ID",
+    "lookup_action": "Load"
+  },
+  "launch": {
+    "symbol_label": "Token symbol",
+    "contract_address_label": "Contract address (optional)"
+  },
+  "smart_contract_deployment": {
+    "bytecode_hash_label": "Bytecode hash",
+    "version_label": "Version",
+    "audit_report_ref_label": "Audit report reference (optional)",
+    "record_action": "Record deployment",
+    "recorded_hint": "Deployment recorded"
+  },
+  "pipeline": {
+    "empty_column": "No proposals in this stage.",
+    "asset_id_prefix": "Asset #",
+    "total_units_label": "Units",
+    "unit_price_usd_label": "Unit price (USD)",
+    "approve_action": "Approve",
+    "reject_action": "Reject",
+    "reject_reason_label": "Rejection reason",
+    "filing_reference_label": "IFSCA filing reference",
+    "record_filing_action": "Record IFSCA filing",
+    "approval_reference_label": "IFSCA approval reference",
+    "record_approval_action": "Record IFSCA approval",
+    "launch_action": "Launch",
+    "launch_blocked_hint": "All 6 disclosure types must be uploaded before launch.",
+    "review_to_launch_hint": "Open this proposal to review its disclosure checklist and launch."
+  },
+  "circuit_breaker": {
+    "title": "Circuit breaker",
+    "description": "Pause this token series to immediately halt trading/transfers without a redeploy.",
+    "status_active": "Active",
+    "status_paused": "Paused"
+  },
+  "error": {
+    "generic": "Something went wrong. Please try again."
+  }
+}

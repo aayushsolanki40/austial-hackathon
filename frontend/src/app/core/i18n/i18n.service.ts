@@ -5,6 +5,7 @@ import appEn from '../../../i18n/locales/en/app.json';
 import assetEn from '../../../i18n/locales/en/asset.json';
 import authEn from '../../../i18n/locales/en/auth.json';
 import custodianEn from '../../../i18n/locales/en/custodian.json';
+import issuanceEn from '../../../i18n/locales/en/issuance.json';
 import issuerEn from '../../../i18n/locales/en/issuer.json';
 import kycEn from '../../../i18n/locales/en/kyc.json';
 import marketplaceEn from '../../../i18n/locales/en/marketplace.json';
@@ -35,6 +36,7 @@ const LOCALE_MODULES: Record<string, Record<string, LocaleModule>> = {
     issuer: issuerEn,
     asset: assetEn,
     custodian: custodianEn,
+    issuance: issuanceEn,
   },
 };
 

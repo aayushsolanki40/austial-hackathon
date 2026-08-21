@@ -1,0 +1,74 @@
+.proposal-review {
+  padding: 1rem 0;
+  max-width: 720px;
+
+  &__back {
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+
+  &__loading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__error {
+    color: #c62828;
+  }
+
+  &__card {
+    margin-bottom: 1.5rem;
+  }
+
+  &__details {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.35rem 1rem;
+    margin: 0 0 1rem;
+
+    dt {
+      font-weight: 600;
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__reason-field {
+    width: 16rem;
+  }
+
+  &__hint {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 0.85rem;
+  }
+
+  &__circuit-breaker {
+    border: 2px solid #f9a825;
+  }
+
+  &__circuit-breaker-description {
+    color: rgba(0, 0, 0, 0.6);
+    margin-top: 0;
+  }
+
+  &__circuit-breaker-control {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__series-symbol {
+    font-weight: 600;
+  }
+}

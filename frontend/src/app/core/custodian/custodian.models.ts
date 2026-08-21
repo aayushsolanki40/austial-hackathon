@@ -1,26 +1,31 @@
 /**
- * ★ CONTRACT ASSUMPTION -- see the header of `core/issuer/issuer.models.ts` for the full
- * caveat (Phase 3's `custodians` backend module hadn't landed yet when this was written).
- * `Custodian.ifsca_verified` is the field the build plan calls out explicitly: "an asset
- * cannot be tokenized unless its custodian row is IFSCA-verified." Listing is assumed to
- * be a plain top-level `/custodians` module (not nested under `/admin`), since an ISSUER
- * needs to read this list too (to pick a custodian for `Asset.custodian_id`) and shouldn't
- * need `/admin/*` access to do so -- create/verify are assumed to still be server-side
- * role-gated to `COMPLIANCE_OFFICER`/`ADMIN` even though the route is shared.
+ * Request/response shapes for the real Phase 3 `custodians` backend module -- confirmed
+ * against `backend/src/modules/custodians/{custodians_controller.py,custodians_dto.py}`.
+ * `ifsca_verified` is the field the build plan calls out explicitly: "an asset cannot be
+ * tokenized unless its custodian row is IFSCA-verified." `GET /custodians`/`GET
+ * /custodians/:id` are readable by both `COMPLIANCE_OFFICER` and `ISSUER` (handler-level
+ * `@Roles(...)` override) so an issuer can pick a verified custodian for their asset;
+ * create/verify stay `COMPLIANCE_OFFICER`-only.
  */
 export interface Custodian {
   id: number;
   name: string;
   ifsca_registration_no: string;
-  jurisdiction: string;
   ifsca_verified: boolean;
+  verified_by_user_id: number | null;
+  verified_at: string | null;
   created_at: string;
   updated_at: string;
 }
 
-/** `POST /custodians` request body (assumed `COMPLIANCE_OFFICER`/`ADMIN`-gated). */
+/** `POST /custodians` request body (`CreateCustodianDto`), `COMPLIANCE_OFFICER`-only. */
 export interface CreateCustodianRequest {
   name: string;
   ifsca_registration_no: string;
-  jurisdiction: string;
+}
+
+/** `GET /custodians?skip=&take=` response (`CustodianListDto`). */
+export interface CustodianListResponse {
+  total: number;
+  items: Custodian[];
 }

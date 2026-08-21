@@ -1,82 +1,91 @@
 /**
- * ★ CONTRACT ASSUMPTION -- Phase 3's backend `issuers`/`assets` modules had not landed in
- * `backend/src/modules/` at the time this frontend work was done (only `investors`, `kyc`,
- * `auth`, `admin`, `compliance`, `health` exist -- confirmed by reading the backend tree
- * directly, not guessed). These shapes are the frontend's fixed expectation of that
- * backend, modeled directly on the build plan's Phase 3 description ("Issuer with
- * fit-and-proper verification fields", "Asset with asset_class enum") and mirrored on the
- * sibling `investors`/`kyc` modules' *real*, already-shipped shape/conventions (create-once
- * self-service profile, snake_case fields, bare-array list responses). Cross-check field-
- * for-field against `backend/src/modules/issuers/{issuers_controller.py,issuers_dto.py}`
- * and `backend/src/modules/assets/{assets_controller.py,assets_dto.py}` once they exist,
- * and update this file to match if they differ.
+ * Request/response shapes for the real Phase 3 `issuers`/`assets` backend modules --
+ * confirmed against `backend/src/modules/issuers/{issuers_controller.py,issuers_dto.py}` and
+ * `backend/src/modules/assets/{assets_controller.py,assets_dto.py}`. Field names/types below are
+ * a direct mirror of the backend's Pydantic DTOs; keep in sync if those change.
  */
 
-/** Mirrors `InvestorProfile.kyc_status`'s "coarse pass/fail flag, not a full state
- * machine" shape (see `core/kyc/kyc.models.ts`) -- an issuer's "fit-and-proper"
- * verification, decided by compliance/admin review of the self-registered profile. There
- * is deliberately no dedicated `IssuerReviewSubmission` sub-resource assumed here (unlike
- * `KycSubmission`) since the build plan doesn't describe one for issuers; if the real
- * backend does add a distinct review workflow, this type and `IssuerService` need updating. */
-export type IssuerVerificationStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+/** `Issuer.verification_status` -- the backend's actual closed set (`IssuerResponseDto`),
+ * flipped only by a `COMPLIANCE_OFFICER` calling `POST /issuers/:id/approve` or `.../reject`. */
+export type IssuerVerificationStatus = 'PENDING' | 'VERIFIED' | 'REJECTED';
 
-/** `GET/POST /issuers/profile` resource shape (assumed `@Roles("ISSUER")`-gated, mirroring
- * `InvestorProfile`). Profile is assumed create-once like `InvestorProfile` -- no `PATCH`. */
+/** `GET/POST /issuers/profile` resource shape (`IssuerResponseDto`, `@Roles("ISSUER")`-gated).
+ * Profile is create-once -- there is no `PATCH`/update endpoint; a second `POST` is expected
+ * to 409 server-side (mirrors `InvestorProfile`/`IssuerProfile`'s sibling conventions). */
 export interface IssuerProfile {
   id: number;
   legal_name: string;
   registration_number: string;
-  jurisdiction: string;
-  contact_email: string;
+  registration_jurisdiction: string;
   verification_status: IssuerVerificationStatus;
+  verified_by_user_id: number | null;
+  verified_at: string | null;
+  rejection_reason: string | null;
   created_at: string;
   updated_at: string;
 }
 
-/** `POST /issuers/profile` request body. */
+/** `POST /issuers/profile` request body (`CreateIssuerDto`). `registration_jurisdiction` must
+ * be a valid ISO 3166-1 alpha-2 code -- the backend validates and normalizes to uppercase. */
 export interface CreateIssuerProfileRequest {
   legal_name: string;
   registration_number: string;
-  jurisdiction: string;
-  contact_email: string;
+  registration_jurisdiction: string;
 }
 
-/** `Asset.asset_class` enum -- verbatim from the build plan's Phase 3 section, the
- * competitive differentiator vs. securities-only rivals. */
+/** `GET /issuers/review-queue?skip=&take=` response (`IssuerListDto`), `@Roles("COMPLIANCE_OFFICER")`. */
+export interface IssuerReviewQueueResponse {
+  total: number;
+  items: IssuerProfile[];
+}
+
+/** `POST /issuers/:id/reject` request body (`RejectIssuerDto`). */
+export interface RejectIssuerRequest {
+  reason: string;
+}
+
+/** `Asset.asset_class` enum (`ASSET_CLASSES` in `entities/asset.py`) -- the competitive
+ * differentiator vs. securities-only rivals, called out in the build plan's Phase 3 section. */
 export type AssetClass = 'SECURITY' | 'REAL_ESTATE' | 'COMMODITY' | 'INFRASTRUCTURE' | 'IP';
 
-/**
- * `Asset` resource shape. `class_attributes` is assumed to be a flexible JSON blob column
- * (rather than one dedicated column per asset-class-specific field) since the build plan
- * explicitly calls out five very differently-shaped classes (a security's ISIN vs. a real
- * estate asset's location have nothing in common) -- a JSON blob is the assumption least
- * likely to require a frontend rewrite if the real backend picks a narrower/wider set of
- * per-class fields than `ASSET_CLASS_FIELDS` (see `asset-class-fields.ts`) guesses, since
- * only that one config object -- not the request/response shape -- would need to change.
- * If the real backend instead models these as structured per-class columns or a
- * discriminated-union DTO, update this interface and `ASSET_CLASS_FIELDS` together.
- */
+/** `Asset` resource shape (`AssetResponseDto`). There is deliberately no `class_attributes`
+ * JSON blob and no `valuation_amount`/`valuation_currency` -- the real `Asset` entity is just
+ * `name` + `asset_class` + `description`, nothing class-specific stored server-side.
+ * `custodian_verified` is a denormalized snapshot of `custodian.ifsca_verified` at attach
+ * time; `tokenization_ready` is a computed (`custodian is not None`) DTO-layer field, not a
+ * stored column -- see `entities/asset.py`'s docstring. */
 export interface Asset {
   id: number;
   issuer_id: number;
-  custodian_id: number;
+  custodian_id: number | null;
   name: string;
   asset_class: AssetClass;
-  description: string;
-  valuation_amount: number;
-  valuation_currency: string;
-  class_attributes: Record<string, string>;
+  description: string | null;
+  custodian_verified: boolean;
+  tokenization_ready: boolean;
   created_at: string;
   updated_at: string;
 }
 
-/** `POST /assets` request body. */
+/** `POST /assets` request body (`CreateAssetDto`). No `class_attributes`, no
+ * `custodian_id`/valuation fields -- custodian attachment is a separate step, see
+ * `AttachCustodianRequest`/`POST /assets/:id/custodian`. */
 export interface CreateAssetRequest {
-  custodian_id: number;
   name: string;
   asset_class: AssetClass;
-  description: string;
-  valuation_amount: number;
-  valuation_currency: string;
-  class_attributes: Record<string, string>;
+  description?: string;
+}
+
+/** `GET /assets?skip=&take=` response (`AssetListDto`), scoped server-side to the caller's
+ * own issuer profile. */
+export interface AssetListResponse {
+  total: number;
+  items: Asset[];
+}
+
+/** `POST /assets/:id/custodian` request body (`AttachCustodianDto`). The backend enforces
+ * (service + DB composite FK) that `custodian_id` refers to an `ifsca_verified` custodian --
+ * 409 otherwise. */
+export interface AttachCustodianRequest {
+  custodian_id: number;
 }

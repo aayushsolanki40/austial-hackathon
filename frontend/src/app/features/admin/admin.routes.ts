@@ -33,6 +33,10 @@ export default [
         loadComponent: () => import('./issuance-pipeline/issuance-pipeline.component'),
       },
       {
+        path: 'issuance-pipeline/:id',
+        loadComponent: () => import('./issuance-pipeline/proposal-review.component'),
+      },
+      {
         path: 'valuation-oracle',
         loadComponent: () => import('./valuation-oracle/valuation-oracle-admin.component'),
       },

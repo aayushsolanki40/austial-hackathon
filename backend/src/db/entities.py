@@ -18,6 +18,10 @@ from src.modules.compliance.entities.audit_log import AuditLog
 from src.modules.custodians.entities.custodian import Custodian
 from src.modules.investors.entities.investor_profile import InvestorProfile
 from src.modules.investors.entities.wallet_mapping import WalletMapping
+from src.modules.issuance.entities.disclosure_document import DisclosureDocument
+from src.modules.issuance.entities.smart_contract_deployment import SmartContractDeployment
+from src.modules.issuance.entities.token_series import TokenSeries
+from src.modules.issuance.entities.tokenization_proposal import TokenizationProposal
 from src.modules.issuers.entities.issuer import Issuer
 from src.modules.kyc.entities.kyc_document import KycDocument
 from src.modules.kyc.entities.kyc_submission import KycSubmission
@@ -35,4 +39,8 @@ ALL_ENTITIES = [
     Issuer,
     Custodian,
     Asset,
+    TokenizationProposal,
+    DisclosureDocument,
+    SmartContractDeployment,
+    TokenSeries,
 ]

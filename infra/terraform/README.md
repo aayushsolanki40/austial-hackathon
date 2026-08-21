@@ -55,6 +55,17 @@ purposes. Account `459141725579`, region `us-east-1`, profile `aayush-gift`.
   policy (`s3:PutObject`/`GetObject`/`PutObjectAcl` on this bucket's
   objects only, not `s3:*` and not account-wide).
 
+- **Ledger demo beneficiary details** (`LEDGER_BENEFICIARY_NAME`,
+  `LEDGER_BENEFICIARY_BANK_NAME`, `LEDGER_BENEFICIARY_ACCOUNT_NUMBER`,
+  `LEDGER_BENEFICIARY_SWIFT_BIC`) are plain Terraform variables (not
+  secrets -- they're fictitious demo wire details shown to investors on a
+  `FundingInstruction`, not a real bank account), defaulted in
+  `variables.tf` and passed through `templatefile()` into both the
+  `austial-backend` and `austial-worker` `docker run -e` flags in
+  `user_data.sh.tpl`. `LedgerService` reads them via
+  `config.get_or_throw(...)`, so a missing value fails the app at DI
+  container build time, not silently.
+
 Everything is tagged `Project=austial`, `Environment=demo`.
 
 ## A note on the `aayush-gift` AWS CLI profile and Terraform

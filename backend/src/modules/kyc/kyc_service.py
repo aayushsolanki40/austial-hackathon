@@ -232,7 +232,7 @@ class KycService:
     async def list_pending_review(self, *, skip: int, take: int) -> KycSubmissionListDto:
         submissions, total = await (
             self.submissions.create_query_builder("s")
-            .where("CAST(s.status AS TEXT) = :status", {"status": "MANUAL_REVIEW"})
+            .where_eq("s.status", "MANUAL_REVIEW", cast_text=True)
             .left_join_and_select("s.investor", "investor")
             .add_order_by("s.id", "ASC")
             .skip(skip)
@@ -361,10 +361,7 @@ class KycService:
         existing = await (
             self.submissions.create_query_builder("s")
             .where("s.investor_id = :investor_id", {"investor_id": investor_id})
-            .and_where(
-                "CAST(s.status AS TEXT) NOT IN (:verified, :rejected)",
-                {"verified": "VERIFIED", "rejected": "REJECTED"},
-            )
+            .and_where_not_in("s.status", ["VERIFIED", "REJECTED"], cast_text=True)
             .get_one()
         )
         return existing is not None

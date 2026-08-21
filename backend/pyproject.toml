@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Generated with the Austial CLI (`austial new`)."
 requires-python = ">=3.11"
 dependencies = [
-    "austial>=0.1.0",
+    "austial>=0.1.6.dev6",
     "asyncpg>=0.29.0",
     "passlib[bcrypt]>=1.7.4",
     "bcrypt<4.1",

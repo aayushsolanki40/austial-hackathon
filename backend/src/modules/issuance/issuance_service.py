@@ -236,9 +236,7 @@ class IssuanceService:
             .left_join_and_select("p.issuer", "issuer")
         )
         if status:
-            # `CAST(... AS TEXT)` -- see `kyc_service.py`'s equivalent workaround for why a plain
-            # `p.status = :status` fails against real Postgres enum columns.
-            query = query.where("CAST(p.status AS TEXT) = :status", {"status": status})
+            query = query.where_eq("p.status", status, cast_text=True)
         proposals, total = await query.add_order_by("p.id", "ASC").skip(skip).take(take).get_many_and_count()
         return ProposalListDto(total=total, items=[_to_proposal_dto(p) for p in proposals])
 
@@ -507,8 +505,7 @@ class IssuanceService:
         return await (
             self.disclosures.create_query_builder("d")
             .where("d.proposal_id = :proposal_id", {"proposal_id": proposal_id})
-            # `CAST(... AS TEXT)` -- see `kyc_service.py`'s equivalent workaround.
-            .and_where("CAST(d.disclosure_type AS TEXT) = :disclosure_type", {"disclosure_type": disclosure_type})
+            .and_where_eq("d.disclosure_type", disclosure_type, cast_text=True)
             .add_order_by("d.id", "ASC")
             .get_many()
         )

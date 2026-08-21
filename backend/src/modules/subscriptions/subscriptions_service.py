@@ -124,10 +124,7 @@ class SubscriptionsService:
         series_list, total = await (
             self.token_series.create_query_builder("s")
             .left_join_and_select("s.proposal", "p")
-            # `CAST(... AS TEXT)` -- see `kyc_service.py`'s equivalent workaround for why a plain
-            # `p.status = :status` fails against real Postgres enum columns (SQLite in tests has
-            # no native enum type, so this doesn't surface there).
-            .where("CAST(p.status AS TEXT) = :status", {"status": "LAUNCHED"})
+            .where_eq("p.status", "LAUNCHED", cast_text=True)
             .and_where("s.paused = :paused", {"paused": False})
             .and_where("p.subscription_start_at <= :now", {"now": now})
             .and_where("p.subscription_end_at >= :now", {"now": now})
@@ -249,7 +246,7 @@ class SubscriptionsService:
             .where("sub.token_series_id = :series_id", {"series_id": series_id})
         )
         if status:
-            query = query.and_where("CAST(sub.status AS TEXT) = :status", {"status": status})
+            query = query.and_where_eq("sub.status", status, cast_text=True)
         subs, total = await query.add_order_by("sub.id", "ASC").skip(skip).take(take).get_many_and_count()
         return SubscriptionListDto(total=total, items=[_to_dto(s) for s in subs])
 
@@ -484,7 +481,7 @@ class SubscriptionsService:
             .left_join_and_select("sub.investor", "investor")
             .left_join_and_select("sub.token_series", "series")
             .where("sub.token_series_id = :series_id", {"series_id": series_id})
-            .and_where("CAST(sub.status AS TEXT) = :status", {"status": "CONFIRMED"})
+            .and_where_eq("sub.status", "CONFIRMED", cast_text=True)
             .add_order_by("sub.id", "ASC")
             .get_many()
         )
@@ -493,7 +490,7 @@ class SubscriptionsService:
         allocated = await (
             self.subscriptions.create_query_builder("sub")
             .where("sub.token_series_id = :series_id", {"series_id": series_id})
-            .and_where("CAST(sub.status AS TEXT) = :status", {"status": "ALLOCATED"})
+            .and_where_eq("sub.status", "ALLOCATED", cast_text=True)
             .get_many()
         )
         return sum((Decimal(str(s.allocated_units or 0)) for s in allocated), Decimal("0"))

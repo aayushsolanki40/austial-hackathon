@@ -155,12 +155,7 @@ class LedgerService:
     async def list_funding_instructions(self, *, status: str | None, skip: int, take: int) -> FundingInstructionListDto:
         query = self.funding_instructions.create_query_builder("f").left_join_and_select("f.investor", "investor")
         if status:
-            # `CAST(... AS TEXT)` -- see `kyc_service.py`'s equivalent workaround: austial.orm's
-            # QueryBuilder doesn't cast bound params to a column's native Postgres enum type, so
-            # a plain `f.status = :status` raises `UndefinedFunctionError` (enum = varchar) on
-            # real Postgres (SQLite in tests has no native enum type, so this doesn't surface
-            # there). Framework gap flagged to austial-framework-dev, not fixed at that layer here.
-            query = query.where("CAST(f.status AS TEXT) = :status", {"status": status})
+            query = query.where_eq("f.status", status, cast_text=True)
         instructions, total = await query.add_order_by("f.id", "ASC").skip(skip).take(take).get_many_and_count()
         return FundingInstructionListDto(total=total, items=[self._to_funding_dto(i) for i in instructions])
 

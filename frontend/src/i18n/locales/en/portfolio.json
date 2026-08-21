@@ -1,0 +1,14 @@
+{
+  "overview": {
+    "title": "Portfolio",
+    "placeholder": "Coming in Phase 6 -- portfolio dashboard."
+  },
+  "holding_detail": {
+    "title": "Holding",
+    "placeholder": "Coming in Phase 6 -- holding detail."
+  },
+  "holding_redeem": {
+    "title": "Redeem",
+    "placeholder": "Coming in Phase 7 -- redemption request flow with liquidity-terms display."
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "onboarding": {
+    "title": "Identity verification",
+    "placeholder": "Coming in Phase 2 -- KYC onboarding wizard (profile, document upload, liveness capture, risk disclosure with signed consent)."
+  }
+}

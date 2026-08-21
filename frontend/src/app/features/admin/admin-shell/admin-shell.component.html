@@ -1,0 +1,25 @@
+<mat-sidenav-container class="admin-shell">
+  <mat-sidenav mode="side" opened class="admin-shell__sidenav">
+    <div class="admin-shell__brand">{{ 'admin.shell.title' | t }}</div>
+    <mat-nav-list>
+      @for (link of navLinks(); track link.path) {
+        <a mat-list-item [routerLink]="link.path" routerLinkActive="admin-shell__link--active">
+          <mat-icon matListItemIcon>{{ link.icon }}</mat-icon>
+          <span matListItemTitle>{{ link.labelKey | t }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="admin-shell__toolbar">
+      <span>{{ 'admin.shell.title' | t }}</span>
+      <span class="admin-shell__spacer"></span>
+      <button mat-button (click)="logout()">{{ 'app.nav.logout' | t }}</button>
+    </mat-toolbar>
+
+    <div class="admin-shell__content">
+      <router-outlet />
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,47 @@
+{
+  "shell": {
+    "title": "Swadely Admin"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "kyc_review": "KYC Review",
+    "issuers_custodians": "Issuers & Custodians",
+    "issuance_pipeline": "Issuance Pipeline",
+    "valuation_oracle": "Valuation Oracle",
+    "redemptions": "Redemptions",
+    "compliance": "Compliance",
+    "audit_log": "Audit Log"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "aum_label": "Assets Under Management (USD)",
+    "investor_count_label": "Investors",
+    "active_issuances_label": "Active Issuances",
+    "pending_kyc_label": "Pending KYC",
+    "open_aml_alerts_label": "Open AML Alerts"
+  },
+  "users": {
+    "title": "Users",
+    "email_column": "Email",
+    "role_column": "Role",
+    "status_column": "Status",
+    "created_at_column": "Created"
+  },
+  "state": {
+    "loading": "Loading...",
+    "error": "Unable to load data -- this endpoint may not be live yet.",
+    "retry": "Retry",
+    "empty": "No records found."
+  },
+  "placeholder": {
+    "kyc_review": "Coming in Phase 2 -- KYC review queue.",
+    "issuers_custodians": "Coming in Phase 3 -- issuer approval and custodian registry (IFSCA-registry verification).",
+    "issuance_pipeline": "Coming in Phase 4 -- issuance kanban, disclosure checklist, and circuit-breaker control.",
+    "valuation_oracle": "Coming in Phase 7 -- valuation feed health monitor and anomaly-flagged feeds.",
+    "redemptions": "Coming in Phase 7 -- redemption approval queue.",
+    "compliance": "Coming in Phase 8 -- AML alert queue and resolution workflow.",
+    "report_generator": "Coming in Phase 8 -- quarterly IFSCA report generator.",
+    "audit_log": "Coming in Phase 8 -- immutable audit log viewer."
+  }
+}

@@ -1,0 +1,38 @@
+<section class="admin-dashboard">
+  <h1>{{ 'admin.dashboard.title' | t }}</h1>
+
+  @switch (state()) {
+    @case ('loading') {
+      <app-admin-state state="loading" />
+    }
+    @case ('error') {
+      <app-admin-state state="error" (retry)="load()" />
+    }
+    @case ('loaded') {
+      @if (summary(); as summary) {
+        <div class="admin-dashboard__kpis">
+          <mat-card>
+            <mat-card-title>{{ summary.aum_usd | number: '1.0-2' }}</mat-card-title>
+            <mat-card-subtitle>{{ 'admin.dashboard.aum_label' | t }}</mat-card-subtitle>
+          </mat-card>
+          <mat-card>
+            <mat-card-title>{{ summary.investor_count }}</mat-card-title>
+            <mat-card-subtitle>{{ 'admin.dashboard.investor_count_label' | t }}</mat-card-subtitle>
+          </mat-card>
+          <mat-card>
+            <mat-card-title>{{ summary.active_issuances }}</mat-card-title>
+            <mat-card-subtitle>{{ 'admin.dashboard.active_issuances_label' | t }}</mat-card-subtitle>
+          </mat-card>
+          <mat-card>
+            <mat-card-title>{{ summary.pending_kyc_count }}</mat-card-title>
+            <mat-card-subtitle>{{ 'admin.dashboard.pending_kyc_label' | t }}</mat-card-subtitle>
+          </mat-card>
+          <mat-card>
+            <mat-card-title>{{ summary.open_aml_alert_count }}</mat-card-title>
+            <mat-card-subtitle>{{ 'admin.dashboard.open_aml_alerts_label' | t }}</mat-card-subtitle>
+          </mat-card>
+        </div>
+      }
+    }
+  }
+</section>

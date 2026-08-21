@@ -1,0 +1,14 @@
+{
+  "list": {
+    "title": "Marketplace",
+    "placeholder": "Coming in Phase 6 -- browse tokenized assets with asset-class filters."
+  },
+  "asset_detail": {
+    "title": "Asset detail",
+    "placeholder": "Coming in Phase 6 -- asset detail and prospectus viewer."
+  },
+  "asset_subscribe": {
+    "title": "Subscribe",
+    "placeholder": "Coming in Phase 6 -- subscription flow with risk/fee acknowledgment."
+  }
+}

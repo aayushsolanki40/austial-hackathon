@@ -7,6 +7,8 @@ import { RouterLink } from '@angular/router';
 
 import { TPipe } from '../../core/i18n/t.pipe';
 import { HoldingsService } from '../../core/holdings/holdings.service';
+import { Distribution } from '../../core/redemptions/redemptions.models';
+import { RedemptionsService } from '../../core/redemptions/redemptions.service';
 import { IN_FLIGHT_SUBSCRIPTION_STATUSES, SubscriptionsService } from '../../core/subscriptions/subscriptions.service';
 
 type LoadState = 'loading' | 'error' | 'loaded';
@@ -30,6 +32,7 @@ type LoadState = 'loading' | 'error' | 'loaded';
 export default class PortfolioComponent implements OnInit {
   private readonly holdingsService = inject(HoldingsService);
   private readonly subscriptionsService = inject(SubscriptionsService);
+  private readonly redemptionsService = inject(RedemptionsService);
 
   readonly state = signal<LoadState>('loading');
   readonly holdings = this.holdingsService.myHoldings;
@@ -41,6 +44,15 @@ export default class PortfolioComponent implements OnInit {
   readonly holdingColumns = ['symbol', 'quantity', 'avg_cost_usd', 'status', 'created_at', 'actions'];
   readonly subscriptionColumns = ['symbol', 'units', 'amount_usd', 'status', 'created_at'];
 
+  readonly distributionsState = signal<LoadState>('loading');
+  private readonly rawDistributions = signal<Distribution[]>([]);
+  /** Distributions carry `token_series_id`, not `symbol` -- resolved here from `holdings`. */
+  readonly distributions = computed(() => {
+    const symbolBySeries = new Map(this.holdings().map((h) => [h.token_series_id, h.symbol]));
+    return this.rawDistributions().map((d) => ({ ...d, symbol: symbolBySeries.get(d.token_series_id) ?? String(d.token_series_id) }));
+  });
+  readonly distributionColumns = ['symbol', 'total_amount', 'record_date', 'status'];
+
   ngOnInit(): void {
     this.load();
   }
@@ -48,7 +60,26 @@ export default class PortfolioComponent implements OnInit {
   load(): void {
     this.state.set('loading');
     Promise.all([this.holdingsService.listMine(), this.subscriptionsService.listMine()])
-      .then(() => this.state.set('loaded'))
+      .then(() => {
+        this.state.set('loaded');
+        this.loadDistributions();
+      })
       .catch(() => this.state.set('error'));
+  }
+
+  private loadDistributions(): void {
+    const seriesIds = [...new Set(this.holdings().map((h) => h.token_series_id))];
+    if (seriesIds.length === 0) {
+      this.rawDistributions.set([]);
+      this.distributionsState.set('loaded');
+      return;
+    }
+    this.distributionsState.set('loading');
+    Promise.all(seriesIds.map((id) => this.redemptionsService.listDistributionsForSeries(id)))
+      .then((results) => {
+        this.rawDistributions.set(results.flat());
+        this.distributionsState.set('loaded');
+      })
+      .catch(() => this.distributionsState.set('error'));
   }
 }

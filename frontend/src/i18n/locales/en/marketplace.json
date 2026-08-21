@@ -28,7 +28,17 @@
     "prospectus_title": "Disclosure documents",
     "prospectus_unavailable": "Disclosure documents aren't available to investors yet -- this will show the prospectus once an investor-facing disclosures endpoint exists.",
     "subscribe_action": "Subscribe",
-    "window_closed_hint": "The subscription window for this asset is closed."
+    "window_closed_hint": "The subscription window for this asset is closed.",
+    "current_nav_title": "Current NAV",
+    "current_nav_unit_price_source": "Launch unit price (no NAV report yet)",
+    "current_nav_feed_source": "Latest valuation feed",
+    "current_nav_as_of_label": "As of",
+    "nav_history_title": "NAV history",
+    "nav_history_loading": "Loading NAV history...",
+    "nav_history_empty": "No valuation feeds reported yet for this asset.",
+    "nav_history_reported_at_column": "Reported",
+    "nav_history_nav_column": "NAV per unit",
+    "nav_history_source_column": "Source"
   },
   "asset_subscribe": {
     "title": "Subscribe",

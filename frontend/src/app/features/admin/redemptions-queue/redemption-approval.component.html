@@ -1,0 +1,271 @@
+<section class="redemption-approval">
+  <h1>{{ 'redemptions.admin.queue_title' | t }}</h1>
+
+  <mat-tab-group>
+    <mat-tab [label]="'redemptions.admin.queue_tab_label' | t">
+      <div class="redemption-approval__tab-content">
+        <div class="redemption-approval__filter">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'redemptions.admin.status_filter_label' | t }}</mat-label>
+            <mat-select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); loadQueue()">
+              <mat-option value="">{{ 'redemptions.admin.status_filter_all' | t }}</mat-option>
+              <mat-option value="REQUESTED">{{ 'redemptions.status_option.requested' | t }}</mat-option>
+              <mat-option value="COMPLIANCE_APPROVED">{{ 'redemptions.status_option.compliance_approved' | t }}</mat-option>
+              <mat-option value="CUSTODIAN_RELEASED">{{ 'redemptions.status_option.custodian_released' | t }}</mat-option>
+              <mat-option value="COMPLETED">{{ 'redemptions.status_option.completed' | t }}</mat-option>
+              <mat-option value="REJECTED">{{ 'redemptions.status_option.rejected' | t }}</mat-option>
+              <mat-option value="CANCELLED">{{ 'redemptions.status_option.cancelled' | t }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        @switch (queueState()) {
+          @case ('loading') {
+            <div class="redemption-approval__loading">
+              <mat-spinner diameter="28" />
+              <span>{{ 'redemptions.admin.loading' | t }}</span>
+            </div>
+          }
+          @case ('error') {
+            <p class="redemption-approval__error">{{ 'redemptions.admin.error' | t }}</p>
+            <button mat-stroked-button (click)="loadQueue()">{{ 'redemptions.admin.retry' | t }}</button>
+          }
+          @case ('loaded') {
+            @if (queue().length === 0) {
+              <p>{{ 'redemptions.admin.empty' | t }}</p>
+            } @else {
+              <table mat-table [dataSource]="queue()" class="redemption-approval__table">
+                <ng-container matColumnDef="id">
+                  <th mat-header-cell *matHeaderCellDef>{{ 'redemptions.admin.id_column' | t }}</th>
+                  <td mat-cell *matCellDef="let r">{{ r.id }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="investor_id">
+                  <th mat-header-cell *matHeaderCellDef>{{ 'redemptions.admin.investor_id_column' | t }}</th>
+                  <td mat-cell *matCellDef="let r">{{ r.investor_id }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="symbol">
+                  <th mat-header-cell *matHeaderCellDef>{{ 'redemptions.admin.symbol_column' | t }}</th>
+                  <td mat-cell *matCellDef="let r">{{ r.symbol }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="units_requested">
+                  <th mat-header-cell *matHeaderCellDef>{{ 'redemptions.admin.units_requested_column' | t }}</th>
+                  <td mat-cell *matCellDef="let r">{{ r.units_requested }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="nav_snapshot">
+                  <th mat-header-cell *matHeaderCellDef>{{ 'redemptions.admin.nav_snapshot_column' | t }}</th>
+                  <td mat-cell *matCellDef="let r">
+                    {{ r.nav_per_unit_snapshot !== null ? (r.nav_per_unit_snapshot | currency: 'USD' : 'symbol' : '1.2-2') : '—' }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="payout_amount">
+                  <th mat-header-cell *matHeaderCellDef>{{ 'redemptions.admin.payout_amount_column' | t }}</th>
+                  <td mat-cell *matCellDef="let r">
+                    {{ r.payout_amount !== null ? (r.payout_amount | currency: 'USD' : 'symbol' : '1.2-2') : '—' }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef>{{ 'redemptions.admin.status_column' | t }}</th>
+                  <td mat-cell *matCellDef="let r">{{ ('redemptions.status_option.' + r.status.toLowerCase()) | t }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="created_at">
+                  <th mat-header-cell *matHeaderCellDef>{{ 'redemptions.admin.created_at_column' | t }}</th>
+                  <td mat-cell *matCellDef="let r">{{ r.created_at | date: 'mediumDate' }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>{{ 'redemptions.admin.actions_column' | t }}</th>
+                  <td mat-cell *matCellDef="let r">
+                    @switch (r.status) {
+                      @case ('REQUESTED') {
+                        <div class="redemption-approval__actions">
+                          <button mat-stroked-button color="primary" [disabled]="actioningId() === r.id" (click)="approve(r.id)">
+                            {{ 'redemptions.admin.approve_action' | t }}
+                          </button>
+
+                          <mat-form-field appearance="outline" class="redemption-approval__reason">
+                            <mat-label>{{ 'redemptions.admin.reject_reason_label' | t }}</mat-label>
+                            <input matInput [value]="reasonFor(r.id)" (input)="setReason(r.id, $any($event.target).value)" />
+                          </mat-form-field>
+
+                          <button
+                            mat-stroked-button
+                            color="warn"
+                            [disabled]="actioningId() === r.id || !reasonFor(r.id).trim()"
+                            (click)="reject(r.id)"
+                          >
+                            {{ 'redemptions.admin.reject_action' | t }}
+                          </button>
+                        </div>
+                      }
+                      @case ('COMPLIANCE_APPROVED') {
+                        <button mat-stroked-button color="primary" [disabled]="actioningId() === r.id" (click)="release(r.id)">
+                          {{ 'redemptions.admin.release_action' | t }}
+                        </button>
+                      }
+                      @case ('CUSTODIAN_RELEASED') {
+                        <button mat-stroked-button color="primary" [disabled]="actioningId() === r.id" (click)="complete(r.id)">
+                          {{ 'redemptions.admin.complete_action' | t }}
+                        </button>
+                      }
+                      @default {
+                        <span class="redemption-approval__hint">{{ 'redemptions.admin.no_actions_hint' | t }}</span>
+                      }
+                    }
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="queueColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: queueColumns"></tr>
+              </table>
+            }
+          }
+        }
+      </div>
+    </mat-tab>
+
+    <mat-tab [label]="'redemptions.admin.distributions_tab_label' | t">
+      <div class="redemption-approval__tab-content">
+        <mat-card class="redemption-approval__card">
+          <mat-card-header>
+            <mat-card-title>{{ 'redemptions.admin.create_distribution_title' | t }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <form [formGroup]="distributionForm" (ngSubmit)="createDistribution()" class="redemption-approval__form">
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'redemptions.admin.distribution_series_label' | t }}</mat-label>
+                <input matInput type="number" formControlName="token_series_id" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'redemptions.admin.distribution_amount_label' | t }}</mat-label>
+                <input matInput type="number" formControlName="total_amount" min="0.01" step="0.01" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'redemptions.admin.distribution_currency_label' | t }}</mat-label>
+                <input matInput formControlName="currency" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'redemptions.admin.distribution_record_date_label' | t }}</mat-label>
+                <input matInput type="date" formControlName="record_date" />
+              </mat-form-field>
+
+              @if (createError()) {
+                <p class="redemption-approval__error">{{ createError() }}</p>
+              }
+
+              <button mat-flat-button color="primary" type="submit" [disabled]="distributionForm.invalid || creating()">
+                @if (creating()) {
+                  <mat-spinner diameter="20" />
+                } @else {
+                  {{ 'redemptions.admin.create_distribution_action' | t }}
+                }
+              </button>
+            </form>
+          </mat-card-content>
+        </mat-card>
+
+        @if (processResult(); as result) {
+          <mat-card class="redemption-approval__card">
+            <mat-card-header>
+              <mat-card-title>{{ 'redemptions.admin.process_result_title' | t }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p>{{ 'redemptions.admin.process_result_holder_count' | t }}: {{ result.holder_count }}</p>
+              <p>{{ 'redemptions.admin.process_result_total_credited' | t }}: {{ result.total_credited | currency: 'USD' : 'symbol' : '1.2-2' }}</p>
+            </mat-card-content>
+          </mat-card>
+        }
+
+        @if (processError()) {
+          <p class="redemption-approval__error">{{ processError() }}</p>
+        }
+
+        <mat-card class="redemption-approval__card">
+          <mat-card-header>
+            <mat-card-title>{{ 'redemptions.admin.distributions_title' | t }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="redemption-approval__filter">
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'redemptions.admin.status_filter_label' | t }}</mat-label>
+                <mat-select [ngModel]="distributionStatusFilter()" (ngModelChange)="distributionStatusFilter.set($event); loadDistributions()">
+                  <mat-option value="">{{ 'redemptions.admin.status_filter_all' | t }}</mat-option>
+                  <mat-option value="DRAFT">{{ 'redemptions.distribution_status_option.draft' | t }}</mat-option>
+                  <mat-option value="PROCESSING">{{ 'redemptions.distribution_status_option.processing' | t }}</mat-option>
+                  <mat-option value="COMPLETED">{{ 'redemptions.distribution_status_option.completed' | t }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            @switch (distributionsState()) {
+              @case ('loading') {
+                <div class="redemption-approval__loading">
+                  <mat-spinner diameter="24" />
+                  <span>{{ 'redemptions.admin.distributions_loading' | t }}</span>
+                </div>
+              }
+              @case ('error') {
+                <p class="redemption-approval__error">{{ 'redemptions.admin.distributions_error' | t }}</p>
+              }
+              @case ('loaded') {
+                @if (distributions().length === 0) {
+                  <p>{{ 'redemptions.admin.distributions_empty' | t }}</p>
+                } @else {
+                  <table mat-table [dataSource]="distributions()" class="redemption-approval__table">
+                    <ng-container matColumnDef="id">
+                      <th mat-header-cell *matHeaderCellDef>{{ 'redemptions.admin.distribution_id_column' | t }}</th>
+                      <td mat-cell *matCellDef="let d">{{ d.id }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="token_series_id">
+                      <th mat-header-cell *matHeaderCellDef>{{ 'redemptions.admin.distribution_series_column' | t }}</th>
+                      <td mat-cell *matCellDef="let d">{{ d.token_series_id }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="total_amount">
+                      <th mat-header-cell *matHeaderCellDef>{{ 'redemptions.admin.distribution_amount_column' | t }}</th>
+                      <td mat-cell *matCellDef="let d">{{ d.total_amount | currency: d.currency : 'symbol' : '1.2-2' }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="record_date">
+                      <th mat-header-cell *matHeaderCellDef>{{ 'redemptions.admin.distribution_record_date_column' | t }}</th>
+                      <td mat-cell *matCellDef="let d">{{ d.record_date | date: 'mediumDate' }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="status">
+                      <th mat-header-cell *matHeaderCellDef>{{ 'redemptions.admin.distribution_status_column' | t }}</th>
+                      <td mat-cell *matCellDef="let d">{{ ('redemptions.distribution_status_option.' + d.status.toLowerCase()) | t }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions">
+                      <th mat-header-cell *matHeaderCellDef>{{ 'redemptions.admin.distribution_actions_column' | t }}</th>
+                      <td mat-cell *matCellDef="let d">
+                        @if (d.status === 'DRAFT') {
+                          <button mat-stroked-button color="primary" [disabled]="processingId() === d.id" (click)="processDistribution(d.id)">
+                            {{ 'redemptions.admin.process_action' | t }}
+                          </button>
+                        }
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="distributionColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: distributionColumns"></tr>
+                  </table>
+                }
+              }
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</section>

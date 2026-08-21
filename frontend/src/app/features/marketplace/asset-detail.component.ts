@@ -3,12 +3,16 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { TPipe } from '../../core/i18n/t.pipe';
 import { MarketplaceService } from '../../core/marketplace/marketplace.service';
+import { ValuationService } from '../../core/valuation/valuation.service';
+import { NavChartComponent } from '../../shared/nav-chart/nav-chart.component';
 
 type LoadState = 'loading' | 'error' | 'loaded';
+type NavLoadState = 'loading' | 'error' | 'loaded';
 
 /**
  * Phase 6 asset detail. `MarketplaceTokenSeriesDto` is the only investor-facing marketplace
@@ -24,16 +28,32 @@ type LoadState = 'loading' | 'error' | 'loaded';
 @Component({
   selector: 'app-asset-detail',
   standalone: true,
-  imports: [CurrencyPipe, DatePipe, MatButtonModule, MatCardModule, MatProgressSpinnerModule, RouterLink, TPipe],
+  imports: [
+    CurrencyPipe,
+    DatePipe,
+    MatButtonModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+    MatTableModule,
+    RouterLink,
+    NavChartComponent,
+    TPipe,
+  ],
   templateUrl: './asset-detail.component.html',
   styleUrl: './asset-detail.component.scss',
 })
 export default class AssetDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly marketplace = inject(MarketplaceService);
+  private readonly valuation = inject(ValuationService);
 
   readonly state = signal<LoadState>('loading');
   readonly listing = computed(() => this.marketplace.findById(this.listingId));
+
+  readonly navState = signal<NavLoadState>('loading');
+  readonly currentNav = this.valuation.currentNav;
+  readonly navHistory = this.valuation.seriesFeeds;
+  readonly navHistoryColumns = ['reported_at', 'nav_per_unit', 'source'];
 
   readonly windowOpen = computed(() => {
     const listing = this.listing();
@@ -56,7 +76,20 @@ export default class AssetDetailComponent implements OnInit {
     this.state.set('loading');
     this.marketplace
       .listListings()
-      .then(() => this.state.set(this.listing() ? 'loaded' : 'error'))
+      .then(() => {
+        const found = this.listing();
+        this.state.set(found ? 'loaded' : 'error');
+        if (found) {
+          this.loadNav(found.id);
+        }
+      })
       .catch(() => this.state.set('error'));
+  }
+
+  private loadNav(seriesId: number): void {
+    this.navState.set('loading');
+    Promise.all([this.valuation.fetchCurrentNav(seriesId), this.valuation.listFeedsForSeries(seriesId)])
+      .then(() => this.navState.set('loaded'))
+      .catch(() => this.navState.set('error'));
   }
 }

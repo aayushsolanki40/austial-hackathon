@@ -1,0 +1,159 @@
+<section class="valuation-oracle">
+  <h1>{{ 'valuation.admin.title' | t }}</h1>
+
+  <mat-card class="valuation-oracle__card">
+    <mat-card-content>
+      <div class="valuation-oracle__lookup">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'valuation.admin.series_lookup_label' | t }}</mat-label>
+          <input matInput type="number" [ngModel]="seriesIdLookup()" (ngModelChange)="seriesIdLookup.set($event)" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'valuation.admin.status_filter_label' | t }}</mat-label>
+          <mat-select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
+            <mat-option value="">{{ 'valuation.admin.status_filter_all' | t }}</mat-option>
+            <mat-option value="PUBLISHED">{{ 'valuation.feed_status_option.published' | t }}</mat-option>
+            <mat-option value="QUARANTINED">{{ 'valuation.feed_status_option.quarantined' | t }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" [disabled]="!seriesIdLookup() || feedsState() === 'loading'" (click)="loadFeeds()">
+          {{ 'valuation.admin.series_lookup_action' | t }}
+        </button>
+      </div>
+
+      @if (feedsState() === 'idle') {
+        <p class="valuation-oracle__hint">{{ 'valuation.admin.series_lookup_hint' | t }}</p>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  @switch (feedsState()) {
+    @case ('loading') {
+      <div class="valuation-oracle__loading">
+        <mat-spinner diameter="28" />
+        <span>{{ 'valuation.admin.loading' | t }}</span>
+      </div>
+    }
+    @case ('error') {
+      <p class="valuation-oracle__error">{{ 'valuation.admin.error' | t }}</p>
+      <button mat-stroked-button (click)="loadFeeds()">{{ 'valuation.admin.retry' | t }}</button>
+    }
+    @case ('loaded') {
+      @if (currentNav(); as nav) {
+        <mat-card class="valuation-oracle__card">
+          <mat-card-header>
+            <mat-card-title>{{ 'valuation.current_nav.label' | t }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="valuation-oracle__nav-value">{{ nav.nav_per_unit | currency: 'USD' : 'symbol' : '1.2-2' }}</p>
+            <p class="valuation-oracle__hint">
+              {{ (nav.as_of ? 'valuation.current_nav.feed_source' : 'valuation.current_nav.unit_price_source') | t }}
+              @if (nav.as_of) {
+                &middot; {{ 'valuation.current_nav.as_of_label' | t }}: {{ nav.as_of | date: 'medium' }}
+              }
+            </p>
+          </mat-card-content>
+        </mat-card>
+      }
+
+      <mat-card class="valuation-oracle__card">
+        <mat-card-header>
+          <mat-card-title>{{ 'valuation.admin.feed_history_title' | t }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (feeds().length === 0) {
+            <p>{{ 'valuation.admin.empty' | t }}</p>
+          } @else {
+            <table mat-table [dataSource]="feeds()" class="valuation-oracle__table">
+              <ng-container matColumnDef="reported_at">
+                <th mat-header-cell *matHeaderCellDef>{{ 'valuation.admin.reported_at_column' | t }}</th>
+                <td mat-cell *matCellDef="let feed">{{ feed.reported_at | date: 'medium' }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="nav_per_unit">
+                <th mat-header-cell *matHeaderCellDef>{{ 'valuation.admin.nav_per_unit_column' | t }}</th>
+                <td mat-cell *matCellDef="let feed">{{ feed.nav_per_unit | currency: 'USD' : 'symbol' : '1.2-2' }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="source">
+                <th mat-header-cell *matHeaderCellDef>{{ 'valuation.admin.source_column' | t }}</th>
+                <td mat-cell *matCellDef="let feed">{{ feed.source }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="anomaly_score">
+                <th mat-header-cell *matHeaderCellDef>{{ 'valuation.admin.anomaly_score_column' | t }}</th>
+                <td mat-cell *matCellDef="let feed">{{ feed.anomaly_score ?? '—' }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>{{ 'valuation.admin.status_column' | t }}</th>
+                <td mat-cell *matCellDef="let feed">{{ ('valuation.feed_status_option.' + feed.status.toLowerCase()) | t }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>{{ 'valuation.admin.actions_column' | t }}</th>
+                <td mat-cell *matCellDef="let feed">
+                  @if (feed.status === 'QUARANTINED') {
+                    <button mat-stroked-button color="primary" [disabled]="approvingId() === feed.id" (click)="approve(feed.id)">
+                      {{ 'valuation.admin.approve_action' | t }}
+                    </button>
+                  }
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="feedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: feedColumns"></tr>
+            </table>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+
+  <mat-card class="valuation-oracle__card">
+    <mat-card-header>
+      <mat-card-title>{{ 'valuation.admin.submit_feed_title' | t }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (submitSuccess()) {
+        <p class="valuation-oracle__success">{{ 'valuation.admin.submit_success' | t }}</p>
+      }
+
+      <form [formGroup]="submitForm" (ngSubmit)="submitFeed()" class="valuation-oracle__form">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'valuation.admin.submit_series_label' | t }}</mat-label>
+          <input matInput type="number" formControlName="token_series_id" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'valuation.admin.submit_nav_label' | t }}</mat-label>
+          <input matInput type="number" formControlName="nav_per_unit" min="0.00000001" step="0.00000001" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'valuation.admin.submit_source_label' | t }}</mat-label>
+          <input matInput formControlName="source" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'valuation.admin.submit_reported_at_label' | t }}</mat-label>
+          <input matInput type="datetime-local" formControlName="reported_at" />
+        </mat-form-field>
+
+        @if (submitError()) {
+          <p class="valuation-oracle__error">{{ submitError() }}</p>
+        }
+
+        <button mat-flat-button color="primary" type="submit" [disabled]="submitForm.invalid || submitting()">
+          @if (submitting()) {
+            <mat-spinner diameter="20" />
+          } @else {
+            {{ 'valuation.admin.submit_action' | t }}
+          }
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</section>

@@ -1,10 +1,16 @@
-.asset-detail {
+.valuation-oracle {
   padding: 2rem;
-  max-width: 800px;
+  max-width: 900px;
 
-  &__back {
-    display: inline-block;
-    margin-bottom: 1rem;
+  &__card {
+    margin-bottom: 1.5rem;
+  }
+
+  &__lookup {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 1rem;
   }
 
   &__loading {
@@ -18,24 +24,9 @@
     color: #b3261e;
   }
 
-  &__card {
-    margin-bottom: 1.5rem;
-  }
-
-  &__details {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 0.5rem 1.5rem;
+  &__success {
+    color: #146c2e;
     margin: 0 0 1rem;
-
-    dt {
-      color: rgba(0, 0, 0, 0.6);
-      font-size: 0.875rem;
-    }
-
-    dd {
-      margin: 0;
-    }
   }
 
   &__hint {
@@ -51,5 +42,13 @@
   &__table {
     width: 100%;
     margin-top: 0.75rem;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    max-width: 24rem;
   }
 }

@@ -1,0 +1,128 @@
+<section class="holding-redeem">
+  <a [routerLink]="['/holdings', holdingIdParam]" class="holding-redeem__back">{{ 'portfolio.holding_redeem.back_to_holding' | t }}</a>
+
+  @switch (state()) {
+    @case ('loading') {
+      <div class="holding-redeem__loading">
+        <mat-spinner diameter="28" />
+        <span>{{ 'portfolio.holding_redeem.loading' | t }}</span>
+      </div>
+    }
+    @case ('error') {
+      <p class="holding-redeem__error">{{ 'portfolio.holding_redeem.error' | t }}</p>
+      <button mat-stroked-button (click)="load()">{{ 'portfolio.holding_redeem.retry' | t }}</button>
+    }
+    @case ('loaded') {
+      @if (holding(); as h) {
+        <h1>{{ 'portfolio.holding_redeem.title' | t }} &ndash; {{ h.symbol }}</h1>
+
+        <mat-card class="holding-redeem__card">
+          <mat-card-header>
+            <mat-card-title>{{ 'portfolio.holding_redeem.liquidity_note_title' | t }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ 'portfolio.holding_redeem.liquidity_note' | t }}</p>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="holding-redeem__card">
+          <mat-card-content>
+            <p class="holding-redeem__units-held">
+              {{ 'portfolio.holding_redeem.holding_units_label' | t }}: <strong>{{ h.quantity }}</strong>
+            </p>
+
+            @if (result() === 'submitted') {
+              <p class="holding-redeem__success">{{ 'portfolio.holding_redeem.success_message' | t }}</p>
+            }
+
+            <form [formGroup]="redeemForm" (ngSubmit)="submit()" class="holding-redeem__form">
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'portfolio.holding_redeem.units_label' | t }}</mat-label>
+                <input matInput type="number" formControlName="units" [max]="h.quantity" min="0" />
+                <mat-hint>{{ 'portfolio.holding_redeem.units_hint' | t }}</mat-hint>
+              </mat-form-field>
+
+              @if (redeemForm.controls.units.touched && redeemForm.controls.units.hasError('max')) {
+                <p class="holding-redeem__warning">{{ 'portfolio.holding_redeem.units_exceed_error' | t }}</p>
+              }
+
+              @if (submitError()) {
+                <p class="holding-redeem__warning">{{ submitError() }}</p>
+              }
+
+              <button mat-flat-button color="primary" type="submit" [disabled]="!canSubmit()">
+                @if (submitting()) {
+                  <mat-spinner diameter="20" />
+                } @else {
+                  {{ 'portfolio.holding_redeem.submit_action' | t }}
+                }
+              </button>
+            </form>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="holding-redeem__card">
+          <mat-card-header>
+            <mat-card-title>{{ 'portfolio.holding_redeem.my_requests_title' | t }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @switch (requestsState()) {
+              @case ('loading') {
+                <div class="holding-redeem__loading">
+                  <mat-spinner diameter="24" />
+                  <span>{{ 'portfolio.holding_redeem.my_requests_loading' | t }}</span>
+                </div>
+              }
+              @case ('error') {
+                <p class="holding-redeem__error">{{ 'portfolio.holding_redeem.my_requests_error' | t }}</p>
+              }
+              @case ('loaded') {
+                @if (myRequestsForHolding().length === 0) {
+                  <p class="holding-redeem__hint">{{ 'portfolio.holding_redeem.my_requests_empty' | t }}</p>
+                } @else {
+                  <table mat-table [dataSource]="myRequestsForHolding()" class="holding-redeem__table">
+                    <ng-container matColumnDef="created_at">
+                      <th mat-header-cell *matHeaderCellDef>{{ 'portfolio.holding_redeem.created_at_column' | t }}</th>
+                      <td mat-cell *matCellDef="let r">{{ r.created_at | date: 'mediumDate' }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="units_requested">
+                      <th mat-header-cell *matHeaderCellDef>{{ 'portfolio.holding_redeem.units_requested_column' | t }}</th>
+                      <td mat-cell *matCellDef="let r">{{ r.units_requested }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="payout_amount">
+                      <th mat-header-cell *matHeaderCellDef>{{ 'portfolio.holding_redeem.payout_amount_column' | t }}</th>
+                      <td mat-cell *matCellDef="let r">
+                        {{ r.payout_amount !== null ? (r.payout_amount | currency: 'USD' : 'symbol' : '1.2-2') : '—' }}
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="status">
+                      <th mat-header-cell *matHeaderCellDef>{{ 'portfolio.holding_redeem.status_column' | t }}</th>
+                      <td mat-cell *matCellDef="let r">{{ ('redemptions.status_option.' + r.status.toLowerCase()) | t }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions">
+                      <th mat-header-cell *matHeaderCellDef>{{ 'portfolio.holding_redeem.actions_column' | t }}</th>
+                      <td mat-cell *matCellDef="let r">
+                        @if (r.status === 'REQUESTED') {
+                          <button mat-stroked-button color="warn" [disabled]="cancellingId() === r.id" (click)="cancel(r.id)">
+                            {{ 'portfolio.holding_redeem.cancel_action' | t }}
+                          </button>
+                        }
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="requestColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: requestColumns"></tr>
+                  </table>
+                }
+              }
+            }
+          </mat-card-content>
+        </mat-card>
+      }
+    }
+  }
+</section>

@@ -50,6 +50,63 @@
 
         <mat-card class="asset-detail__card">
           <mat-card-header>
+            <mat-card-title>{{ 'marketplace.asset_detail.current_nav_title' | t }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @switch (navState()) {
+              @case ('loading') {
+                <div class="asset-detail__loading">
+                  <mat-spinner diameter="24" />
+                  <span>{{ 'marketplace.asset_detail.nav_history_loading' | t }}</span>
+                </div>
+              }
+              @case ('error') {
+                <p class="asset-detail__error">{{ 'marketplace.asset_detail.error' | t }}</p>
+              }
+              @case ('loaded') {
+                @if (currentNav(); as nav) {
+                  <p class="asset-detail__nav-value">{{ nav.nav_per_unit | currency: 'USD' : 'symbol' : '1.2-2' }}</p>
+                  <p class="asset-detail__hint">
+                    {{ (nav.as_of ? 'marketplace.asset_detail.current_nav_feed_source' : 'marketplace.asset_detail.current_nav_unit_price_source') | t }}
+                    @if (nav.as_of) {
+                      &middot; {{ 'marketplace.asset_detail.current_nav_as_of_label' | t }}: {{ nav.as_of | date: 'medium' }}
+                    }
+                  </p>
+                }
+
+                <h3>{{ 'marketplace.asset_detail.nav_history_title' | t }}</h3>
+                @if (navHistory().length === 0) {
+                  <p class="asset-detail__hint">{{ 'marketplace.asset_detail.nav_history_empty' | t }}</p>
+                } @else {
+                  <app-nav-chart [data]="navHistory()" />
+
+                  <table mat-table [dataSource]="navHistory()" class="asset-detail__table">
+                    <ng-container matColumnDef="reported_at">
+                      <th mat-header-cell *matHeaderCellDef>{{ 'marketplace.asset_detail.nav_history_reported_at_column' | t }}</th>
+                      <td mat-cell *matCellDef="let feed">{{ feed.reported_at | date: 'medium' }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="nav_per_unit">
+                      <th mat-header-cell *matHeaderCellDef>{{ 'marketplace.asset_detail.nav_history_nav_column' | t }}</th>
+                      <td mat-cell *matCellDef="let feed">{{ feed.nav_per_unit | currency: 'USD' : 'symbol' : '1.2-2' }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="source">
+                      <th mat-header-cell *matHeaderCellDef>{{ 'marketplace.asset_detail.nav_history_source_column' | t }}</th>
+                      <td mat-cell *matCellDef="let feed">{{ feed.source }}</td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="navHistoryColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: navHistoryColumns"></tr>
+                  </table>
+                }
+              }
+            }
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="asset-detail__card">
+          <mat-card-header>
             <mat-card-title>{{ 'marketplace.asset_detail.prospectus_title' | t }}</mat-card-title>
           </mat-card-header>
           <mat-card-content>

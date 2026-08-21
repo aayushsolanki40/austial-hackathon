@@ -1,0 +1,51 @@
+{
+  "current_nav": {
+    "label": "Current NAV",
+    "unit_price_source": "Launch unit price (no NAV report yet)",
+    "feed_source": "Latest valuation feed",
+    "as_of_label": "As of"
+  },
+  "history": {
+    "title": "NAV history",
+    "loading": "Loading NAV history...",
+    "error": "Unable to load NAV history right now.",
+    "retry": "Retry",
+    "empty": "No valuation feeds reported yet for this asset.",
+    "reported_at_column": "Reported",
+    "nav_per_unit_column": "NAV per unit",
+    "source_column": "Source",
+    "status_column": "Status"
+  },
+  "feed_status_option": {
+    "published": "Published",
+    "quarantined": "Quarantined"
+  },
+  "admin": {
+    "title": "Valuation Oracle",
+    "series_lookup_label": "Token series ID",
+    "series_lookup_action": "Load feed history",
+    "series_lookup_hint": "Enter a launched token series ID to review its valuation feeds.",
+    "status_filter_label": "Status",
+    "status_filter_all": "All statuses",
+    "feed_history_title": "Feed history",
+    "loading": "Loading feeds...",
+    "error": "Unable to load feeds right now.",
+    "retry": "Retry",
+    "empty": "No feeds found for this series.",
+    "reported_at_column": "Reported",
+    "nav_per_unit_column": "NAV per unit",
+    "source_column": "Source",
+    "anomaly_score_column": "Anomaly score",
+    "status_column": "Status",
+    "actions_column": "Actions",
+    "approve_action": "Approve (publish)",
+    "submit_feed_title": "Submit a new valuation feed",
+    "submit_series_label": "Token series ID",
+    "submit_nav_label": "NAV per unit (USD)",
+    "submit_source_label": "Source",
+    "submit_reported_at_label": "Reported at",
+    "submit_action": "Submit feed",
+    "submit_error": "Unable to submit this feed right now.",
+    "submit_success": "Feed submitted."
+  }
+}

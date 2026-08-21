@@ -59,8 +59,6 @@
     "empty": "No records found."
   },
   "placeholder": {
-    "valuation_oracle": "Coming in Phase 7 -- valuation feed health monitor and anomaly-flagged feeds.",
-    "redemptions": "Coming in Phase 7 -- redemption approval queue.",
     "compliance": "Coming in Phase 8 -- AML alert queue and resolution workflow.",
     "report_generator": "Coming in Phase 8 -- quarterly IFSCA report generator.",
     "audit_log": "Coming in Phase 8 -- immutable audit log viewer."

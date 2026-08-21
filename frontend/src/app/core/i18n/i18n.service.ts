@@ -10,6 +10,8 @@ import issuerEn from '../../../i18n/locales/en/issuer.json';
 import kycEn from '../../../i18n/locales/en/kyc.json';
 import marketplaceEn from '../../../i18n/locales/en/marketplace.json';
 import portfolioEn from '../../../i18n/locales/en/portfolio.json';
+import redemptionsEn from '../../../i18n/locales/en/redemptions.json';
+import valuationEn from '../../../i18n/locales/en/valuation.json';
 import walletEn from '../../../i18n/locales/en/wallet.json';
 
 /** One module's locale JSON: flat string values, or one level of nesting. */
@@ -37,6 +39,8 @@ const LOCALE_MODULES: Record<string, Record<string, LocaleModule>> = {
     asset: assetEn,
     custodian: custodianEn,
     issuance: issuanceEn,
+    valuation: valuationEn,
+    redemptions: redemptionsEn,
   },
 };
 

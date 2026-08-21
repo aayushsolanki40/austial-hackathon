@@ -28,6 +28,7 @@ from austial.orm import DataSource
 
 from src.app_module import AppModule
 from src.i18n.i18n import t
+from src.modules.compliance.interceptors.audit_interceptor import AuditInterceptor
 
 
 def _build() -> AustialApplication:
@@ -39,6 +40,7 @@ def _build() -> AustialApplication:
     )
     app.use_global_pipes(ValidationPipe())
     app.use_global_filters(AllExceptionsFilter())
+    app.use_global_interceptors(AuditInterceptor)
     app.enable_cors()
 
     @app.get_http_adapter().on_event("startup")

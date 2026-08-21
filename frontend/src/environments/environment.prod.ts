@@ -9,5 +9,5 @@
  */
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://api.swadely.com',
+  apiBaseUrl: 'http://52.6.51.39:8000',
 };

@@ -87,7 +87,7 @@ class IssuersService:
     async def list_pending_review(self, *, skip: int, take: int) -> IssuerListDto:
         issuers, total = await (
             self.issuers.create_query_builder("i")
-            .where("i.verification_status = :status", {"status": "PENDING"})
+            .where("CAST(i.verification_status AS TEXT) = :status", {"status": "PENDING"})
             .add_order_by("i.id", "ASC")
             .skip(skip)
             .take(take)

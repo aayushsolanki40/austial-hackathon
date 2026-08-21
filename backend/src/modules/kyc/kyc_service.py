@@ -232,7 +232,7 @@ class KycService:
     async def list_pending_review(self, *, skip: int, take: int) -> KycSubmissionListDto:
         submissions, total = await (
             self.submissions.create_query_builder("s")
-            .where("s.status = :status", {"status": "MANUAL_REVIEW"})
+            .where("CAST(s.status AS TEXT) = :status", {"status": "MANUAL_REVIEW"})
             .left_join_and_select("s.investor", "investor")
             .add_order_by("s.id", "ASC")
             .skip(skip)

@@ -16,6 +16,7 @@ from src.modules.auth.entities.refresh_token import RefreshToken
 from src.modules.auth.entities.user import User
 from src.modules.compliance.entities.audit_log import AuditLog
 from src.modules.custodians.entities.custodian import Custodian
+from src.modules.holdings.entities.token_holding import TokenHolding
 from src.modules.investors.entities.investor_profile import InvestorProfile
 from src.modules.investors.entities.wallet_mapping import WalletMapping
 from src.modules.issuance.entities.disclosure_document import DisclosureDocument
@@ -30,6 +31,7 @@ from src.modules.ledger.entities.funding_instruction import FundingInstruction
 from src.modules.ledger.entities.ledger_account import LedgerAccount
 from src.modules.ledger.entities.ledger_entry import LedgerEntry
 from src.modules.ledger.entities.payout_instruction import PayoutInstruction
+from src.modules.subscriptions.entities.subscription import Subscription
 
 ALL_ENTITIES = [
     User,
@@ -51,4 +53,6 @@ ALL_ENTITIES = [
     LedgerEntry,
     FundingInstruction,
     PayoutInstruction,
+    Subscription,
+    TokenHolding,
 ]

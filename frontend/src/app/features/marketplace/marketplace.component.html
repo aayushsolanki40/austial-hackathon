@@ -1,0 +1,60 @@
+<section class="marketplace">
+  <h1>{{ 'marketplace.list.title' | t }}</h1>
+  <p class="marketplace__intro">{{ 'marketplace.list.intro' | t }}</p>
+
+  <mat-form-field appearance="outline" class="marketplace__filter">
+    <mat-label>{{ 'marketplace.list.filter_label' | t }}</mat-label>
+    <mat-select [value]="selectedAssetClass()" (selectionChange)="setAssetClassFilter($event.value)">
+      <mat-option [value]="null">{{ 'marketplace.list.filter_all_option' | t }}</mat-option>
+      @for (option of assetClassOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.labelKey | t }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  @switch (state()) {
+    @case ('loading') {
+      <div class="marketplace__loading">
+        <mat-spinner diameter="28" />
+        <span>{{ 'marketplace.list.loading' | t }}</span>
+      </div>
+    }
+    @case ('error') {
+      <div class="marketplace__error">
+        <p>{{ 'marketplace.list.error' | t }}</p>
+        <button mat-stroked-button (click)="load()">{{ 'marketplace.list.retry' | t }}</button>
+      </div>
+    }
+    @case ('loaded') {
+      @if (listings().length === 0) {
+        <p>{{ 'marketplace.list.empty' | t }}</p>
+      } @else {
+        <div class="marketplace__grid">
+          @for (listing of listings(); track listing.id) {
+            <mat-card class="marketplace__card">
+              <mat-card-header>
+                <mat-card-title>{{ listing.asset_name }}</mat-card-title>
+                <mat-card-subtitle>{{ ('asset.class_option.' + listing.asset_class.toLowerCase()) | t }}</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <dl class="marketplace__card-details">
+                  <dt>{{ 'marketplace.list.unit_price_label' | t }}</dt>
+                  <dd>{{ listing.unit_price_usd | currency: 'USD' : 'symbol' : '1.2-2' }}</dd>
+
+                  <dt>{{ 'marketplace.list.min_subscription_label' | t }}</dt>
+                  <dd>{{ listing.min_subscription_units }}</dd>
+
+                  <dt>{{ 'marketplace.list.window_label' | t }}</dt>
+                  <dd>{{ listing.subscription_start_at | date: 'mediumDate' }} &ndash; {{ listing.subscription_end_at | date: 'mediumDate' }}</dd>
+                </dl>
+              </mat-card-content>
+              <mat-card-actions>
+                <a mat-flat-button color="primary" [routerLink]="['/assets', listing.id]">{{ 'marketplace.list.view_action' | t }}</a>
+              </mat-card-actions>
+            </mat-card>
+          }
+        </div>
+      }
+    }
+  }
+</section>

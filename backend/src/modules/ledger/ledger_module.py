@@ -19,7 +19,11 @@ from src.modules.ledger.ledger_service import LedgerService
     ],
     controllers=[LedgerController],
     providers=[LedgerService, JwtAuthGuard, RolesGuard],
-    exports=[repository_token(LedgerAccount), repository_token(LedgerEntry)],
+    # `LedgerService` itself is exported (not just its repository tokens) -- Phase 6's
+    # `SubscriptionsModule` calls `lock_funds`/`unlock_funds`/`settle_locked_funds` directly
+    # rather than re-deriving ledger-mutation logic in `subscriptions_service.py`; see that
+    # module's docstring.
+    exports=[repository_token(LedgerAccount), repository_token(LedgerEntry), LedgerService],
 )
 class LedgerModule:
     pass

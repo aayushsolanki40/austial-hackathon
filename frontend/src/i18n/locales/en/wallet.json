@@ -13,28 +13,23 @@
   },
   "funding": {
     "title": "Add funds",
-    "intro": "Request wire instructions and a unique reference code, then send a USD wire transfer that includes the reference code so it can be matched to your account.",
-    "amount_label": "Expected amount (USD, optional)",
+    "intro": "Request wire instructions and a unique reference code, then send a wire transfer that includes the reference code so it can be matched to your account.",
+    "amount_label": "Amount",
+    "amount_label_display": "Amount",
     "request_action": "Request funding instructions",
     "requesting": "Requesting...",
-    "request_error": "Unable to request funding instructions -- please try again.",
-    "list_title": "Your funding instructions",
-    "loading": "Loading your funding instructions...",
-    "load_error": "Unable to load funding instructions -- this endpoint may not be live yet.",
-    "retry": "Retry",
-    "empty": "You haven't requested any funding instructions yet.",
+    "request_error": "Unable to request funding instructions -- enter a valid amount and try again.",
     "reference_code_label": "Reference code",
     "reference_code_hint": "Include this exact reference code in your wire transfer's payment reference field.",
     "status_label": "Status",
-    "expected_amount_label": "Expected amount",
-    "expected_amount_not_specified": "Not specified",
+    "beneficiary_name_label": "Beneficiary name",
     "beneficiary_bank_label": "Beneficiary bank",
-    "beneficiary_account_name_label": "Beneficiary account name",
     "beneficiary_account_number_label": "Beneficiary account number",
     "beneficiary_swift_label": "SWIFT / BIC",
-    "beneficiary_address_label": "Bank address",
-    "intermediary_swift_label": "Intermediary bank SWIFT / BIC",
-    "requested_at_label": "Requested"
+    "expires_at_label": "Expires",
+    "requested_at_label": "Requested",
+    "check_status_action": "Check status",
+    "checking_status": "Checking..."
   },
   "funding_status_option": {
     "pending": "Pending",
@@ -49,25 +44,13 @@
     "empty": "No ledger entries yet.",
     "date_column": "Date",
     "type_column": "Type",
-    "direction_column": "Direction",
-    "amount_column": "Amount (USD)",
-    "balance_after_column": "Balance after (USD)",
+    "amount_column": "Amount",
+    "balance_after_column": "Balance after",
     "reference_column": "Reference",
     "previous_page": "Previous",
     "next_page": "Next",
     "showing_label": "Showing",
     "of_label": "of",
     "entries_label": "entries"
-  },
-  "history_direction_option": {
-    "credit": "Credit",
-    "debit": "Debit"
-  },
-  "history_entry_type_option": {
-    "funding_credit": "Funding",
-    "payout_debit": "Payout",
-    "subscription_lock": "Subscription lock",
-    "subscription_release": "Subscription release",
-    "redemption_credit": "Redemption"
   }
 }

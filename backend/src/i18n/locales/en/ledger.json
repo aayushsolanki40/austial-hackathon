@@ -7,6 +7,7 @@
     "funding_instruction_not_found": "No funding instruction exists with that ID.",
     "funding_instruction_not_pending": "This funding instruction is not in PENDING status and cannot be confirmed again.",
     "idempotency_key_already_used": "This idempotency key has already been used to post a ledger entry -- refusing to double-process.",
-    "insufficient_available_balance": "The ledger account does not have sufficient available balance for this payout."
+    "insufficient_available_balance": "The ledger account does not have sufficient available balance for this payout.",
+    "insufficient_locked_balance": "The ledger account does not have sufficient locked balance for this operation."
   }
 }

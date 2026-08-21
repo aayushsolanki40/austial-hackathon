@@ -1,0 +1,44 @@
+<section class="holding-detail">
+  <a [routerLink]="['/portfolio']" class="holding-detail__back">{{ 'portfolio.holding_detail.back_to_portfolio' | t }}</a>
+
+  @switch (state()) {
+    @case ('loading') {
+      <div class="holding-detail__loading">
+        <mat-spinner diameter="28" />
+        <span>{{ 'portfolio.holding_detail.loading' | t }}</span>
+      </div>
+    }
+    @case ('error') {
+      <p class="holding-detail__error">{{ 'portfolio.holding_detail.error' | t }}</p>
+      <button mat-stroked-button (click)="load()">{{ 'portfolio.holding_detail.retry' | t }}</button>
+    }
+    @case ('loaded') {
+      @if (holding(); as h) {
+        <h1>{{ h.asset_name }}</h1>
+
+        <mat-card class="holding-detail__card">
+          <mat-card-content>
+            <dl class="holding-detail__details">
+              <dt>{{ 'portfolio.holding_detail.asset_label' | t }}</dt>
+              <dd>{{ h.asset_name }}</dd>
+
+              @if (h.symbol) {
+                <dt>{{ 'portfolio.holding_detail.symbol_label' | t }}</dt>
+                <dd>{{ h.symbol }}</dd>
+              }
+
+              <dt>{{ 'portfolio.holding_detail.units_label' | t }}</dt>
+              <dd>{{ h.units }}</dd>
+
+              <dt>{{ 'portfolio.holding_detail.subscription_reference_label' | t }}</dt>
+              <dd>#{{ h.subscription_id }}</dd>
+
+              <dt>{{ 'portfolio.holding_detail.acquired_at_label' | t }}</dt>
+              <dd>{{ h.created_at | date: 'medium' }}</dd>
+            </dl>
+          </mat-card-content>
+        </mat-card>
+      }
+    }
+  }
+</section>

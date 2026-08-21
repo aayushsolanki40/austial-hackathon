@@ -1,14 +1,46 @@
 {
   "overview": {
     "title": "Portfolio",
-    "placeholder": "Coming in Phase 6 -- portfolio dashboard."
+    "holdings_title": "Holdings",
+    "subscriptions_title": "Subscriptions in progress",
+    "loading": "Loading your portfolio...",
+    "error": "Unable to load your portfolio right now.",
+    "retry": "Retry",
+    "holdings_empty": "You don't have any holdings yet.",
+    "subscriptions_empty": "You don't have any subscriptions in progress.",
+    "asset_column": "Asset",
+    "symbol_column": "Symbol",
+    "units_column": "Units",
+    "amount_column": "Amount",
+    "status_column": "Status",
+    "created_at_column": "Date",
+    "actions_column": "Actions",
+    "view_action": "View",
+    "cancel_action": "Cancel",
+    "browse_marketplace_action": "Browse marketplace"
   },
   "holding_detail": {
     "title": "Holding",
-    "placeholder": "Coming in Phase 6 -- holding detail."
+    "loading": "Loading holding...",
+    "error": "Unable to load this holding right now.",
+    "retry": "Retry",
+    "back_to_portfolio": "Back to portfolio",
+    "asset_label": "Asset",
+    "symbol_label": "Token symbol",
+    "units_label": "Units held",
+    "subscription_reference_label": "Originating subscription",
+    "acquired_at_label": "Acquired"
   },
   "holding_redeem": {
     "title": "Redeem",
     "placeholder": "Coming in Phase 7 -- redemption request flow with liquidity-terms display."
+  },
+  "subscription_status_option": {
+    "pending": "Pending",
+    "funded": "Funded",
+    "confirmed": "Confirmed",
+    "allocated": "Allocated",
+    "refunded": "Refunded",
+    "cancelled": "Cancelled"
   }
 }

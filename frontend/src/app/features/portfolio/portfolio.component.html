@@ -1,0 +1,100 @@
+<section class="portfolio">
+  <h1>{{ 'portfolio.overview.title' | t }}</h1>
+
+  @switch (state()) {
+    @case ('loading') {
+      <div class="portfolio__loading">
+        <mat-spinner diameter="28" />
+        <span>{{ 'portfolio.overview.loading' | t }}</span>
+      </div>
+    }
+    @case ('error') {
+      <div class="portfolio__error">
+        <p>{{ 'portfolio.overview.error' | t }}</p>
+        <button mat-stroked-button (click)="load()">{{ 'portfolio.overview.retry' | t }}</button>
+      </div>
+    }
+    @case ('loaded') {
+      <section class="portfolio__section">
+        <h2>{{ 'portfolio.overview.holdings_title' | t }}</h2>
+
+        @if (holdings().length === 0) {
+          <p>{{ 'portfolio.overview.holdings_empty' | t }}</p>
+          <a mat-stroked-button routerLink="/marketplace">{{ 'portfolio.overview.browse_marketplace_action' | t }}</a>
+        } @else {
+          <table mat-table [dataSource]="holdings()" class="portfolio__table">
+            <ng-container matColumnDef="asset_name">
+              <th mat-header-cell *matHeaderCellDef>{{ 'portfolio.overview.asset_column' | t }}</th>
+              <td mat-cell *matCellDef="let holding">{{ holding.asset_name }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="symbol">
+              <th mat-header-cell *matHeaderCellDef>{{ 'portfolio.overview.symbol_column' | t }}</th>
+              <td mat-cell *matCellDef="let holding">{{ holding.symbol ?? '--' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="units">
+              <th mat-header-cell *matHeaderCellDef>{{ 'portfolio.overview.units_column' | t }}</th>
+              <td mat-cell *matCellDef="let holding">{{ holding.units }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="created_at">
+              <th mat-header-cell *matHeaderCellDef>{{ 'portfolio.overview.created_at_column' | t }}</th>
+              <td mat-cell *matCellDef="let holding">{{ holding.created_at | date: 'mediumDate' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>{{ 'portfolio.overview.actions_column' | t }}</th>
+              <td mat-cell *matCellDef="let holding">
+                <a mat-stroked-button [routerLink]="['/holdings', holding.id]">{{ 'portfolio.overview.view_action' | t }}</a>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="holdingColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: holdingColumns"></tr>
+          </table>
+        }
+      </section>
+
+      <section class="portfolio__section">
+        <h2>{{ 'portfolio.overview.subscriptions_title' | t }}</h2>
+
+        @if (inFlightSubscriptions().length === 0) {
+          <p>{{ 'portfolio.overview.subscriptions_empty' | t }}</p>
+        } @else {
+          <table mat-table [dataSource]="inFlightSubscriptions()" class="portfolio__table">
+            <ng-container matColumnDef="asset_name">
+              <th mat-header-cell *matHeaderCellDef>{{ 'portfolio.overview.asset_column' | t }}</th>
+              <td mat-cell *matCellDef="let subscription">{{ subscription.asset_name }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="units_requested">
+              <th mat-header-cell *matHeaderCellDef>{{ 'portfolio.overview.units_column' | t }}</th>
+              <td mat-cell *matCellDef="let subscription">{{ subscription.units_requested }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="amount_usd">
+              <th mat-header-cell *matHeaderCellDef>{{ 'portfolio.overview.amount_column' | t }}</th>
+              <td mat-cell *matCellDef="let subscription">{{ subscription.amount_usd | currency: 'USD' : 'symbol' : '1.2-2' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>{{ 'portfolio.overview.status_column' | t }}</th>
+              <td mat-cell *matCellDef="let subscription">
+                {{ ('portfolio.subscription_status_option.' + subscription.status.toLowerCase()) | t }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="created_at">
+              <th mat-header-cell *matHeaderCellDef>{{ 'portfolio.overview.created_at_column' | t }}</th>
+              <td mat-cell *matCellDef="let subscription">{{ subscription.created_at | date: 'mediumDate' }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="subscriptionColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: subscriptionColumns"></tr>
+          </table>
+        }
+      </section>
+    }
+  }
+</section>

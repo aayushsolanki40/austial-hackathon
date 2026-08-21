@@ -1,0 +1,75 @@
+<section class="asset-detail">
+  <a [routerLink]="['/marketplace']" class="asset-detail__back">{{ 'marketplace.asset_detail.back_to_marketplace' | t }}</a>
+
+  @switch (state()) {
+    @case ('loading') {
+      <div class="asset-detail__loading">
+        <mat-spinner diameter="28" />
+        <span>{{ 'marketplace.asset_detail.loading' | t }}</span>
+      </div>
+    }
+    @case ('error') {
+      <p class="asset-detail__error">{{ 'marketplace.asset_detail.error' | t }}</p>
+      <button mat-stroked-button (click)="load()">{{ 'marketplace.asset_detail.retry' | t }}</button>
+    }
+    @case ('loaded') {
+      @if (listing(); as l) {
+        <h1>{{ l.asset_name }}</h1>
+
+        <mat-card class="asset-detail__card">
+          <mat-card-content>
+            <dl class="asset-detail__details">
+              <dt>{{ 'marketplace.asset_detail.asset_class_label' | t }}</dt>
+              <dd>{{ ('asset.class_option.' + l.asset_class.toLowerCase()) | t }}</dd>
+
+              @if (l.asset_description) {
+                <dt>{{ 'marketplace.asset_detail.description_label' | t }}</dt>
+                <dd>{{ l.asset_description }}</dd>
+              }
+
+              @if (l.symbol) {
+                <dt>{{ 'marketplace.asset_detail.symbol_label' | t }}</dt>
+                <dd>{{ l.symbol }}</dd>
+              }
+
+              <dt>{{ 'marketplace.asset_detail.unit_price_label' | t }}</dt>
+              <dd>{{ l.unit_price_usd | currency: 'USD' : 'symbol' : '1.2-2' }}</dd>
+
+              <dt>{{ 'marketplace.asset_detail.total_units_label' | t }}</dt>
+              <dd>{{ l.total_units }}</dd>
+
+              <dt>{{ 'marketplace.asset_detail.min_subscription_label' | t }}</dt>
+              <dd>{{ l.min_subscription_units }}</dd>
+
+              <dt>{{ 'marketplace.asset_detail.subscription_window_label' | t }}</dt>
+              <dd>{{ l.subscription_start_at | date: 'medium' }} &ndash; {{ l.subscription_end_at | date: 'medium' }}</dd>
+            </dl>
+
+            @if (windowOpen()) {
+              <a mat-flat-button color="primary" [routerLink]="['/assets', l.id, 'subscribe']">
+                {{ 'marketplace.asset_detail.subscribe_action' | t }}
+              </a>
+            } @else {
+              <p class="asset-detail__hint">{{ 'marketplace.asset_detail.window_closed_hint' | t }}</p>
+            }
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="asset-detail__card">
+          <mat-card-header>
+            <mat-card-title>{{ 'marketplace.asset_detail.prospectus_title' | t }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <app-disclosure-checklist
+              [proposalId]="l.id"
+              [disclosures]="l.disclosures"
+              [missingDisclosureTypes]="[]"
+              [disclosuresComplete]="true"
+              [uploadable]="false"
+            />
+          </mat-card-content>
+        </mat-card>
+      }
+    }
+  }
+</section>

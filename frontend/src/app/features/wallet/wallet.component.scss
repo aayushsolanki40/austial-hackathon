@@ -58,19 +58,11 @@
     margin: 1rem 0;
   }
 
-  &__funding-list {
-    list-style: none;
-    padding: 0;
-    margin: 1rem 0 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
   &__funding-instruction {
     border: 1px solid rgba(0, 0, 0, 0.12);
     border-radius: 8px;
     padding: 1rem;
+    margin-top: 1rem;
   }
 
   &__funding-instruction-header {
@@ -107,6 +99,14 @@
   &__table {
     width: 100%;
     margin-top: 1rem;
+  }
+
+  &__entry-type--credit {
+    color: #1e7a34;
+  }
+
+  &__entry-type--debit {
+    color: #b3261e;
   }
 
   &__pagination {

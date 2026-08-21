@@ -1,14 +1,64 @@
 {
   "list": {
     "title": "Marketplace",
-    "placeholder": "Coming in Phase 6 -- browse tokenized assets with asset-class filters."
+    "intro": "Browse launched, tokenized assets open for subscription.",
+    "filter_label": "Asset class",
+    "filter_all_option": "All asset classes",
+    "loading": "Loading marketplace listings...",
+    "error": "Unable to load the marketplace right now.",
+    "retry": "Retry",
+    "empty": "No launched assets are open for subscription right now.",
+    "unit_price_label": "Unit price",
+    "min_subscription_label": "Minimum subscription",
+    "window_label": "Subscription window",
+    "view_action": "View details"
   },
   "asset_detail": {
     "title": "Asset detail",
-    "placeholder": "Coming in Phase 6 -- asset detail and prospectus viewer."
+    "loading": "Loading asset detail...",
+    "error": "Unable to load this asset right now.",
+    "retry": "Retry",
+    "back_to_marketplace": "Back to marketplace",
+    "asset_class_label": "Asset class",
+    "description_label": "Description",
+    "issuer_label": "Issuer",
+    "symbol_label": "Token symbol",
+    "unit_price_label": "Unit price",
+    "total_units_label": "Total units",
+    "min_subscription_label": "Minimum subscription",
+    "subscription_window_label": "Subscription window",
+    "prospectus_title": "Disclosure documents",
+    "subscribe_action": "Subscribe",
+    "window_closed_hint": "The subscription window for this asset is closed."
   },
   "asset_subscribe": {
     "title": "Subscribe",
-    "placeholder": "Coming in Phase 6 -- subscription flow with risk/fee acknowledgment."
+    "loading": "Loading subscription details...",
+    "error": "Unable to load this asset right now.",
+    "retry": "Retry",
+    "back_to_asset": "Back to asset",
+    "available_balance_label": "Available balance",
+    "units_label": "Units to subscribe",
+    "amount_label": "Amount",
+    "min_units_hint": "Minimum subscription applies",
+    "insufficient_funds_hint": "Your available balance is not enough to cover this subscription.",
+    "risk_ack_label": "I acknowledge the risks disclosed for this asset -- including market, liquidity, regulatory, and custody risk -- and that there is no guarantee of returns.",
+    "fee_ack_label": "I acknowledge and accept the applicable subscription fees for this asset.",
+    "submit_action": "Subscribe",
+    "submitting": "Submitting...",
+    "submit_error": "Unable to submit your subscription right now.",
+    "success_title": "Subscription submitted",
+    "success_message": "Your funds have been locked pending allocation.",
+    "status_label": "Status",
+    "locked_amount_label": "Locked amount",
+    "view_portfolio_action": "View portfolio"
+  },
+  "subscription_status_option": {
+    "pending": "Pending",
+    "funded": "Funded",
+    "confirmed": "Confirmed",
+    "allocated": "Allocated",
+    "refunded": "Refunded",
+    "cancelled": "Cancelled"
   }
 }

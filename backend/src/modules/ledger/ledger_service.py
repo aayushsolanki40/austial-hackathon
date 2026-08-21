@@ -263,6 +263,130 @@ class LedgerService:
         payout.investor = investor  # `em.save()` returns the instance as constructed -- already set, kept explicit.
         return _to_payout_dto(payout)
 
+    # -- lock / unlock / settle -- Phase 6, consumed by ``SubscriptionsService`` -----------------
+    #
+    # These three move money between an account's `available_balance`/`locked_balance` (lock,
+    # unlock) or shrink `locked_balance` outright (settle) -- see each method's own docstring for
+    # why only `settle_locked_funds` produces a `LedgerEntry`. All three are called from inside a
+    # caller-owned state-machine transition (`SubscriptionsService`'s `ALLOWED_TRANSITIONS`
+    # already guarantees each subscription is locked/unlocked/settled at most once per legal path
+    # through the state machine), so unlike `confirm_funding_instruction`/
+    # `record_payout_instruction` there is no separate idempotency-key parameter here -- the
+    # state machine *is* the idempotency guard.
+
+    async def get_or_create_account(self, investor: InvestorProfile) -> LedgerAccount:
+        """Public entry point onto ``_get_or_create_account`` for callers outside this module
+        (``SubscriptionsService``) that need the raw ``LedgerAccount`` entity -- not its response
+        DTO -- to pass into ``lock_within``/``unlock_within``/``settle_within`` below."""
+        return await self._get_or_create_account(investor)
+
+    async def lock_within(self, em: Any, account: LedgerAccount, amount: float) -> LedgerAccount:
+        """``available_balance -> locked_balance``, against a caller-supplied ``EntityManager``
+        (``em``) inside an *already-open* ``DataSource.transaction(...)`` block -- for callers
+        (``SubscriptionsService.subscribe``) that need the lock to commit atomically together with
+        other writes (the ``Subscription`` row itself) in a single transaction, rather than in the
+        lock's own standalone one. ``lock_funds`` below is the self-transacting wrapper around this
+        for callers that only need to lock in isolation. Fresh-re-reads the account by id (mirrors
+        ``record_payout_instruction``'s check-then-fresh-re-check pattern) so a concurrent
+        lock/unlock/settle on the same account can't race past the balance check. Raises
+        ``UnprocessableEntityException`` if ``available_balance`` is insufficient -- checked
+        *before* any write, so a caller's whole transaction (including e.g. the ``Subscription``
+        row) rolls back cleanly rather than partially applying -- exactly this phase's task brief
+        ("a subscription with insufficient available_balance must be rejected before any lock is
+        attempted").
+
+        **No ``LedgerEntry`` is written for this operation** -- deliberate. ``LedgerEntry``'s
+        columns (in particular ``balance_after``) exist to give an account a chronological,
+        auditable history of *total-balance-affecting* events (funding in, payout out). Locking
+        does not change the account's total balance (``available + locked`` is invariant across
+        this call) -- it only reclassifies part of that same total as "committed", so there is no
+        total-balance-affecting event here to record. The generic ``AuditInterceptor`` still
+        writes an ``AuditLog`` row for the HTTP request that triggered this (subscribing), and
+        ``SubscriptionsService`` writes its own domain-level ``AuditLog`` entry alongside every
+        subscription state transition -- see that module's docstring -- so the lock is not
+        un-audited, it just isn't modelled as a ledger *entry*.
+        """
+        fresh = await em.find_one(LedgerAccount, FindOptions(where={"id": account.id}))
+        if float(fresh.available_balance) < amount:
+            raise UnprocessableEntityException(t("ledger.error.insufficient_available_balance"))
+        new_available = float(fresh.available_balance) - amount
+        new_locked = float(fresh.locked_balance) + amount
+        await em.update(LedgerAccount, fresh.id, {"available_balance": new_available, "locked_balance": new_locked})
+        return fresh
+
+    async def unlock_within(self, em: Any, account: LedgerAccount, amount: float) -> LedgerAccount:
+        """The exact reverse of ``lock_within`` -- ``locked_balance -> available_balance``, same
+        caller-supplied-``em``/already-open-transaction contract. Used both by
+        ``SubscriptionsService``'s ``CANCELLED``/``REFUNDED`` transitions (return *everything*
+        that was locked) and by the allocation engine's pro-rata path (return only the
+        *unallocated excess* of what was locked -- see ``SubscriptionsService.allocate``). Same
+        no-``LedgerEntry`` reasoning as ``lock_within`` -- total balance is unchanged.
+        """
+        fresh = await em.find_one(LedgerAccount, FindOptions(where={"id": account.id}))
+        if float(fresh.locked_balance) < amount:
+            raise ConflictException(t("ledger.error.insufficient_locked_balance"))
+        new_available = float(fresh.available_balance) + amount
+        new_locked = float(fresh.locked_balance) - amount
+        await em.update(LedgerAccount, fresh.id, {"available_balance": new_available, "locked_balance": new_locked})
+        return fresh
+
+    async def settle_within(
+        self, em: Any, account: LedgerAccount, amount: float, *, reference_id: int
+    ) -> LedgerEntry:
+        """Consumes ``locked_balance`` outright, same caller-supplied-``em`` contract -- called
+        once a subscription's locked funds are actually spent on an allocated ``TokenHolding``
+        (``SubscriptionsService.allocate``). Unlike lock/unlock, this **does** shrink the account's
+        total balance (funds have left the investor's ledger account, paid for the asset), so it
+        **does** write a ``LedgerEntry`` -- ``entry_type="DEBIT_SUBSCRIPTION_SETTLEMENT"``,
+        ``reference_type="SUBSCRIPTION"`` -- to stay consistent with Phase 5's "every
+        balance-affecting event gets an entry" rule. See ``LedgerEntry.LEDGER_ENTRY_TYPES``'s
+        docstring for why ``balance_after`` here is ``locked_balance`` after the debit rather than
+        ``available_balance`` (which this call never touches). ``idempotency_key`` is deterministic
+        in ``reference_id`` (the ``Subscription.id``) alone -- a subscription is only ever settled
+        once, at the single ``CONFIRMED -> ALLOCATED`` transition its own state machine allows.
+        """
+        fresh = await em.find_one(LedgerAccount, FindOptions(where={"id": account.id}))
+        if float(fresh.locked_balance) < amount:
+            raise ConflictException(t("ledger.error.insufficient_locked_balance"))
+        new_locked = float(fresh.locked_balance) - amount
+        await em.update(LedgerAccount, fresh.id, {"locked_balance": new_locked})
+        return await em.save(
+            LedgerEntry(  # type: ignore[call-arg]
+                account=fresh,
+                entry_type="DEBIT_SUBSCRIPTION_SETTLEMENT",
+                amount=amount,
+                currency=fresh.currency,
+                balance_after=new_locked,
+                reference_type="SUBSCRIPTION",
+                reference_id=reference_id,
+                idempotency_key=f"subscription:{reference_id}:settle",
+            )
+        )
+
+    async def lock_funds(self, investor: InvestorProfile, amount: float) -> LedgerAccount:
+        """Standalone, self-transacting wrapper around ``lock_within`` for callers that only need
+        to lock in isolation (not used by ``SubscriptionsService``, which needs the lock atomic
+        together with its own ``Subscription`` row write -- see ``lock_within``'s docstring --
+        kept here for API completeness/direct unit-testability of the lock primitive alone)."""
+        account = await self._get_or_create_account(investor)
+
+        async def work(em: Any) -> LedgerAccount:
+            return await self.lock_within(em, account, amount)
+
+        await self.ds.transaction(work)
+        return await self._get_or_create_account(investor)
+
+    async def unlock_funds(self, investor: InvestorProfile, amount: float) -> LedgerAccount:
+        """Standalone, self-transacting wrapper around ``unlock_within`` -- see ``lock_funds``'s
+        docstring for why ``SubscriptionsService`` uses ``unlock_within`` directly instead."""
+        account = await self._get_or_create_account(investor)
+
+        async def work(em: Any) -> LedgerAccount:
+            return await self.unlock_within(em, account, amount)
+
+        await self.ds.transaction(work)
+        return await self._get_or_create_account(investor)
+
     # -- internals ------------------------------------------------------------------------------
 
     async def _get_or_create_account(self, investor: InvestorProfile) -> LedgerAccount:

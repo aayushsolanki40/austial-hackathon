@@ -100,3 +100,34 @@ variable "jwt_refresh_token_ttl_days" {
   type        = number
   default     = 30
 }
+
+# --- Phase 5 additions: ledger funding beneficiary display details -----------
+
+# Static wire/beneficiary details `LedgerService` shows investors on every `FundingInstruction`
+# (see `backend/src/modules/ledger/ledger_service.py`) -- same for every instruction, differs only
+# per deployment environment, so config-driven rather than hardcoded. Demo values only, not a real
+# bank account; not marked `sensitive` since they're meant to be displayed back to investors.
+
+variable "ledger_beneficiary_name" {
+  description = "Value for the app's LEDGER_BENEFICIARY_NAME env var -- demo wire beneficiary display name."
+  type        = string
+  default     = "Swadely Demo Custody Account"
+}
+
+variable "ledger_beneficiary_bank_name" {
+  description = "Value for the app's LEDGER_BENEFICIARY_BANK_NAME env var -- demo wire beneficiary bank name."
+  type        = string
+  default     = "GIFT City Demo Bank"
+}
+
+variable "ledger_beneficiary_account_number" {
+  description = "Value for the app's LEDGER_BENEFICIARY_ACCOUNT_NUMBER env var -- demo wire account number, not a real account."
+  type        = string
+  default     = "000123456789"
+}
+
+variable "ledger_beneficiary_swift_bic" {
+  description = "Value for the app's LEDGER_BENEFICIARY_SWIFT_BIC env var -- demo SWIFT/BIC code."
+  type        = string
+  default     = "GIFTINBBDEM"
+}

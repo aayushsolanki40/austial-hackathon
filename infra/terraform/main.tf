@@ -247,20 +247,24 @@ resource "aws_instance" "backend" {
   user_data_replace_on_change = true
 
   user_data = templatefile("${path.module}/user_data.sh.tpl", {
-    ecr_repo_url                 = aws_ecr_repository.backend.repository_url
-    ecr_registry                 = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com"
-    aws_region                   = var.aws_region
-    image_tag                    = var.container_image_tag
-    app_port                     = var.app_port
-    db_endpoint                  = aws_db_instance.main.endpoint
-    db_username                  = var.db_username
-    db_password                  = var.db_password
-    db_name                      = var.db_name
-    api_key                      = var.api_key
-    jwt_secret                   = random_password.jwt_secret.result
-    jwt_access_token_ttl_minutes = var.jwt_access_token_ttl_minutes
-    jwt_refresh_token_ttl_days   = var.jwt_refresh_token_ttl_days
-    documents_s3_bucket          = aws_s3_bucket.documents.id
+    ecr_repo_url                      = aws_ecr_repository.backend.repository_url
+    ecr_registry                      = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com"
+    aws_region                        = var.aws_region
+    image_tag                         = var.container_image_tag
+    app_port                          = var.app_port
+    db_endpoint                       = aws_db_instance.main.endpoint
+    db_username                       = var.db_username
+    db_password                       = var.db_password
+    db_name                           = var.db_name
+    api_key                           = var.api_key
+    jwt_secret                        = random_password.jwt_secret.result
+    jwt_access_token_ttl_minutes      = var.jwt_access_token_ttl_minutes
+    jwt_refresh_token_ttl_days        = var.jwt_refresh_token_ttl_days
+    documents_s3_bucket               = aws_s3_bucket.documents.id
+    ledger_beneficiary_name           = var.ledger_beneficiary_name
+    ledger_beneficiary_bank_name      = var.ledger_beneficiary_bank_name
+    ledger_beneficiary_account_number = var.ledger_beneficiary_account_number
+    ledger_beneficiary_swift_bic      = var.ledger_beneficiary_swift_bic
   })
 
   root_block_device {

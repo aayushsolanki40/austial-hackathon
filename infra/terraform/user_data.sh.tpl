@@ -73,6 +73,10 @@ docker run -d \
   -e REDIS_URL="$REDIS_URL" \
   -e DOCUMENTS_S3_BUCKET="${documents_s3_bucket}" \
   -e AWS_REGION="${aws_region}" \
+  -e LEDGER_BENEFICIARY_NAME="${ledger_beneficiary_name}" \
+  -e LEDGER_BENEFICIARY_BANK_NAME="${ledger_beneficiary_bank_name}" \
+  -e LEDGER_BENEFICIARY_ACCOUNT_NUMBER="${ledger_beneficiary_account_number}" \
+  -e LEDGER_BENEFICIARY_SWIFT_BIC="${ledger_beneficiary_swift_bic}" \
   "$IMAGE"
 
 docker run -d \
@@ -84,6 +88,10 @@ docker run -d \
   -e REDIS_URL="$REDIS_URL" \
   -e DOCUMENTS_S3_BUCKET="${documents_s3_bucket}" \
   -e AWS_REGION="${aws_region}" \
+  -e LEDGER_BENEFICIARY_NAME="${ledger_beneficiary_name}" \
+  -e LEDGER_BENEFICIARY_BANK_NAME="${ledger_beneficiary_bank_name}" \
+  -e LEDGER_BENEFICIARY_ACCOUNT_NUMBER="${ledger_beneficiary_account_number}" \
+  -e LEDGER_BENEFICIARY_SWIFT_BIC="${ledger_beneficiary_swift_bic}" \
   "$IMAGE" celery -A src.jobs.celery_app worker --loglevel=info
 
 echo "user-data complete"

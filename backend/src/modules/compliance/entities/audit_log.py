@@ -5,12 +5,15 @@ every write site in this codebase (today, only ``AuditInterceptor``) must
 call ``Repository.save()`` to insert a fresh row, never
 ``Repository.update()``/``Repository.delete()``.
 
-Enforcement is convention-only today: ``austial.orm`` has no
-``@Entity(append_only=True)`` (or equivalent) that would reject an
-``UPDATE``/``DELETE`` at the framework level. That gap is tracked in
-``AUSTIAL_BUILD_PLAN.md`` (framework-gap item 3) as follow-up work for
-``austial-framework-dev`` before Phase 5's ``LedgerEntry`` ships -- not
-something to work around here.
+Enforced at the framework level via ``@Entity(append_only=True)`` --
+``EntityManager`` raises ``AppendOnlyViolationError`` on any UPDATE-shaped
+``save()``, ``Repository.update()``, ``Repository.remove()``, or
+``Repository.delete()`` against this entity. INSERT (a fresh row via
+``save()`` with no PK set) is unaffected -- that's the only legitimate write
+path here. See ``austial-py-doc/content/techniques/database.mdx``'s
+"Append-only entities" section for the full contract (this is an
+application-level `EntityManager` guard, not a DB-level trigger/permission --
+raw SQL run outside the ORM is not covered).
 """
 
 from __future__ import annotations
@@ -21,7 +24,7 @@ from typing import Any
 from austial.orm import Column, CreateDateColumn, Entity, JSONType, PrimaryGeneratedColumn
 
 
-@Entity()
+@Entity(append_only=True)
 class AuditLog:
     id: int = PrimaryGeneratedColumn()
     actor_user_id: int = Column(nullable=True)

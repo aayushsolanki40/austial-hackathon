@@ -361,7 +361,10 @@ class KycService:
         existing = await (
             self.submissions.create_query_builder("s")
             .where("s.investor_id = :investor_id", {"investor_id": investor_id})
-            .and_where("s.status NOT IN (:verified, :rejected)", {"verified": "VERIFIED", "rejected": "REJECTED"})
+            .and_where(
+                "CAST(s.status AS TEXT) NOT IN (:verified, :rejected)",
+                {"verified": "VERIFIED", "rejected": "REJECTED"},
+            )
             .get_one()
         )
         return existing is not None

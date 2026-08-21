@@ -1,0 +1,9 @@
+{
+  "route_prefix": "health",
+  "protected_route_path": "protected",
+  "protected_message": "You presented a valid x-api-key header.",
+  "check": {
+    "memory_heap_label": "memory_heap",
+    "database_label": "database"
+  }
+}

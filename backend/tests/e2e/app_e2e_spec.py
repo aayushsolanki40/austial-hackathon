@@ -1,0 +1,43 @@
+"""End-to-end test -- mirrors a Nest ``*.e2e-spec.ts`` test: spin up a real
+(in-process) app via ``austial.testing`` + ``httpx``'s ASGI transport, and hit
+routes exactly like a client would, no mocking of the HTTP layer at all.
+"""
+
+from __future__ import annotations
+
+import pytest
+from austial.orm import DataSource, OrmModule
+from austial.testing import Test
+from httpx import ASGITransport, AsyncClient
+
+from src.app_controller import AppController
+from src.app_service import AppService
+from src.modules.health.health_module import HealthModule
+
+
+@pytest.mark.asyncio
+async def test_root_and_health_endpoints():
+    # In-memory SQLite stands in for Postgres here -- `DatabaseHealthIndicator` just needs a real
+    # `DataSource` to ping, and this keeps the e2e test hermetic (no external Postgres dependency).
+    orm_module = OrmModule.for_root(type_="sqlite", url="sqlite+aiosqlite:///:memory:", entities=[])
+    module = await Test.create_testing_module(
+        imports=[orm_module, HealthModule],
+        controllers=[AppController],
+        providers=[AppService],
+    ).compile()
+    await module.get(DataSource).initialize()
+    app = module.create_austial_application()
+    await app.init()
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+        root_response = await client.get("/")
+        assert root_response.status_code == 200
+        assert "message" in root_response.json()
+
+        health_response = await client.get("/health")
+        assert health_response.status_code == 200
+        assert health_response.json()["status"] == "ok"
+
+        protected_denied = await client.get("/health/protected")
+        assert protected_denied.status_code == 403

@@ -1,0 +1,7 @@
+{
+  "route_prefix": "admin",
+  "error": {
+    "user_not_found": "No user exists with that ID.",
+    "invalid_role": "role must be one of INVESTOR, ISSUER, COMPLIANCE_OFFICER, ADMIN."
+  }
+}

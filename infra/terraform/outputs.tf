@@ -37,3 +37,8 @@ output "s3_bucket_name" {
   description = "S3 bucket name for the Angular frontend build output."
   value       = aws_s3_bucket.frontend.id
 }
+
+output "documents_s3_bucket_name" {
+  description = "Private S3 bucket name for KYC/disclosure documents (DOCUMENTS_S3_BUCKET env var)."
+  value       = aws_s3_bucket.documents.id
+}

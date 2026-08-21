@@ -1,0 +1,79 @@
+# Local dev stack for the Swadely backend -- Postgres, Redis, the API, and a
+# Celery worker, all as sibling containers (mirrors the real deployment shape
+# on the single cost-capped EC2 host: no managed RDS/ElastiCache here, just
+# plain containers -- see `infra/terraform/README.md` for the live-AWS
+# equivalent). Not used by the live deployment itself (that's a single EC2
+# instance running these images directly, not docker-compose) -- this file is
+# for `docker compose up` on a laptop only.
+#
+# Usage:
+#   cp .env.example .env   # then fill in real secrets
+#   docker compose up --build
+#   docker compose exec app python -m alembic upgrade head   # first run only
+#
+# `app` and `worker` share the same image (built once from ./Dockerfile) and
+# the same `.env` -- they differ only in the container command, exactly like
+# a real deployment would run "web" and "worker" processes from one image.
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: swadely
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: swadely_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U swadely -d swadely_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://swadely:${POSTGRES_PASSWORD:-changeme}@postgres:5432/swadely_dev
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["python", "src/main.py"]
+
+  worker:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://swadely:${POSTGRES_PASSWORD:-changeme}@postgres:5432/swadely_dev
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["celery", "-A", "src.jobs.celery_app", "worker", "--loglevel=info"]
+
+volumes:
+  postgres_data:

@@ -25,10 +25,23 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 COPY vendor ./vendor
 
 # Install the vendored austial-py wheels (order doesn't matter, pip resolves
-# from the local dir), plus the app's other runtime dependency.
-RUN pip install --no-cache-dir ./vendor/*.whl "asyncpg>=0.29.0" \
+# from the local dir), plus every other runtime dependency `pyproject.toml`
+# declares under `[project.dependencies]` (kept in sync with that list by
+# hand -- this image doesn't run `uv sync` itself, see the note above on why).
+RUN pip install --no-cache-dir ./vendor/*.whl \
+    "asyncpg>=0.29.0" \
+    "passlib[bcrypt]>=1.7.4" \
+    "bcrypt<4.1" \
+    "python-jose[cryptography]>=3.3.0" \
+    "pydantic[email]>=2.0.0" \
+    "alembic>=1.13.0" \
+    "celery[redis]>=5.4.0" \
+    "redis>=5.0.0" \
+    "boto3>=1.34.0" \
     && rm -rf ./vendor
 
+COPY alembic ./alembic
+COPY alembic.ini ./alembic.ini
 COPY src ./src
 
 EXPOSE 8000

@@ -81,6 +81,10 @@ class AuthService:
         user = await self.users.find_one_by({"email": dto.email})
         if user is None or not _pwd_context.verify(dto.password, user.password_hash):
             raise UnauthorizedException(t("auth.error.invalid_credentials"))
+        if not user.is_active:
+            # Phase 1.10 -- `PATCH /admin/users/:id/suspend` sets `is_active=False`; a suspended
+            # user must actually be blocked from signing in, not just flagged for display.
+            raise UnauthorizedException(t("auth.error.account_suspended"))
 
         tokens = await self._issue_token_pair(user)
         return AuthResponseDto(user=_to_user_dto(user), tokens=tokens)

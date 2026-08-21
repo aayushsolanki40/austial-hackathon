@@ -22,6 +22,7 @@ from src.modules.ledger.ledger_module import LedgerModule
 from src.modules.redemptions.redemptions_module import RedemptionsModule
 from src.modules.subscriptions.subscriptions_module import SubscriptionsModule
 from src.modules.valuation.valuation_module import ValuationModule
+from src.modules.ml.ml_module import MlModule
 from src.storage.storage_module import StorageModule
 
 
@@ -56,6 +57,7 @@ from src.storage.storage_module import StorageModule
         ValuationModule,
         RedemptionsModule,
         ComplianceModule,
+        MlModule,
         JobsModule,
         StorageModule,
         AdminModule,

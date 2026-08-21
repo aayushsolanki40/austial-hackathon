@@ -1,0 +1,50 @@
+.audit-log-viewer {
+  padding: 1.5rem;
+
+  h1 {
+    margin: 0 0 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+
+  .filters {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+
+    mat-form-field {
+      min-width: 180px;
+    }
+
+    button {
+      height: 40px;
+    }
+  }
+
+  .empty-state {
+    padding: 2rem;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .log-table {
+    width: 100%;
+
+    .actor-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+
+      .actor-email {
+        font-weight: 500;
+      }
+
+      .actor-name {
+        font-size: 0.875rem;
+        color: rgba(0, 0, 0, 0.6);
+      }
+    }
+  }
+}

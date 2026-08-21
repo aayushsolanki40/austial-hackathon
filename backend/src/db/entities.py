@@ -3,7 +3,9 @@ from __future__ import annotations
 from src.modules.assets.entities.asset import Asset
 from src.modules.auth.entities.refresh_token import RefreshToken
 from src.modules.auth.entities.user import User
+from src.modules.compliance.entities.aml_alert import AmlAlert
 from src.modules.compliance.entities.audit_log import AuditLog
+from src.modules.compliance.entities.compliance_report import ComplianceReport
 from src.modules.custodians.entities.custodian import Custodian
 from src.modules.holdings.entities.token_holding import TokenHolding
 from src.modules.investors.entities.investor_profile import InvestorProfile
@@ -24,6 +26,7 @@ from src.modules.redemptions.entities.distribution import Distribution
 from src.modules.redemptions.entities.redemption_request import RedemptionRequest
 from src.modules.subscriptions.entities.subscription import Subscription
 from src.modules.valuation.entities.valuation_feed import ValuationFeed
+from src.modules.ml.entities.ml_prediction import MlPrediction
 
 ALL_ENTITIES = [
     User,
@@ -34,6 +37,8 @@ ALL_ENTITIES = [
     KycDocument,
     RiskDisclosureConsent,
     AuditLog,
+    AmlAlert,
+    ComplianceReport,
     Issuer,
     Custodian,
     Asset,
@@ -50,4 +55,5 @@ ALL_ENTITIES = [
     ValuationFeed,
     RedemptionRequest,
     Distribution,
+    MlPrediction,
 ]

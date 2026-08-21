@@ -1,0 +1,36 @@
+{
+  "route_prefix": "ml",
+  "models": {
+    "title": "ML Models",
+    "list_success": "Models retrieved successfully"
+  },
+  "predictions": {
+    "title": "ML Predictions",
+    "query_success": "Predictions retrieved successfully",
+    "insufficient_history": "Insufficient historical data for prediction"
+  },
+  "kyc": {
+    "ocr_extraction": "OCR extraction completed",
+    "liveness_check": "Liveness verification completed",
+    "face_match": "Face matching completed"
+  },
+  "aml": {
+    "scoring": "AML risk scoring completed",
+    "risk_levels": {
+      "low": "Low risk",
+      "medium": "Medium risk",
+      "high": "High risk",
+      "critical": "Critical risk"
+    }
+  },
+  "valuation": {
+    "anomaly_detected": "Valuation anomaly detected",
+    "anomaly_check": "Anomaly detection completed"
+  },
+  "contract": {
+    "risk_assessment": "Contract risk assessment completed"
+  },
+  "issuer": {
+    "trust_score": "Issuer trust score calculated"
+  }
+}

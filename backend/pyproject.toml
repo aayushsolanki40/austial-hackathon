@@ -14,6 +14,12 @@ dependencies = [
     "celery[redis]>=5.4.0",
     "redis>=5.0.0",
     "boto3>=1.34.0",
+    "scikit-learn>=1.5",
+    "xgboost>=2.1",
+    "joblib>=1.4",
+    "pytesseract>=0.3.13",
+    "opencv-python>=4.10",
+    "reportlab>=4.2.0",
 ]
 
 [project.optional-dependencies]

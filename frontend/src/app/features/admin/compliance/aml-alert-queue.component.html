@@ -1,0 +1,108 @@
+<div class="aml-alert-queue">
+  <h1>{{ 'compliance.aml_queue.title' | t }}</h1>
+
+  <div class="filters">
+    <mat-form-field>
+      <mat-label>{{ 'compliance.aml_queue.status_filter' | t }}</mat-label>
+      <mat-select [(ngModel)]="statusFilter" (ngModelChange)="applyFilters()">
+        <mat-option value="">{{ 'compliance.aml_queue.all_statuses' | t }}</mat-option>
+        @for (status of statusOptions; track status) {
+          <mat-option [value]="status">{{ status }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>{{ 'compliance.aml_queue.alert_type_filter' | t }}</mat-label>
+      <mat-select [(ngModel)]="alertTypeFilter" (ngModelChange)="applyFilters()">
+        <mat-option value="">{{ 'compliance.aml_queue.all_types' | t }}</mat-option>
+        @for (type of alertTypeOptions; track type) {
+          <mat-option [value]="type">{{ type }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-checkbox [(ngModel)]="assignedToMeFilter" (ngModelChange)="applyFilters()">
+      {{ 'compliance.aml_queue.assigned_to_me' | t }}
+    </mat-checkbox>
+  </div>
+
+  @if (state() === 'loading') {
+    <app-admin-state [state]="'loading'" (retry)="load()" />
+  } @else if (state() === 'error') {
+    <app-admin-state [state]="'error'" (retry)="load()" />
+  } @else {
+    @if (alerts().length === 0) {
+      <p class="empty-state">{{ 'compliance.aml_queue.empty' | t }}</p>
+    } @else {
+      <table mat-table [dataSource]="alerts()" class="alert-table">
+        <ng-container matColumnDef="transaction_ref">
+          <th mat-header-cell *matHeaderCellDef>{{ 'compliance.aml_queue.transaction_ref_column' | t }}</th>
+          <td mat-cell *matCellDef="let alert">{{ alert.transaction_ref }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="investor_name">
+          <th mat-header-cell *matHeaderCellDef>{{ 'compliance.aml_queue.investor_name_column' | t }}</th>
+          <td mat-cell *matCellDef="let alert">{{ alert.investor_name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="alert_type">
+          <th mat-header-cell *matHeaderCellDef>{{ 'compliance.aml_queue.alert_type_column' | t }}</th>
+          <td mat-cell *matCellDef="let alert">{{ alert.alert_type }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="risk_score">
+          <th mat-header-cell *matHeaderCellDef>{{ 'compliance.aml_queue.risk_score_column' | t }}</th>
+          <td mat-cell *matCellDef="let alert">
+            <span [class]="'risk-score ' + riskScoreClass(alert.risk_score)">{{ alert.risk_score }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>{{ 'compliance.aml_queue.status_column' | t }}</th>
+          <td mat-cell *matCellDef="let alert">
+            <app-status-badge [status]="alert.status" [colorClass]="statusColor(alert.status)" />
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="assigned_officer_name">
+          <th mat-header-cell *matHeaderCellDef>{{ 'compliance.aml_queue.assigned_to_column' | t }}</th>
+          <td mat-cell *matCellDef="let alert">{{ alert.assigned_officer_name || '—' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="created_at">
+          <th mat-header-cell *matHeaderCellDef>{{ 'compliance.aml_queue.created_at_column' | t }}</th>
+          <td mat-cell *matCellDef="let alert">{{ alert.created_at | date: 'short' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>{{ 'compliance.aml_queue.actions_column' | t }}</th>
+          <td mat-cell *matCellDef="let alert">
+            @if (!alert.assigned_officer_id) {
+              <button
+                mat-stroked-button
+                (click)="assignToMe(alert)"
+                [disabled]="isActioning(alert.id)"
+              >
+                {{ 'compliance.aml_queue.assign_to_me_action' | t }}
+              </button>
+            }
+            @if (alert.status === 'OPEN' || alert.status === 'UNDER_REVIEW') {
+              <button
+                mat-flat-button
+                color="primary"
+                (click)="openResolveDialog(alert)"
+                [disabled]="isActioning(alert.id)"
+              >
+                {{ 'compliance.aml_queue.resolve_action' | t }}
+              </button>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    }
+  }
+</div>

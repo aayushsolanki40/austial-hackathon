@@ -1,5 +1,19 @@
 {
+  "route_prefix": "compliance",
   "audit": {
     "unknown_entity_type_label": "Unknown"
+  },
+  "error": {
+    "investor_not_found": "No investor profile exists with that ID.",
+    "alert_not_found": "No AML alert exists with that ID.",
+    "report_not_found": "No compliance report exists with that ID.",
+    "user_not_found": "No user exists with that ID.",
+    "officer_role_required": "Assigned officer must have COMPLIANCE_OFFICER or ADMIN role.",
+    "alert_already_resolved": "This alert has already been resolved.",
+    "invalid_resolution_status": "Invalid resolution status {status}. Allowed: {allowed}.",
+    "report_pdf_not_ready": "PDF report is still being generated. Try again in a few moments."
+  },
+  "success": {
+    "deletion_queued": "Deletion request queued for compliance review. No immediate deletion will occur (7-year retention rule)."
   }
 }

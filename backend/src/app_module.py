@@ -1,5 +1,3 @@
-"""Root application module -- mirrors Nest's ``src/app.module.ts``."""
-
 from austial import Module
 from austial.common.middleware import LoggingMiddleware, MiddlewareConsumer
 from austial.config import ConfigModule, ConfigService
@@ -21,7 +19,9 @@ from src.modules.issuance.issuance_module import IssuanceModule
 from src.modules.issuers.issuers_module import IssuersModule
 from src.modules.kyc.kyc_module import KycModule
 from src.modules.ledger.ledger_module import LedgerModule
+from src.modules.redemptions.redemptions_module import RedemptionsModule
 from src.modules.subscriptions.subscriptions_module import SubscriptionsModule
+from src.modules.valuation.valuation_module import ValuationModule
 from src.storage.storage_module import StorageModule
 
 
@@ -53,6 +53,8 @@ from src.storage.storage_module import StorageModule
         LedgerModule,
         HoldingsModule,
         SubscriptionsModule,
+        ValuationModule,
+        RedemptionsModule,
         ComplianceModule,
         JobsModule,
         StorageModule,

@@ -224,42 +224,112 @@ class LedgerService:
         account = await self._get_or_create_account(investor)
         if float(account.available_balance) < dto.amount:
             raise UnprocessableEntityException(t("ledger.error.insufficient_available_balance"))
-        now = _now()
 
         async def work(em: Any) -> tuple[PayoutInstruction, LedgerEntry]:
-            fresh_account = await em.find_one(LedgerAccount, FindOptions(where={"id": account.id}))
-            if float(fresh_account.available_balance) < dto.amount:
-                raise UnprocessableEntityException(t("ledger.error.insufficient_available_balance"))
-            new_balance = float(fresh_account.available_balance) - dto.amount
-            await em.update(LedgerAccount, fresh_account.id, {"available_balance": new_balance})
-            payout = await em.save(
-                PayoutInstruction(  # type: ignore[call-arg]
-                    investor=investor,
-                    amount=dto.amount,
-                    currency=dto.currency,
-                    status="RECORDED",
-                    memo=dto.memo,
-                    recorded_by_user_id=officer_id,
-                    recorded_at=now,
-                )
+            return await self.debit_payout_within(
+                em,
+                account,
+                dto.amount,
+                investor=investor,
+                currency=dto.currency,
+                memo=dto.memo,
+                officer_id=officer_id,
+                idempotency_key=dto.idempotency_key,
             )
-            entry = await em.save(
-                LedgerEntry(  # type: ignore[call-arg]
-                    account=fresh_account,
-                    entry_type="DEBIT_PAYOUT",
-                    amount=dto.amount,
-                    currency=dto.currency,
-                    balance_after=new_balance,
-                    reference_type="PAYOUT_INSTRUCTION",
-                    reference_id=payout.id,
-                    idempotency_key=dto.idempotency_key,
-                )
-            )
-            return payout, entry
 
         payout, _entry = await self.ds.transaction(work)
         payout.investor = investor  # `em.save()` returns the instance as constructed -- already set, kept explicit.
         return _to_payout_dto(payout)
+
+    async def debit_payout_within(
+        self,
+        em: Any,
+        account: LedgerAccount,
+        amount: float,
+        *,
+        investor: InvestorProfile,
+        currency: str,
+        memo: str | None,
+        officer_id: int,
+        idempotency_key: str,
+    ) -> tuple[PayoutInstruction, LedgerEntry]:
+        """The debit-out-of-the-platform primitive extracted from ``record_payout_instruction`` --
+        writes a ``PayoutInstruction`` row plus a ``DEBIT_PAYOUT`` ``LedgerEntry`` against a
+        caller-supplied ``EntityManager`` inside an already-open transaction, mirroring
+        ``lock_within``/``settle_within``'s identical caller-owns-the-transaction contract. Used
+        both by ``record_payout_instruction`` (self-transacting, via the ``work`` closure above)
+        and by ``RedemptionsService.complete``/``process_distribution`` (which need this debit to
+        commit atomically alongside their own ``RedemptionRequest``/``Distribution`` row writes --
+        see those methods' docstrings). Fresh-re-reads the account and re-checks
+        ``available_balance`` (mirrors ``lock_within``'s identical check-inside-the-transaction
+        pattern) so a concurrent debit against the same account can't race past the balance check.
+        """
+        fresh_account = await em.find_one(LedgerAccount, FindOptions(where={"id": account.id}))
+        if float(fresh_account.available_balance) < amount:
+            raise UnprocessableEntityException(t("ledger.error.insufficient_available_balance"))
+        new_balance = float(fresh_account.available_balance) - amount
+        await em.update(LedgerAccount, fresh_account.id, {"available_balance": new_balance})
+        now = _now()
+        payout = await em.save(
+            PayoutInstruction(  # type: ignore[call-arg]
+                investor=investor,
+                amount=amount,
+                currency=currency,
+                status="RECORDED",
+                memo=memo,
+                recorded_by_user_id=officer_id,
+                recorded_at=now,
+            )
+        )
+        entry = await em.save(
+            LedgerEntry(  # type: ignore[call-arg]
+                account=fresh_account,
+                entry_type="DEBIT_PAYOUT",
+                amount=amount,
+                currency=currency,
+                balance_after=new_balance,
+                reference_type="PAYOUT_INSTRUCTION",
+                reference_id=payout.id,
+                idempotency_key=idempotency_key,
+            )
+        )
+        return payout, entry
+
+    async def credit_within(
+        self,
+        em: Any,
+        account: LedgerAccount,
+        amount: float,
+        *,
+        entry_type: str,
+        reference_type: str,
+        reference_id: int,
+        idempotency_key: str,
+    ) -> LedgerEntry:
+        """The credit-into-the-ledger-account primitive backing ``RedemptionsService.complete``/
+        ``process_distribution`` -- mirrors ``confirm_funding_instruction``'s balance-increment
+        shape but, unlike that method, runs against a caller-supplied ``EntityManager`` inside an
+        already-open transaction (mirrors ``lock_within``/``debit_payout_within``'s identical
+        contract), since a redemption/distribution credit must commit atomically alongside the
+        caller's own state-transition row write. ``entry_type`` is caller-supplied (``
+        CREDIT_REDEMPTION``/``CREDIT_DISTRIBUTION``, see ``LedgerEntry.LEDGER_ENTRY_TYPES``'s
+        docstring) rather than hardcoded here, since this single primitive backs both callers.
+        """
+        fresh_account = await em.find_one(LedgerAccount, FindOptions(where={"id": account.id}))
+        new_balance = float(fresh_account.available_balance) + amount
+        await em.update(LedgerAccount, fresh_account.id, {"available_balance": new_balance})
+        return await em.save(
+            LedgerEntry(  # type: ignore[call-arg]
+                account=fresh_account,
+                entry_type=entry_type,
+                amount=amount,
+                currency=fresh_account.currency,
+                balance_after=new_balance,
+                reference_type=reference_type,
+                reference_id=reference_id,
+                idempotency_key=idempotency_key,
+            )
+        )
 
     # -- lock / unlock / settle -- Phase 6, consumed by ``SubscriptionsService`` -----------------
     #

@@ -1,0 +1,15 @@
+{
+  "route_prefix": "redemptions",
+  "error": {
+    "investor_profile_required": "You must create an investor profile before redeeming.",
+    "holding_not_found": "No holding exists with that ID.",
+    "holding_not_active": "This holding is not active and cannot be redeemed.",
+    "units_exceed_holding": "The requested units exceed the holding's available quantity.",
+    "request_not_found": "No redemption request exists with that ID.",
+    "invalid_transition": "Cannot move a redemption request from {current} to {target}.",
+    "token_series_not_found": "No token series exists with that ID.",
+    "distribution_not_found": "No distribution exists with that ID.",
+    "distribution_not_draft": "Only a draft distribution can be processed.",
+    "distribution_no_eligible_holders": "This token series has no active holders to distribute to."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "route_prefix": "valuation",
+  "error": {
+    "token_series_not_found": "No token series exists with that ID.",
+    "feed_not_found": "No valuation feed exists with that ID.",
+    "feed_not_quarantined": "Only a quarantined valuation feed can be approved."
+  }
+}

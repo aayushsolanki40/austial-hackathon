@@ -2,6 +2,14 @@
 
 Quick-start scripts for testing the platform.
 
+## 🌐 Production Environment
+
+**Live Deployment:**
+- Backend: `http://52.6.51.39:8000`
+- Frontend: `http://austial-demo-frontend-459141725579.s3-website-us-east-1.amazonaws.com`
+
+See [`../PRODUCTION_ENDPOINTS.md`](../PRODUCTION_ENDPOINTS.md) for a complete API reference.
+
 ## Available Scripts
 
 ### `test-quick.sh`
@@ -26,7 +34,11 @@ Quick-start scripts for testing the platform.
 **Phase 8 & 9 focused tests** — tests newly completed Compliance & Reporting + AI/ML features.
 
 ```bash
+# Test against production (default)
 ./scripts/test-phase8-9.sh
+
+# Test against local development server
+API_URL=http://localhost:8000 ./scripts/test-phase8-9.sh
 ```
 
 **What it tests:**

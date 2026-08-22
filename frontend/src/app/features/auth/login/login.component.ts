@@ -1,11 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, Validators, NonNullableFormBuilder } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { postAuthRedirectUrl } from '../../../core/auth/post-auth-redirect';
@@ -15,16 +10,7 @@ import { I18nService } from '../../../core/i18n/i18n.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    RouterLink,
-    MatButtonModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatProgressSpinnerModule,
-    TPipe,
-  ],
+  imports: [ReactiveFormsModule, RouterLink, TPipe],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })

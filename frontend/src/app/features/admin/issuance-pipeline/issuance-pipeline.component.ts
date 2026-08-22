@@ -1,9 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
 
 import { TPipe } from '../../../core/i18n/t.pipe';
@@ -36,7 +32,7 @@ type LoadState = 'loading' | 'error' | 'loaded';
 @Component({
   selector: 'app-issuance-pipeline',
   standalone: true,
-  imports: [FormsModule, RouterLink, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, AdminStateComponent, TPipe],
+  imports: [FormsModule, RouterLink, AdminStateComponent, TPipe],
   templateUrl: './issuance-pipeline.component.html',
   styleUrl: './issuance-pipeline.component.scss',
 })

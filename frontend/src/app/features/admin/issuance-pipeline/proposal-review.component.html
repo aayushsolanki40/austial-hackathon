@@ -1,216 +1,230 @@
-<section class="proposal-review">
-  <a [routerLink]="['/admin', 'issuance-pipeline']" class="proposal-review__back">{{ 'issuance.proposal_detail.back_to_list' | t }}</a>
+<section class="animate-fade-in max-w-3xl">
+  <a [routerLink]="['/admin', 'issuance-pipeline']" class="text-primary-600 hover:text-primary-700 font-medium mb-4 inline-block">{{ 'issuance.proposal_detail.back_to_list' | t }}</a>
 
   @switch (state()) {
     @case ('loading') {
-      <div class="proposal-review__loading">
-        <mat-spinner diameter="28" />
+      <div class="flex items-center gap-3 py-8">
+        <span class="spinner text-primary-600"></span>
         <span>{{ 'issuance.proposal_detail.loading' | t }}</span>
       </div>
     }
     @case ('error') {
-      <p class="proposal-review__error">{{ 'issuance.proposal_detail.error' | t }}</p>
-      <button mat-stroked-button (click)="load()">{{ 'issuance.proposal_detail.retry' | t }}</button>
+      <p class="text-red-600 mb-4">{{ 'issuance.proposal_detail.error' | t }}</p>
+      <button class="btn-outline" (click)="load()">{{ 'issuance.proposal_detail.retry' | t }}</button>
     }
     @case ('loaded') {
       @if (proposal(); as p) {
-        <h1>{{ 'issuance.proposal_detail.title' | t }} #{{ p.id }}</h1>
+        <h1 class="mb-6">{{ 'issuance.proposal_detail.title' | t }} #{{ p.id }}</h1>
 
-        <mat-card class="proposal-review__card">
-          <mat-card-content>
-            <dl class="proposal-review__details">
-              <dt>{{ 'issuance.proposal_detail.status_label' | t }}</dt>
-              <dd>{{ ('issuance.status_option.' + p.status.toLowerCase()) | t }}</dd>
+        <div class="card mb-6">
+          <dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm mb-4">
+            <dt class="font-medium text-slate-500">{{ 'issuance.proposal_detail.status_label' | t }}</dt>
+            <dd class="text-slate-900">{{ ('issuance.status_option.' + p.status.toLowerCase()) | t }}</dd>
 
-              <dt>{{ 'issuance.pipeline.asset_id_prefix' | t }}</dt>
-              <dd>{{ p.asset_id }}</dd>
+            <dt class="font-medium text-slate-500">{{ 'issuance.pipeline.asset_id_prefix' | t }}</dt>
+            <dd class="text-slate-900">{{ p.asset_id }}</dd>
 
-              <dt>{{ 'issuance.proposal_detail.total_units_label' | t }}</dt>
-              <dd>{{ p.total_units }}</dd>
+            <dt class="font-medium text-slate-500">{{ 'issuance.proposal_detail.total_units_label' | t }}</dt>
+            <dd class="text-slate-900">{{ p.total_units }}</dd>
 
-              <dt>{{ 'issuance.proposal_detail.unit_price_usd_label' | t }}</dt>
-              <dd>{{ p.unit_price_usd }}</dd>
+            <dt class="font-medium text-slate-500">{{ 'issuance.proposal_detail.unit_price_usd_label' | t }}</dt>
+            <dd class="text-slate-900">{{ p.unit_price_usd }}</dd>
 
-              <dt>{{ 'issuance.proposal_detail.min_subscription_label' | t }}</dt>
-              <dd>{{ p.min_subscription_units }}</dd>
+            <dt class="font-medium text-slate-500">{{ 'issuance.proposal_detail.min_subscription_label' | t }}</dt>
+            <dd class="text-slate-900">{{ p.min_subscription_units }}</dd>
 
-              <dt>{{ 'issuance.proposal_detail.subscription_window_label' | t }}</dt>
-              <dd>{{ p.subscription_start_at }} &ndash; {{ p.subscription_end_at }}</dd>
+            <dt class="font-medium text-slate-500">{{ 'issuance.proposal_detail.subscription_window_label' | t }}</dt>
+            <dd class="text-slate-900">{{ p.subscription_start_at }} &ndash; {{ p.subscription_end_at }}</dd>
 
-              @if (p.status === 'REJECTED' && p.rejection_reason) {
-                <dt>{{ 'issuance.proposal_detail.rejection_reason_label' | t }}</dt>
-                <dd>{{ p.rejection_reason }}</dd>
-              }
-
-              @if (p.ifsca_filing_reference) {
-                <dt>{{ 'issuance.proposal_detail.ifsca_filing_reference_label' | t }}</dt>
-                <dd>{{ p.ifsca_filing_reference }}</dd>
-              }
-
-              @if (p.ifsca_approval_reference) {
-                <dt>{{ 'issuance.proposal_detail.ifsca_approval_reference_label' | t }}</dt>
-                <dd>{{ p.ifsca_approval_reference }}</dd>
-              }
-            </dl>
-
-            @switch (p.status) {
-              @case ('DOCUMENTATION_REVIEW') {
-                <div class="proposal-review__actions">
-                  <button mat-flat-button color="primary" [disabled]="actioning()" (click)="approve()">
-                    {{ 'issuance.pipeline.approve_action' | t }}
-                  </button>
-
-                  <mat-form-field appearance="outline" class="proposal-review__reason-field">
-                    <mat-label>{{ 'issuance.pipeline.reject_reason_label' | t }}</mat-label>
-                    <input matInput [ngModel]="rejectReason()" (ngModelChange)="rejectReason.set($event)" />
-                  </mat-form-field>
-                  <button mat-stroked-button color="warn" [disabled]="actioning() || !rejectReason().trim()" (click)="reject()">
-                    {{ 'issuance.pipeline.reject_action' | t }}
-                  </button>
-                </div>
-              }
-              @case ('COMPLIANCE_APPROVED') {
-                <div class="proposal-review__actions">
-                  <mat-form-field appearance="outline" class="proposal-review__reason-field">
-                    <mat-label>{{ 'issuance.pipeline.filing_reference_label' | t }}</mat-label>
-                    <input matInput [ngModel]="filingReference()" (ngModelChange)="filingReference.set($event)" />
-                  </mat-form-field>
-                  <button mat-flat-button color="primary" [disabled]="actioning() || !filingReference().trim()" (click)="recordFiling()">
-                    {{ 'issuance.pipeline.record_filing_action' | t }}
-                  </button>
-                </div>
-              }
-              @case ('IFSCA_FILED') {
-                <div class="proposal-review__actions">
-                  <mat-form-field appearance="outline" class="proposal-review__reason-field">
-                    <mat-label>{{ 'issuance.pipeline.approval_reference_label' | t }}</mat-label>
-                    <input matInput [ngModel]="approvalReference()" (ngModelChange)="approvalReference.set($event)" />
-                  </mat-form-field>
-                  <button mat-flat-button color="primary" [disabled]="actioning() || !approvalReference().trim()" (click)="recordApproval()">
-                    {{ 'issuance.pipeline.record_approval_action' | t }}
-                  </button>
-
-                  <mat-form-field appearance="outline" class="proposal-review__reason-field">
-                    <mat-label>{{ 'issuance.pipeline.reject_reason_label' | t }}</mat-label>
-                    <input matInput [ngModel]="rejectReason()" (ngModelChange)="rejectReason.set($event)" />
-                  </mat-form-field>
-                  <button mat-stroked-button color="warn" [disabled]="actioning() || !rejectReason().trim()" (click)="reject()">
-                    {{ 'issuance.pipeline.reject_action' | t }}
-                  </button>
-                </div>
-              }
-              @case ('IFSCA_APPROVED') {
-                <div class="proposal-review__actions">
-                  <mat-form-field appearance="outline" class="proposal-review__reason-field">
-                    <mat-label>{{ 'issuance.launch.symbol_label' | t }}</mat-label>
-                    <input matInput [ngModel]="launchSymbol()" (ngModelChange)="launchSymbol.set($event)" />
-                  </mat-form-field>
-                  <mat-form-field appearance="outline" class="proposal-review__reason-field">
-                    <mat-label>{{ 'issuance.launch.contract_address_label' | t }}</mat-label>
-                    <input matInput [ngModel]="launchContractAddress()" (ngModelChange)="launchContractAddress.set($event)" />
-                  </mat-form-field>
-                  <button
-                    mat-flat-button
-                    color="primary"
-                    [disabled]="actioning() || !isLaunchable() || !launchSymbol().trim()"
-                    (click)="launch()"
-                  >
-                    {{ 'issuance.pipeline.launch_action' | t }}
-                  </button>
-                  @if (!isLaunchable()) {
-                    <span class="proposal-review__hint">{{ 'issuance.pipeline.launch_blocked_hint' | t }}</span>
-                  }
-                </div>
-              }
+            @if (p.status === 'REJECTED' && p.rejection_reason) {
+              <dt class="font-medium text-slate-500">{{ 'issuance.proposal_detail.rejection_reason_label' | t }}</dt>
+              <dd class="text-slate-900">{{ p.rejection_reason }}</dd>
             }
-          </mat-card-content>
-        </mat-card>
 
-        <mat-card class="proposal-review__card">
-          <mat-card-content>
-            <app-disclosure-checklist
-              [proposalId]="p.id"
-              [disclosures]="p.disclosures"
-              [missingDisclosureTypes]="p.missing_disclosure_types"
-              [disclosuresComplete]="p.disclosures_complete"
-              [uploadable]="false"
-              (uploaded)="onDisclosureUploaded()"
-            />
-          </mat-card-content>
-        </mat-card>
+            @if (p.ifsca_filing_reference) {
+              <dt class="font-medium text-slate-500">{{ 'issuance.proposal_detail.ifsca_filing_reference_label' | t }}</dt>
+              <dd class="text-slate-900">{{ p.ifsca_filing_reference }}</dd>
+            }
+
+            @if (p.ifsca_approval_reference) {
+              <dt class="font-medium text-slate-500">{{ 'issuance.proposal_detail.ifsca_approval_reference_label' | t }}</dt>
+              <dd class="text-slate-900">{{ p.ifsca_approval_reference }}</dd>
+            }
+          </dl>
+
+          @switch (p.status) {
+            @case ('DOCUMENTATION_REVIEW') {
+              <div class="flex flex-wrap items-end gap-3">
+                <button class="btn-primary" [disabled]="actioning()" (click)="approve()">
+                  {{ 'issuance.pipeline.approve_action' | t }}
+                </button>
+
+                <div class="form-group !mb-0 flex-1 min-w-[12rem]">
+                  <label class="form-label">{{ 'issuance.pipeline.reject_reason_label' | t }}</label>
+                  <input class="form-input" [ngModel]="rejectReason()" (ngModelChange)="rejectReason.set($event)" />
+                </div>
+                <button
+                  class="border-2 border-red-500 text-red-600 font-semibold rounded-lg px-6 py-3 hover:bg-red-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  [disabled]="actioning() || !rejectReason().trim()"
+                  (click)="reject()"
+                >
+                  {{ 'issuance.pipeline.reject_action' | t }}
+                </button>
+              </div>
+            }
+            @case ('COMPLIANCE_APPROVED') {
+              <div class="flex flex-wrap items-end gap-3">
+                <div class="form-group !mb-0 flex-1 min-w-[12rem]">
+                  <label class="form-label">{{ 'issuance.pipeline.filing_reference_label' | t }}</label>
+                  <input class="form-input" [ngModel]="filingReference()" (ngModelChange)="filingReference.set($event)" />
+                </div>
+                <button class="btn-primary" [disabled]="actioning() || !filingReference().trim()" (click)="recordFiling()">
+                  {{ 'issuance.pipeline.record_filing_action' | t }}
+                </button>
+              </div>
+            }
+            @case ('IFSCA_FILED') {
+              <div class="flex flex-wrap items-end gap-3">
+                <div class="form-group !mb-0 flex-1 min-w-[12rem]">
+                  <label class="form-label">{{ 'issuance.pipeline.approval_reference_label' | t }}</label>
+                  <input class="form-input" [ngModel]="approvalReference()" (ngModelChange)="approvalReference.set($event)" />
+                </div>
+                <button class="btn-primary" [disabled]="actioning() || !approvalReference().trim()" (click)="recordApproval()">
+                  {{ 'issuance.pipeline.record_approval_action' | t }}
+                </button>
+
+                <div class="form-group !mb-0 flex-1 min-w-[12rem]">
+                  <label class="form-label">{{ 'issuance.pipeline.reject_reason_label' | t }}</label>
+                  <input class="form-input" [ngModel]="rejectReason()" (ngModelChange)="rejectReason.set($event)" />
+                </div>
+                <button
+                  class="border-2 border-red-500 text-red-600 font-semibold rounded-lg px-6 py-3 hover:bg-red-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  [disabled]="actioning() || !rejectReason().trim()"
+                  (click)="reject()"
+                >
+                  {{ 'issuance.pipeline.reject_action' | t }}
+                </button>
+              </div>
+            }
+            @case ('IFSCA_APPROVED') {
+              <div class="flex flex-wrap items-end gap-3">
+                <div class="form-group !mb-0 flex-1 min-w-[12rem]">
+                  <label class="form-label">{{ 'issuance.launch.symbol_label' | t }}</label>
+                  <input class="form-input" [ngModel]="launchSymbol()" (ngModelChange)="launchSymbol.set($event)" />
+                </div>
+                <div class="form-group !mb-0 flex-1 min-w-[12rem]">
+                  <label class="form-label">{{ 'issuance.launch.contract_address_label' | t }}</label>
+                  <input class="form-input" [ngModel]="launchContractAddress()" (ngModelChange)="launchContractAddress.set($event)" />
+                </div>
+                <button
+                  class="btn-primary"
+                  [disabled]="actioning() || !isLaunchable() || !launchSymbol().trim()"
+                  (click)="launch()"
+                >
+                  {{ 'issuance.pipeline.launch_action' | t }}
+                </button>
+                @if (!isLaunchable()) {
+                  <span class="text-sm text-amber-600">{{ 'issuance.pipeline.launch_blocked_hint' | t }}</span>
+                }
+              </div>
+            }
+          }
+        </div>
+
+        <div class="card mb-6">
+          <app-disclosure-checklist
+            [proposalId]="p.id"
+            [disclosures]="p.disclosures"
+            [missingDisclosureTypes]="p.missing_disclosure_types"
+            [disclosuresComplete]="p.disclosures_complete"
+            [uploadable]="false"
+            (uploaded)="onDisclosureUploaded()"
+          />
+        </div>
 
         @if (p.status === 'LAUNCHED') {
-          <mat-card class="proposal-review__card proposal-review__circuit-breaker">
-            <mat-card-header>
-              <mat-card-title>{{ 'issuance.token_series.title' | t }}</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              @if (tokenSeries(); as series) {
-                <dl class="proposal-review__details">
-                  <dt>{{ 'issuance.token_series.symbol_label' | t }}</dt>
-                  <dd>{{ series.symbol }}</dd>
-                  <dt>{{ 'issuance.token_series.supply_label' | t }}</dt>
-                  <dd>{{ series.total_supply }}</dd>
-                  @if (series.contract_address) {
-                    <dt>{{ 'issuance.token_series.contract_address_label' | t }}</dt>
-                    <dd>{{ series.contract_address }}</dd>
-                  }
-                  <dt>{{ 'issuance.token_series.status_label' | t }}</dt>
-                  <dd>{{ (series.paused ? 'issuance.token_series.status_paused' : 'issuance.token_series.status_active') | t }}</dd>
-                </dl>
+          <div class="card">
+            <h3 class="mb-4">{{ 'issuance.token_series.title' | t }}</h3>
+            @if (tokenSeries(); as series) {
+              <dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm mb-4">
+                <dt class="font-medium text-slate-500">{{ 'issuance.token_series.symbol_label' | t }}</dt>
+                <dd class="text-slate-900">{{ series.symbol }}</dd>
+                <dt class="font-medium text-slate-500">{{ 'issuance.token_series.supply_label' | t }}</dt>
+                <dd class="text-slate-900">{{ series.total_supply }}</dd>
+                @if (series.contract_address) {
+                  <dt class="font-medium text-slate-500">{{ 'issuance.token_series.contract_address_label' | t }}</dt>
+                  <dd class="text-slate-900">{{ series.contract_address }}</dd>
+                }
+                <dt class="font-medium text-slate-500">{{ 'issuance.token_series.status_label' | t }}</dt>
+                <dd class="text-slate-900">{{ (series.paused ? 'issuance.token_series.status_paused' : 'issuance.token_series.status_active') | t }}</dd>
+              </dl>
 
-                <p class="proposal-review__circuit-breaker-description">
-                  {{ 'issuance.circuit_breaker.description' | t }}
-                </p>
+              <p class="text-sm text-slate-600 mb-4">
+                {{ 'issuance.circuit_breaker.description' | t }}
+              </p>
 
-                <div class="proposal-review__circuit-breaker-control">
-                  <mat-slide-toggle [checked]="!series.paused" [disabled]="togglingCircuitBreaker()" (change)="toggleCircuitBreaker()">
-                    {{ (series.paused ? 'issuance.circuit_breaker.status_paused' : 'issuance.circuit_breaker.status_active') | t }}
-                  </mat-slide-toggle>
-                  <span class="proposal-review__series-symbol">{{ series.symbol }}</span>
-                </div>
+              <div class="flex items-center gap-3 mb-6">
+                <button
+                  type="button"
+                  role="switch"
+                  [attr.aria-checked]="!series.paused"
+                  [disabled]="togglingCircuitBreaker()"
+                  (click)="toggleCircuitBreaker()"
+                  class="relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors duration-200 disabled:opacity-50"
+                  [class.bg-primary-500]="!series.paused"
+                  [class.bg-slate-300]="series.paused"
+                >
+                  <span
+                    class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200"
+                    [class.translate-x-6]="!series.paused"
+                    [class.translate-x-1]="series.paused"
+                  ></span>
+                </button>
+                <span class="text-sm font-medium text-slate-700">
+                  {{ (series.paused ? 'issuance.circuit_breaker.status_paused' : 'issuance.circuit_breaker.status_active') | t }}
+                </span>
+                <span class="text-sm text-slate-500">{{ series.symbol }}</span>
+              </div>
 
-                <div class="proposal-review__actions">
-                  <mat-form-field appearance="outline" class="proposal-review__reason-field">
-                    <mat-label>{{ 'issuance.smart_contract_deployment.bytecode_hash_label' | t }}</mat-label>
-                    <input matInput [ngModel]="deploymentBytecodeHash()" (ngModelChange)="deploymentBytecodeHash.set($event)" />
-                  </mat-form-field>
-                  <mat-form-field appearance="outline" class="proposal-review__reason-field">
-                    <mat-label>{{ 'issuance.smart_contract_deployment.version_label' | t }}</mat-label>
-                    <input matInput [ngModel]="deploymentVersion()" (ngModelChange)="deploymentVersion.set($event)" />
-                  </mat-form-field>
-                  <mat-form-field appearance="outline" class="proposal-review__reason-field">
-                    <mat-label>{{ 'issuance.smart_contract_deployment.audit_report_ref_label' | t }}</mat-label>
-                    <input matInput [ngModel]="deploymentAuditRef()" (ngModelChange)="deploymentAuditRef.set($event)" />
-                  </mat-form-field>
-                  <button
-                    mat-stroked-button
-                    color="primary"
-                    [disabled]="recordingDeployment() || !deploymentBytecodeHash().trim() || !deploymentVersion().trim()"
-                    (click)="recordDeployment()"
-                  >
-                    {{ 'issuance.smart_contract_deployment.record_action' | t }}
-                  </button>
-                  @if (series.smart_contract_deployment_id) {
-                    <span class="proposal-review__hint">
-                      {{ 'issuance.smart_contract_deployment.recorded_hint' | t }}: #{{ series.smart_contract_deployment_id }}
-                    </span>
-                  }
+              <div class="flex flex-wrap items-end gap-3">
+                <div class="form-group !mb-0 flex-1 min-w-[10rem]">
+                  <label class="form-label">{{ 'issuance.smart_contract_deployment.bytecode_hash_label' | t }}</label>
+                  <input class="form-input" [ngModel]="deploymentBytecodeHash()" (ngModelChange)="deploymentBytecodeHash.set($event)" />
                 </div>
-              } @else {
-                <p class="proposal-review__hint">{{ 'issuance.token_series.not_loaded_hint' | t }}</p>
-                <div class="proposal-review__actions">
-                  <mat-form-field appearance="outline" class="proposal-review__reason-field">
-                    <mat-label>{{ 'issuance.token_series.lookup_id_label' | t }}</mat-label>
-                    <input matInput type="number" [ngModel]="tokenSeriesIdLookup()" (ngModelChange)="tokenSeriesIdLookup.set($event)" />
-                  </mat-form-field>
-                  <button mat-stroked-button [disabled]="loadingTokenSeries() || !tokenSeriesIdLookup()" (click)="loadTokenSeriesById()">
-                    {{ 'issuance.token_series.lookup_action' | t }}
-                  </button>
+                <div class="form-group !mb-0 flex-1 min-w-[10rem]">
+                  <label class="form-label">{{ 'issuance.smart_contract_deployment.version_label' | t }}</label>
+                  <input class="form-input" [ngModel]="deploymentVersion()" (ngModelChange)="deploymentVersion.set($event)" />
                 </div>
-              }
-            </mat-card-content>
-          </mat-card>
+                <div class="form-group !mb-0 flex-1 min-w-[10rem]">
+                  <label class="form-label">{{ 'issuance.smart_contract_deployment.audit_report_ref_label' | t }}</label>
+                  <input class="form-input" [ngModel]="deploymentAuditRef()" (ngModelChange)="deploymentAuditRef.set($event)" />
+                </div>
+                <button
+                  class="btn-outline"
+                  [disabled]="recordingDeployment() || !deploymentBytecodeHash().trim() || !deploymentVersion().trim()"
+                  (click)="recordDeployment()"
+                >
+                  {{ 'issuance.smart_contract_deployment.record_action' | t }}
+                </button>
+                @if (series.smart_contract_deployment_id) {
+                  <span class="text-sm text-slate-500">
+                    {{ 'issuance.smart_contract_deployment.recorded_hint' | t }}: #{{ series.smart_contract_deployment_id }}
+                  </span>
+                }
+              </div>
+            } @else {
+              <p class="text-sm text-slate-500 mb-4">{{ 'issuance.token_series.not_loaded_hint' | t }}</p>
+              <div class="flex flex-wrap items-end gap-3">
+                <div class="form-group !mb-0 flex-1 min-w-[10rem]">
+                  <label class="form-label">{{ 'issuance.token_series.lookup_id_label' | t }}</label>
+                  <input class="form-input" type="number" [ngModel]="tokenSeriesIdLookup()" (ngModelChange)="tokenSeriesIdLookup.set($event)" />
+                </div>
+                <button class="btn-outline" [disabled]="loadingTokenSeries() || !tokenSeriesIdLookup()" (click)="loadTokenSeriesById()">
+                  {{ 'issuance.token_series.lookup_action' | t }}
+                </button>
+              </div>
+            }
+          </div>
         }
       }
     }

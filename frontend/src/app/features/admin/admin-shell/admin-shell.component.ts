@@ -1,18 +1,14 @@
 import { Component, computed, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { TPipe } from '../../../core/i18n/t.pipe';
+import { IconComponent, IconName } from '../../../shared/components/icon/icon.component';
 
 interface AdminNavLink {
   path: string;
   labelKey: string;
-  icon: string;
+  icon: IconName;
   /** Section 1.5: `users` is ADMIN-only, unlike every other admin section (shared by
    * COMPLIANCE_OFFICER + ADMIN). Hiding the link for a role that would just get bounced
    * by `roleGuard(['ADMIN'])` on `admin/users` avoids a dead-end nav item. */
@@ -49,17 +45,7 @@ const NAV_LINKS: AdminNavLink[] = [
 @Component({
   selector: 'app-admin-shell',
   standalone: true,
-  imports: [
-    RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatListModule,
-    MatIconModule,
-    MatButtonModule,
-    TPipe,
-  ],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, IconComponent, TPipe],
   templateUrl: './admin-shell.component.html',
   styleUrl: './admin-shell.component.scss',
 })

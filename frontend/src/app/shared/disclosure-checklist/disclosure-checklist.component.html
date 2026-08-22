@@ -8,7 +8,7 @@
     @for (item of checklist(); track item.type) {
       <li class="disclosure-checklist__row" [class.disclosure-checklist__row--missing]="item.status === 'missing'">
         <div class="disclosure-checklist__label">
-          <mat-icon>{{ item.status === 'uploaded' ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+          <app-icon [name]="item.status === 'uploaded' ? 'check_circle' : 'radio_button_unchecked'" class="w-5 h-5" />
           <span>{{ typeLabel(item.type) }}</span>
         </div>
 
@@ -32,8 +32,8 @@
           }
 
           @if (uploadable) {
-            <button mat-stroked-button type="button" (click)="fileInput.click()" [disabled]="slotState(item.type) === 'uploading'">
-              <mat-icon>upload_file</mat-icon>
+            <button class="btn-outline !px-4 !py-2 !text-sm inline-flex items-center gap-2" type="button" (click)="fileInput.click()" [disabled]="slotState(item.type) === 'uploading'">
+              <app-icon name="upload_file" class="w-4 h-4" />
               {{ (item.status === 'uploaded' ? 'issuance.disclosure_checklist.replace_file' : 'issuance.disclosure_checklist.choose_file') | t }}
             </button>
             <input #fileInput type="file" hidden accept="application/pdf,image/*" (change)="onFileSelected(item.type, $event)" />
@@ -45,7 +45,9 @@
         </div>
 
         @if (uploadable && slotState(item.type) === 'uploading') {
-          <mat-progress-bar mode="indeterminate" />
+          <div class="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
+            <div class="h-full w-full bg-primary-500 animate-pulse"></div>
+          </div>
         }
       </li>
     }

@@ -1,8 +1,8 @@
-<div class="disclosure-step">
-  <h2>{{ 'kyc.disclosure.title' | t }}</h2>
-  <p>{{ 'kyc.disclosure.intro' | t }}</p>
+<div class="animate-fade-in">
+  <h2 class="mb-2">{{ 'kyc.disclosure.title' | t }}</h2>
+  <p class="text-slate-600 mb-4">{{ 'kyc.disclosure.intro' | t }}</p>
 
-  <ul class="disclosure-step__list">
+  <ul class="list-disc list-inside space-y-1 text-sm text-slate-700 mb-6">
     <li>{{ 'kyc.disclosure.market_risk' | t }}</li>
     <li>{{ 'kyc.disclosure.liquidity_risk' | t }}</li>
     <li>{{ 'kyc.disclosure.regulatory_risk' | t }}</li>
@@ -10,19 +10,24 @@
     <li>{{ 'kyc.disclosure.no_guarantee' | t }}</li>
   </ul>
 
-  <mat-checkbox [checked]="acknowledged()" (change)="acknowledged.set($event.checked)">
-    {{ 'kyc.disclosure.acknowledgment_label' | t }}
-  </mat-checkbox>
+  <label class="flex items-start gap-3 mb-6 cursor-pointer">
+    <input
+      type="checkbox"
+      class="mt-0.5 h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+      [checked]="acknowledged()"
+      (change)="acknowledged.set($any($event.target).checked)"
+    />
+    <span class="text-sm text-slate-700">{{ 'kyc.disclosure.acknowledgment_label' | t }}</span>
+  </label>
 
   @if (errorMessage()) {
-    <p class="disclosure-step__error">{{ errorMessage() }}</p>
+    <p class="text-red-600 text-sm mb-4">{{ errorMessage() }}</p>
   }
 
-  <button mat-flat-button color="primary" type="button" [disabled]="!acknowledged() || submitting()" (click)="submit()">
+  <button class="btn-primary flex items-center gap-2" type="button" [disabled]="!acknowledged() || submitting()" (click)="submit()">
     @if (submitting()) {
-      <mat-spinner diameter="20" />
-    } @else {
-      {{ 'kyc.disclosure.submit' | t }}
+      <span class="spinner !h-4 !w-4 border-white"></span>
     }
+    {{ 'kyc.disclosure.submit' | t }}
   </button>
 </div>

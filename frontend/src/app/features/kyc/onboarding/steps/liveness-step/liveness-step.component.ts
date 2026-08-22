@@ -1,6 +1,4 @@
 import { Component, ElementRef, EventEmitter, OnDestroy, Output, ViewChild, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { I18nService } from '../../../../../core/i18n/i18n.service';
 import { TPipe } from '../../../../../core/i18n/t.pipe';
@@ -20,7 +18,7 @@ const SELFIE_CONTENT_TYPE = 'image/jpeg';
 @Component({
   selector: 'app-kyc-liveness-step',
   standalone: true,
-  imports: [MatButtonModule, MatProgressSpinnerModule, TPipe],
+  imports: [TPipe],
   templateUrl: './liveness-step.component.html',
   styleUrl: './liveness-step.component.scss',
 })

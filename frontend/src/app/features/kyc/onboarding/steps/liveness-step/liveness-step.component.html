@@ -1,43 +1,42 @@
-<div class="liveness-step">
-  <h2>{{ 'kyc.liveness.title' | t }}</h2>
-  <p class="liveness-step__description">{{ 'kyc.liveness.description' | t }}</p>
+<div class="animate-fade-in">
+  <h2 class="mb-2">{{ 'kyc.liveness.title' | t }}</h2>
+  <p class="text-slate-600 mb-6">{{ 'kyc.liveness.description' | t }}</p>
 
-  <div class="liveness-step__stage">
-    <video #video class="liveness-step__video" [hidden]="!cameraActive()" autoplay playsinline muted></video>
-    <canvas #canvas class="liveness-step__canvas" hidden></canvas>
+  <div class="relative bg-slate-900 rounded-xl overflow-hidden mb-4 aspect-video flex items-center justify-center">
+    <video #video class="w-full h-full object-cover" [hidden]="!cameraActive()" autoplay playsinline muted></video>
+    <canvas #canvas hidden></canvas>
 
     @if (capturedImage()) {
-      <img class="liveness-step__preview" [src]="capturedImage()" alt="" />
+      <img class="w-full h-full object-cover" [src]="capturedImage()" alt="" />
     }
   </div>
 
   @if (errorMessage()) {
-    <p class="liveness-step__error">{{ errorMessage() }}</p>
+    <p class="text-red-600 text-sm mb-4">{{ errorMessage() }}</p>
   }
 
-  <div class="liveness-step__actions">
+  <div class="flex flex-wrap gap-3">
     @if (!cameraActive() && !capturedImage()) {
-      <button mat-flat-button color="primary" type="button" (click)="startCamera()">
+      <button class="btn-primary" type="button" (click)="startCamera()">
         {{ 'kyc.liveness.start_camera' | t }}
       </button>
     }
 
     @if (cameraActive() && !capturedImage()) {
-      <button mat-flat-button color="primary" type="button" (click)="capture()">
+      <button class="btn-primary" type="button" (click)="capture()">
         {{ 'kyc.liveness.capture' | t }}
       </button>
     }
 
     @if (capturedImage()) {
-      <button mat-stroked-button type="button" (click)="retake()" [disabled]="submitting()">
+      <button class="btn-outline" type="button" (click)="retake()" [disabled]="submitting()">
         {{ 'kyc.liveness.retake' | t }}
       </button>
-      <button mat-flat-button color="primary" type="button" (click)="submit()" [disabled]="submitting()">
+      <button class="btn-primary flex items-center gap-2" type="button" (click)="submit()" [disabled]="submitting()">
         @if (submitting()) {
-          <mat-spinner diameter="20" />
-        } @else {
-          {{ 'kyc.liveness.submit' | t }}
+          <span class="spinner !h-4 !w-4 border-white"></span>
         }
+        {{ 'kyc.liveness.submit' | t }}
       </button>
     }
   </div>

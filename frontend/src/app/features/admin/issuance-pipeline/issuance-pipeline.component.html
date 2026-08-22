@@ -1,5 +1,5 @@
-<section class="issuance-pipeline">
-  <h1>{{ 'admin.nav.issuance_pipeline' | t }}</h1>
+<section class="animate-fade-in">
+  <h1 class="mb-6">{{ 'admin.nav.issuance_pipeline' | t }}</h1>
 
   @switch (state()) {
     @case ('loading') {
@@ -9,43 +9,44 @@
       <app-admin-state state="error" (retry)="load()" />
     }
     @case ('loaded') {
-      <div class="issuance-pipeline__board">
+      <div class="flex gap-4 overflow-x-auto pb-4">
         @for (column of columns; track column) {
-          <div class="issuance-pipeline__column">
-            <h2 class="issuance-pipeline__column-title">
+          <div class="flex-shrink-0 w-80">
+            <h2 class="flex items-center gap-2 text-sm font-bold text-slate-700 uppercase tracking-wide mb-3">
               {{ ('issuance.status_option.' + column.toLowerCase()) | t }}
-              <span class="issuance-pipeline__count">{{ pipelineByStatus()[column].length }}</span>
+              <span class="badge badge-info">{{ pipelineByStatus()[column].length }}</span>
             </h2>
 
             @if (pipelineByStatus()[column].length === 0) {
-              <p class="issuance-pipeline__empty">{{ 'issuance.pipeline.empty_column' | t }}</p>
+              <p class="text-sm text-slate-400 italic">{{ 'issuance.pipeline.empty_column' | t }}</p>
             }
 
-            @for (proposal of pipelineByStatus()[column]; track proposal.id) {
-              <mat-card class="issuance-pipeline__card">
-                <mat-card-content>
-                  <a [routerLink]="[proposal.id]" class="issuance-pipeline__card-title">#{{ proposal.id }} -- {{ 'issuance.pipeline.asset_id_prefix' | t }}{{ proposal.asset_id }}</a>
+            <div class="space-y-3">
+              @for (proposal of pipelineByStatus()[column]; track proposal.id) {
+                <div class="card-compact">
+                  <a [routerLink]="[proposal.id]" class="font-semibold text-primary-600 hover:text-primary-700">
+                    #{{ proposal.id }} -- {{ 'issuance.pipeline.asset_id_prefix' | t }}{{ proposal.asset_id }}
+                  </a>
 
-                  <dl class="issuance-pipeline__card-details">
-                    <dt>{{ 'issuance.pipeline.total_units_label' | t }}</dt>
+                  <dl class="grid grid-cols-2 gap-x-2 gap-y-1 text-xs text-slate-600 mt-2 mb-3">
+                    <dt class="font-medium">{{ 'issuance.pipeline.total_units_label' | t }}</dt>
                     <dd>{{ proposal.total_units }}</dd>
-                    <dt>{{ 'issuance.pipeline.unit_price_usd_label' | t }}</dt>
+                    <dt class="font-medium">{{ 'issuance.pipeline.unit_price_usd_label' | t }}</dt>
                     <dd>{{ proposal.unit_price_usd }}</dd>
                   </dl>
 
                   @switch (column) {
                     @case ('DOCUMENTATION_REVIEW') {
-                      <div class="issuance-pipeline__card-actions">
-                        <button mat-stroked-button color="primary" [disabled]="actioningId() === proposal.id" (click)="approve(proposal)">
+                      <div class="space-y-2">
+                        <button class="btn-outline !px-3 !py-1.5 !text-xs w-full" [disabled]="actioningId() === proposal.id" (click)="approve(proposal)">
                           {{ 'issuance.pipeline.approve_action' | t }}
                         </button>
-                        <mat-form-field appearance="outline" class="issuance-pipeline__reason-field">
-                          <mat-label>{{ 'issuance.pipeline.reject_reason_label' | t }}</mat-label>
-                          <input matInput [ngModel]="reasonFor(proposal.id)" (ngModelChange)="setReason(proposal.id, $event)" />
-                        </mat-form-field>
+                        <div class="form-group !mb-2">
+                          <label class="form-label !text-xs !mb-1">{{ 'issuance.pipeline.reject_reason_label' | t }}</label>
+                          <input class="form-input !py-1.5 !text-xs" [ngModel]="reasonFor(proposal.id)" (ngModelChange)="setReason(proposal.id, $event)" />
+                        </div>
                         <button
-                          mat-stroked-button
-                          color="warn"
+                          class="!px-3 !py-1.5 !text-xs w-full border-2 border-red-500 text-red-600 font-semibold rounded-lg hover:bg-red-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                           [disabled]="actioningId() === proposal.id || !reasonFor(proposal.id).trim()"
                           (click)="reject(proposal)"
                         >
@@ -54,14 +55,13 @@
                       </div>
                     }
                     @case ('COMPLIANCE_APPROVED') {
-                      <div class="issuance-pipeline__card-actions">
-                        <mat-form-field appearance="outline" class="issuance-pipeline__reason-field">
-                          <mat-label>{{ 'issuance.pipeline.filing_reference_label' | t }}</mat-label>
-                          <input matInput [ngModel]="filingReferenceFor(proposal.id)" (ngModelChange)="setFilingReference(proposal.id, $event)" />
-                        </mat-form-field>
+                      <div class="space-y-2">
+                        <div class="form-group !mb-2">
+                          <label class="form-label !text-xs !mb-1">{{ 'issuance.pipeline.filing_reference_label' | t }}</label>
+                          <input class="form-input !py-1.5 !text-xs" [ngModel]="filingReferenceFor(proposal.id)" (ngModelChange)="setFilingReference(proposal.id, $event)" />
+                        </div>
                         <button
-                          mat-stroked-button
-                          color="primary"
+                          class="btn-outline !px-3 !py-1.5 !text-xs w-full"
                           [disabled]="actioningId() === proposal.id || !filingReferenceFor(proposal.id).trim()"
                           (click)="recordFiling(proposal)"
                         >
@@ -70,27 +70,25 @@
                       </div>
                     }
                     @case ('IFSCA_FILED') {
-                      <div class="issuance-pipeline__card-actions">
-                        <mat-form-field appearance="outline" class="issuance-pipeline__reason-field">
-                          <mat-label>{{ 'issuance.pipeline.approval_reference_label' | t }}</mat-label>
-                          <input matInput [ngModel]="approvalReferenceFor(proposal.id)" (ngModelChange)="setApprovalReference(proposal.id, $event)" />
-                        </mat-form-field>
+                      <div class="space-y-2">
+                        <div class="form-group !mb-2">
+                          <label class="form-label !text-xs !mb-1">{{ 'issuance.pipeline.approval_reference_label' | t }}</label>
+                          <input class="form-input !py-1.5 !text-xs" [ngModel]="approvalReferenceFor(proposal.id)" (ngModelChange)="setApprovalReference(proposal.id, $event)" />
+                        </div>
                         <button
-                          mat-stroked-button
-                          color="primary"
+                          class="btn-outline !px-3 !py-1.5 !text-xs w-full"
                           [disabled]="actioningId() === proposal.id || !approvalReferenceFor(proposal.id).trim()"
                           (click)="recordApproval(proposal)"
                         >
                           {{ 'issuance.pipeline.record_approval_action' | t }}
                         </button>
 
-                        <mat-form-field appearance="outline" class="issuance-pipeline__reason-field">
-                          <mat-label>{{ 'issuance.pipeline.reject_reason_label' | t }}</mat-label>
-                          <input matInput [ngModel]="reasonFor(proposal.id)" (ngModelChange)="setReason(proposal.id, $event)" />
-                        </mat-form-field>
+                        <div class="form-group !mb-2">
+                          <label class="form-label !text-xs !mb-1">{{ 'issuance.pipeline.reject_reason_label' | t }}</label>
+                          <input class="form-input !py-1.5 !text-xs" [ngModel]="reasonFor(proposal.id)" (ngModelChange)="setReason(proposal.id, $event)" />
+                        </div>
                         <button
-                          mat-stroked-button
-                          color="warn"
+                          class="!px-3 !py-1.5 !text-xs w-full border-2 border-red-500 text-red-600 font-semibold rounded-lg hover:bg-red-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                           [disabled]="actioningId() === proposal.id || !reasonFor(proposal.id).trim()"
                           (click)="reject(proposal)"
                         >
@@ -99,17 +97,17 @@
                       </div>
                     }
                     @case ('IFSCA_APPROVED') {
-                      <div class="issuance-pipeline__card-actions">
-                        <a mat-stroked-button color="primary" [routerLink]="[proposal.id]">
+                      <div class="space-y-2">
+                        <a class="btn-outline !px-3 !py-1.5 !text-xs w-full text-center block" [routerLink]="[proposal.id]">
                           {{ 'issuance.pipeline.launch_action' | t }}
                         </a>
-                        <span class="issuance-pipeline__hint">{{ 'issuance.pipeline.review_to_launch_hint' | t }}</span>
+                        <span class="text-xs text-slate-500 block">{{ 'issuance.pipeline.review_to_launch_hint' | t }}</span>
                       </div>
                     }
                   }
-                </mat-card-content>
-              </mat-card>
-            }
+                </div>
+              }
+            </div>
           </div>
         }
       </div>

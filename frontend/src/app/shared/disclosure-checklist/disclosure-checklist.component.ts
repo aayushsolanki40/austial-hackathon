@@ -1,13 +1,11 @@
 import { Component, EventEmitter, Input, Output, computed, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TPipe } from '../../core/i18n/t.pipe';
 import { buildDisclosureChecklist } from '../../core/issuance/disclosure-checklist.util';
 import { DisclosureDocument, DisclosureType, REQUIRED_DISCLOSURE_TYPES } from '../../core/issuance/issuance.models';
 import { IssuanceService } from '../../core/issuance/issuance.service';
+import { IconComponent } from '../components/icon/icon.component';
 
 type SlotUploadState = 'idle' | 'uploading' | 'error';
 
@@ -32,7 +30,7 @@ type SlotUploadState = 'idle' | 'uploading' | 'error';
 @Component({
   selector: 'app-disclosure-checklist',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, MatProgressBarModule, TPipe],
+  imports: [IconComponent, TPipe],
   templateUrl: './disclosure-checklist.component.html',
   styleUrl: './disclosure-checklist.component.scss',
 })

@@ -1,7 +1,4 @@
 import { Component, EventEmitter, Output, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { I18nService } from '../../../../../core/i18n/i18n.service';
 import { TPipe } from '../../../../../core/i18n/t.pipe';
@@ -29,7 +26,7 @@ const DISCLOSURE_VERSION = '2026-08-21-v1';
 @Component({
   selector: 'app-kyc-risk-disclosure-step',
   standalone: true,
-  imports: [MatButtonModule, MatCheckboxModule, MatProgressSpinnerModule, TPipe],
+  imports: [TPipe],
   templateUrl: './risk-disclosure-step.component.html',
   styleUrl: './risk-disclosure-step.component.scss',
 })

@@ -1,79 +1,74 @@
-<section class="proposal-detail">
-  <a [routerLink]="['/issuer', 'proposals']" class="proposal-detail__back">{{ 'issuance.proposal_detail.back_to_list' | t }}</a>
+<section class="animate-fade-in max-w-2xl">
+  <a [routerLink]="['/issuer', 'proposals']" class="text-primary-600 hover:text-primary-700 font-medium mb-4 inline-block">{{ 'issuance.proposal_detail.back_to_list' | t }}</a>
 
   @switch (state()) {
     @case ('loading') {
-      <div class="proposal-detail__loading">
-        <mat-spinner diameter="28" />
+      <div class="flex items-center gap-3 py-8">
+        <span class="spinner text-primary-600"></span>
         <span>{{ 'issuance.proposal_detail.loading' | t }}</span>
       </div>
     }
     @case ('error') {
-      <p class="proposal-detail__error">{{ 'issuance.proposal_detail.error' | t }}</p>
-      <button mat-stroked-button (click)="load()">{{ 'issuance.proposal_detail.retry' | t }}</button>
+      <p class="text-red-600 mb-4">{{ 'issuance.proposal_detail.error' | t }}</p>
+      <button class="btn-outline" (click)="load()">{{ 'issuance.proposal_detail.retry' | t }}</button>
     }
     @case ('loaded') {
       @if (proposal(); as p) {
-        <h1>{{ 'issuance.proposal_detail.title' | t }} #{{ p.id }}</h1>
+        <h1 class="mb-6">{{ 'issuance.proposal_detail.title' | t }} #{{ p.id }}</h1>
 
-        <mat-card class="proposal-detail__card">
-          <mat-card-content>
-            <dl class="proposal-detail__details">
-              <dt>{{ 'issuance.proposal_detail.status_label' | t }}</dt>
-              <dd>{{ ('issuance.status_option.' + p.status.toLowerCase()) | t }}</dd>
+        <div class="card mb-6">
+          <dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm mb-4">
+            <dt class="font-medium text-slate-500">{{ 'issuance.proposal_detail.status_label' | t }}</dt>
+            <dd class="text-slate-900">{{ ('issuance.status_option.' + p.status.toLowerCase()) | t }}</dd>
 
-              <dt>{{ 'issuance.proposal_detail.total_units_label' | t }}</dt>
-              <dd>{{ p.total_units }}</dd>
+            <dt class="font-medium text-slate-500">{{ 'issuance.proposal_detail.total_units_label' | t }}</dt>
+            <dd class="text-slate-900">{{ p.total_units }}</dd>
 
-              <dt>{{ 'issuance.proposal_detail.unit_price_usd_label' | t }}</dt>
-              <dd>{{ p.unit_price_usd }}</dd>
+            <dt class="font-medium text-slate-500">{{ 'issuance.proposal_detail.unit_price_usd_label' | t }}</dt>
+            <dd class="text-slate-900">{{ p.unit_price_usd }}</dd>
 
-              <dt>{{ 'issuance.proposal_detail.min_subscription_label' | t }}</dt>
-              <dd>{{ p.min_subscription_units }}</dd>
+            <dt class="font-medium text-slate-500">{{ 'issuance.proposal_detail.min_subscription_label' | t }}</dt>
+            <dd class="text-slate-900">{{ p.min_subscription_units }}</dd>
 
-              <dt>{{ 'issuance.proposal_detail.subscription_window_label' | t }}</dt>
-              <dd>{{ p.subscription_start_at }} &ndash; {{ p.subscription_end_at }}</dd>
+            <dt class="font-medium text-slate-500">{{ 'issuance.proposal_detail.subscription_window_label' | t }}</dt>
+            <dd class="text-slate-900">{{ p.subscription_start_at }} &ndash; {{ p.subscription_end_at }}</dd>
 
-              @if (p.status === 'REJECTED' && p.rejection_reason) {
-                <dt>{{ 'issuance.proposal_detail.rejection_reason_label' | t }}</dt>
-                <dd>{{ p.rejection_reason }}</dd>
-              }
-
-              @if (p.ifsca_filing_reference) {
-                <dt>{{ 'issuance.proposal_detail.ifsca_filing_reference_label' | t }}</dt>
-                <dd>{{ p.ifsca_filing_reference }}</dd>
-              }
-
-              @if (p.ifsca_approval_reference) {
-                <dt>{{ 'issuance.proposal_detail.ifsca_approval_reference_label' | t }}</dt>
-                <dd>{{ p.ifsca_approval_reference }}</dd>
-              }
-            </dl>
-
-            @if (canSubmitForReview()) {
-              <button mat-flat-button color="primary" [disabled]="submitting()" (click)="submitForReview()">
-                @if (submitting()) {
-                  <mat-spinner diameter="20" />
-                } @else {
-                  {{ 'issuance.proposal_detail.submit_for_review_action' | t }}
-                }
-              </button>
+            @if (p.status === 'REJECTED' && p.rejection_reason) {
+              <dt class="font-medium text-slate-500">{{ 'issuance.proposal_detail.rejection_reason_label' | t }}</dt>
+              <dd class="text-slate-900">{{ p.rejection_reason }}</dd>
             }
-          </mat-card-content>
-        </mat-card>
 
-        <mat-card class="proposal-detail__card">
-          <mat-card-content>
-            <app-disclosure-checklist
-              [proposalId]="p.id"
-              [disclosures]="p.disclosures"
-              [missingDisclosureTypes]="p.missing_disclosure_types"
-              [disclosuresComplete]="p.disclosures_complete"
-              [uploadable]="disclosuresEditable()"
-              (uploaded)="onDisclosureUploaded()"
-            />
-          </mat-card-content>
-        </mat-card>
+            @if (p.ifsca_filing_reference) {
+              <dt class="font-medium text-slate-500">{{ 'issuance.proposal_detail.ifsca_filing_reference_label' | t }}</dt>
+              <dd class="text-slate-900">{{ p.ifsca_filing_reference }}</dd>
+            }
+
+            @if (p.ifsca_approval_reference) {
+              <dt class="font-medium text-slate-500">{{ 'issuance.proposal_detail.ifsca_approval_reference_label' | t }}</dt>
+              <dd class="text-slate-900">{{ p.ifsca_approval_reference }}</dd>
+            }
+          </dl>
+
+          @if (canSubmitForReview()) {
+            <button class="btn-primary flex items-center gap-2" [disabled]="submitting()" (click)="submitForReview()">
+              @if (submitting()) {
+                <span class="spinner !h-4 !w-4 border-white"></span>
+              }
+              {{ 'issuance.proposal_detail.submit_for_review_action' | t }}
+            </button>
+          }
+        </div>
+
+        <div class="card">
+          <app-disclosure-checklist
+            [proposalId]="p.id"
+            [disclosures]="p.disclosures"
+            [missingDisclosureTypes]="p.missing_disclosure_types"
+            [disclosuresComplete]="p.disclosures_complete"
+            [uploadable]="disclosuresEditable()"
+            (uploaded)="onDisclosureUploaded()"
+          />
+        </div>
       }
     }
   }

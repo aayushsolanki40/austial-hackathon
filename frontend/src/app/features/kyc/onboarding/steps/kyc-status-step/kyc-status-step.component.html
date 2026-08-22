@@ -1,36 +1,35 @@
-<div class="status-step">
-  <h2>{{ 'kyc.status.title' | t }}</h2>
+<div class="animate-fade-in">
+  <h2 class="mb-4">{{ 'kyc.status.title' | t }}</h2>
 
   @if (isVerified()) {
-    <div class="status-step__card status-step__card--verified">
-      <h3>{{ 'kyc.status_verified.title' | t }}</h3>
-      <p>{{ 'kyc.status_verified.message' | t }}</p>
-      <button mat-flat-button color="primary" type="button" (click)="goToDashboard()">
+    <div class="card-compact border-l-4 border-green-500 mb-4">
+      <h3 class="mb-1">{{ 'kyc.status_verified.title' | t }}</h3>
+      <p class="text-slate-600 mb-4">{{ 'kyc.status_verified.message' | t }}</p>
+      <button class="btn-primary" type="button" (click)="goToDashboard()">
         {{ 'kyc.status.go_to_dashboard' | t }}
       </button>
     </div>
   } @else if (isRejected()) {
-    <div class="status-step__card status-step__card--rejected">
-      <h3>{{ 'kyc.status_rejected.title' | t }}</h3>
-      <p>{{ 'kyc.status_rejected.message' | t }}</p>
+    <div class="card-compact border-l-4 border-red-500 mb-4">
+      <h3 class="mb-1">{{ 'kyc.status_rejected.title' | t }}</h3>
+      <p class="text-slate-600">{{ 'kyc.status_rejected.message' | t }}</p>
       @if (submission()?.review_notes) {
-        <p class="status-step__reason">
+        <p class="text-sm text-slate-700 mt-2">
           <strong>{{ 'kyc.status_rejected.reason_label' | t }}:</strong> {{ submission()?.review_notes }}
         </p>
       }
     </div>
   } @else {
-    <div class="status-step__card status-step__card--pending">
-      <h3>{{ 'kyc.status_pending.title' | t }}</h3>
-      <p>{{ 'kyc.status_pending.message' | t }}</p>
+    <div class="card-compact border-l-4 border-amber-500 mb-4">
+      <h3 class="mb-1">{{ 'kyc.status_pending.title' | t }}</h3>
+      <p class="text-slate-600">{{ 'kyc.status_pending.message' | t }}</p>
     </div>
   }
 
-  <button mat-stroked-button type="button" (click)="refresh()" [disabled]="refreshing()">
+  <button class="btn-outline flex items-center gap-2" type="button" (click)="refresh()" [disabled]="refreshing()">
     @if (refreshing()) {
-      <mat-spinner diameter="20" />
-    } @else {
-      {{ 'kyc.status.refresh' | t }}
+      <span class="spinner !h-4 !w-4"></span>
     }
+    {{ 'kyc.status.refresh' | t }}
   </button>
 </div>

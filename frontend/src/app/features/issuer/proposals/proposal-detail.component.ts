@@ -1,7 +1,4 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { TPipe } from '../../../core/i18n/t.pipe';
@@ -36,7 +33,7 @@ const DISCLOSURE_EDITABLE_STATUSES: ProposalStatus[] = [
 @Component({
   selector: 'app-issuer-proposal-detail',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule, MatProgressSpinnerModule, RouterLink, DisclosureChecklistComponent, TPipe],
+  imports: [RouterLink, DisclosureChecklistComponent, TPipe],
   templateUrl: './proposal-detail.component.html',
   styleUrl: './proposal-detail.component.scss',
 })

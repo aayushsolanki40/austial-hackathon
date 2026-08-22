@@ -1,6 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 
 import { TPipe } from '../../../../../core/i18n/t.pipe';
@@ -18,7 +16,7 @@ import { KycService } from '../../../../../core/kyc/kyc.service';
 @Component({
   selector: 'app-kyc-status-step',
   standalone: true,
-  imports: [MatButtonModule, MatProgressSpinnerModule, TPipe],
+  imports: [TPipe],
   templateUrl: './kyc-status-step.component.html',
   styleUrl: './kyc-status-step.component.scss',
 })

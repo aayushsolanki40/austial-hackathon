@@ -1,6 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { TPipe } from '../../../core/i18n/t.pipe';
 
@@ -14,7 +12,7 @@ import { TPipe } from '../../../core/i18n/t.pipe';
 @Component({
   selector: 'app-admin-state',
   standalone: true,
-  imports: [MatButtonModule, MatProgressSpinnerModule, TPipe],
+  imports: [TPipe],
   template: `
     @if (state === 'loading') {
       <div class="admin-state admin-state--loading">
@@ -24,7 +22,7 @@ import { TPipe } from '../../../core/i18n/t.pipe';
     } @else {
       <div class="admin-state admin-state--error">
         <p>{{ 'admin.state.error' | t }}</p>
-        <button mat-stroked-button (click)="retry.emit()">{{ 'admin.state.retry' | t }}</button>
+        <button class="btn-outline" (click)="retry.emit()">{{ 'admin.state.retry' | t }}</button>
       </div>
     }
   `,

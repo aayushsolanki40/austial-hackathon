@@ -1,10 +1,5 @@
 import { Component, EventEmitter, Output, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
 
 import { I18nService } from '../../../../../core/i18n/i18n.service';
 import { TPipe } from '../../../../../core/i18n/t.pipe';
@@ -53,15 +48,7 @@ const JURISDICTION_OPTIONS: SelectOption[] = [
 @Component({
   selector: 'app-kyc-profile-step',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatProgressSpinnerModule,
-    TPipe,
-  ],
+  imports: [ReactiveFormsModule, TPipe],
   templateUrl: './profile-step.component.html',
   styleUrl: './profile-step.component.scss',
 })

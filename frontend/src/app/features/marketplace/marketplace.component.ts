@@ -1,10 +1,5 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 
 import { ASSET_CLASS_OPTIONS } from '../../core/issuer/asset-class-fields';
@@ -23,17 +18,7 @@ type LoadState = 'loading' | 'error' | 'loaded';
 @Component({
   selector: 'app-marketplace',
   standalone: true,
-  imports: [
-    CurrencyPipe,
-    DatePipe,
-    MatButtonModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatProgressSpinnerModule,
-    MatSelectModule,
-    RouterLink,
-    TPipe,
-  ],
+  imports: [CurrencyPipe, DatePipe, RouterLink, TPipe],
   templateUrl: './marketplace.component.html',
   styleUrl: './marketplace.component.scss',
 })

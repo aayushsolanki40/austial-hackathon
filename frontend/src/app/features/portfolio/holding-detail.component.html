@@ -1,46 +1,44 @@
-<section class="holding-detail">
-  <a [routerLink]="['/portfolio']" class="holding-detail__back">{{ 'portfolio.holding_detail.back_to_portfolio' | t }}</a>
+<section class="animate-fade-in max-w-2xl">
+  <a [routerLink]="['/portfolio']" class="text-primary-600 hover:text-primary-700 font-medium mb-4 inline-block">{{ 'portfolio.holding_detail.back_to_portfolio' | t }}</a>
 
   @switch (state()) {
     @case ('loading') {
-      <div class="holding-detail__loading">
-        <mat-spinner diameter="28" />
+      <div class="flex items-center gap-3 py-8">
+        <span class="spinner text-primary-600"></span>
         <span>{{ 'portfolio.holding_detail.loading' | t }}</span>
       </div>
     }
     @case ('error') {
-      <p class="holding-detail__error">{{ 'portfolio.holding_detail.error' | t }}</p>
-      <button mat-stroked-button (click)="load()">{{ 'portfolio.holding_detail.retry' | t }}</button>
+      <p class="text-red-600 mb-4">{{ 'portfolio.holding_detail.error' | t }}</p>
+      <button class="btn-outline" (click)="load()">{{ 'portfolio.holding_detail.retry' | t }}</button>
     }
     @case ('loaded') {
       @if (holding(); as h) {
-        <h1>{{ h.symbol }}</h1>
+        <h1 class="mb-6">{{ h.symbol }}</h1>
 
-        <mat-card class="holding-detail__card">
-          <mat-card-content>
-            <dl class="holding-detail__details">
-              <dt>{{ 'portfolio.holding_detail.symbol_label' | t }}</dt>
-              <dd>{{ h.symbol }}</dd>
+        <div class="card">
+          <dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+            <dt class="font-medium text-slate-500">{{ 'portfolio.holding_detail.symbol_label' | t }}</dt>
+            <dd class="text-slate-900">{{ h.symbol }}</dd>
 
-              <dt>{{ 'portfolio.holding_detail.units_label' | t }}</dt>
-              <dd>{{ h.quantity }}</dd>
+            <dt class="font-medium text-slate-500">{{ 'portfolio.holding_detail.units_label' | t }}</dt>
+            <dd class="text-slate-900">{{ h.quantity }}</dd>
 
-              <dt>{{ 'portfolio.holding_detail.avg_cost_label' | t }}</dt>
-              <dd>{{ h.avg_cost_usd | currency: 'USD' : 'symbol' : '1.2-2' }}</dd>
+            <dt class="font-medium text-slate-500">{{ 'portfolio.holding_detail.avg_cost_label' | t }}</dt>
+            <dd class="text-slate-900">{{ h.avg_cost_usd | currency: 'USD' : 'symbol' : '1.2-2' }}</dd>
 
-              <dt>{{ 'portfolio.holding_detail.status_label' | t }}</dt>
-              <dd>{{ ('portfolio.holding_status_option.' + h.status.toLowerCase()) | t }}</dd>
+            <dt class="font-medium text-slate-500">{{ 'portfolio.holding_detail.status_label' | t }}</dt>
+            <dd class="text-slate-900">{{ ('portfolio.holding_status_option.' + h.status.toLowerCase()) | t }}</dd>
 
-              @if (h.custodian_confirmation_ref) {
-                <dt>{{ 'portfolio.holding_detail.custodian_ref_label' | t }}</dt>
-                <dd>{{ h.custodian_confirmation_ref }}</dd>
-              }
+            @if (h.custodian_confirmation_ref) {
+              <dt class="font-medium text-slate-500">{{ 'portfolio.holding_detail.custodian_ref_label' | t }}</dt>
+              <dd class="text-slate-900">{{ h.custodian_confirmation_ref }}</dd>
+            }
 
-              <dt>{{ 'portfolio.holding_detail.acquired_at_label' | t }}</dt>
-              <dd>{{ h.created_at | date: 'medium' }}</dd>
-            </dl>
-          </mat-card-content>
-        </mat-card>
+            <dt class="font-medium text-slate-500">{{ 'portfolio.holding_detail.acquired_at_label' | t }}</dt>
+            <dd class="text-slate-900">{{ h.created_at | date: 'medium' }}</dd>
+          </dl>
+        </div>
       }
     }
   }

@@ -1,14 +1,14 @@
-<div class="document-upload-step">
-  <h2>{{ 'kyc.documents.title' | t }}</h2>
-  <p class="document-upload-step__description">{{ 'kyc.documents.description' | t }}</p>
+<div class="animate-fade-in">
+  <h2 class="mb-2">{{ 'kyc.documents.title' | t }}</h2>
+  <p class="text-slate-600 mb-6">{{ 'kyc.documents.description' | t }}</p>
 
   @for (slot of slots; track slot.type) {
-    <div class="document-upload-step__slot">
-      <label class="document-upload-step__label">{{ slot.labelKey | t }}</label>
+    <div class="mb-6">
+      <label class="form-label">{{ slot.labelKey | t }}</label>
 
-      <div class="document-upload-step__row">
-        <button mat-stroked-button type="button" (click)="fileInput.click()" [disabled]="stateFor(slot.type).status === 'uploading'">
-          <mat-icon>upload_file</mat-icon>
+      <div class="flex flex-wrap items-center gap-3">
+        <button class="btn-outline !px-4 !py-2 !text-sm inline-flex items-center gap-2" type="button" (click)="fileInput.click()" [disabled]="stateFor(slot.type).status === 'uploading'">
+          <app-icon name="upload_file" class="w-4 h-4" />
           {{ (stateFor(slot.type).status === 'uploaded' ? 'kyc.documents.replace_file' : 'kyc.documents.choose_file') | t }}
         </button>
         <input
@@ -19,7 +19,7 @@
           (change)="onFileSelected(slot.type, $event)"
         />
 
-        <span class="document-upload-step__status" [class.document-upload-step__status--error]="stateFor(slot.type).status === 'error'">
+        <span class="text-sm" [class.text-red-600]="stateFor(slot.type).status === 'error'" [class.text-slate-600]="stateFor(slot.type).status !== 'error'">
           @switch (stateFor(slot.type).status) {
             @case ('uploading') {
               {{ 'kyc.documents.status_uploading' | t }}
@@ -38,12 +38,14 @@
       </div>
 
       @if (stateFor(slot.type).status === 'uploading') {
-        <mat-progress-bar mode="indeterminate" />
+        <div class="w-full h-1 bg-slate-200 rounded-full overflow-hidden mt-2">
+          <div class="h-full w-full bg-primary-500 animate-pulse"></div>
+        </div>
       }
     </div>
   }
 
-  <button mat-flat-button color="primary" type="button" [disabled]="anyUploading()" (click)="continue()">
+  <button class="btn-primary" type="button" [disabled]="anyUploading()" (click)="continue()">
     {{ 'kyc.documents.continue' | t }}
   </button>
 </div>

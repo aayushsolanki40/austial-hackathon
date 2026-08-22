@@ -1,12 +1,11 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 
 import { ApiService } from '../../../core/api/api.service';
 import { TPipe } from '../../../core/i18n/t.pipe';
 import { AdminDashboardSummary } from '../admin.models';
 import { AdminStateComponent } from '../shared/admin-state.component';
+import { IconComponent } from '../../../shared/components/icon/icon.component';
 
 type LoadState = 'loading' | 'error' | 'loaded';
 
@@ -20,7 +19,7 @@ type LoadState = 'loading' | 'error' | 'loaded';
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [MatCardModule, MatIconModule, AdminStateComponent, TPipe, DecimalPipe],
+  imports: [AdminStateComponent, IconComponent, TPipe, DecimalPipe],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.scss',
 })

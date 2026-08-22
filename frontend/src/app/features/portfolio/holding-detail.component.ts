@@ -1,8 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { TPipe } from '../../core/i18n/t.pipe';
@@ -15,7 +12,7 @@ type LoadState = 'loading' | 'error' | 'loaded';
 @Component({
   selector: 'app-holding-detail',
   standalone: true,
-  imports: [CurrencyPipe, DatePipe, MatButtonModule, MatCardModule, MatProgressSpinnerModule, RouterLink, TPipe],
+  imports: [CurrencyPipe, DatePipe, RouterLink, TPipe],
   templateUrl: './holding-detail.component.html',
   styleUrl: './holding-detail.component.scss',
 })

@@ -1,11 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { TPipe } from '../../../core/i18n/t.pipe';
@@ -32,18 +26,7 @@ type LoadState = 'loading' | 'error' | 'loaded';
 @Component({
   selector: 'app-proposal-review',
   standalone: true,
-  imports: [
-    FormsModule,
-    RouterLink,
-    MatButtonModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatProgressSpinnerModule,
-    MatSlideToggleModule,
-    DisclosureChecklistComponent,
-    TPipe,
-  ],
+  imports: [FormsModule, RouterLink, DisclosureChecklistComponent, TPipe],
   templateUrl: './proposal-review.component.html',
   styleUrl: './proposal-review.component.scss',
 })

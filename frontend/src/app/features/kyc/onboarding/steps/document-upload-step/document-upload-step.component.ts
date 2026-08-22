@@ -1,11 +1,9 @@
 import { Component, EventEmitter, Output, computed, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { TPipe } from '../../../../../core/i18n/t.pipe';
 import { KycDocumentType } from '../../../../../core/kyc/kyc.models';
 import { KycService } from '../../../../../core/kyc/kyc.service';
+import { IconComponent } from '../../../../../shared/components/icon/icon.component';
 
 type UploadStatus = 'idle' | 'uploading' | 'uploaded' | 'error';
 
@@ -38,7 +36,7 @@ const DOCUMENT_SLOTS: DocumentSlot[] = [
 @Component({
   selector: 'app-kyc-document-upload-step',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, MatProgressBarModule, TPipe],
+  imports: [IconComponent, TPipe],
   templateUrl: './document-upload-step.component.html',
   styleUrl: './document-upload-step.component.scss',
 })

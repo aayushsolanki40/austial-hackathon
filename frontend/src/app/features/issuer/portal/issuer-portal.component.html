@@ -1,23 +1,21 @@
 <section class="issuer-portal">
   <div class="issuer-portal__header">
     <h1>{{ 'issuer.portal.title' | t }}</h1>
-    <a mat-stroked-button routerLink="/issuer/proposals">{{ 'issuer.portal.view_proposals_link' | t }}</a>
+    <a class="btn-outline" routerLink="/issuer/proposals">{{ 'issuer.portal.view_proposals_link' | t }}</a>
   </div>
 
   @switch (viewState()) {
     @case ('loading') {
       <div class="issuer-portal__loading">
-        <mat-spinner diameter="28" />
+        <div class="spinner"></div>
         <span>{{ 'issuer.portal.loading' | t }}</span>
       </div>
     }
 
     @case ('create-profile') {
-      <mat-card class="issuer-portal__card">
-        <mat-card-header>
-          <mat-card-title>{{ 'issuer.profile.empty_title' | t }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
+      <div class="card issuer-portal__card">
+        <h3 class="text-xl font-bold mb-4">{{ 'issuer.profile.empty_title' | t }}</h3>
+        <div>
           <p>{{ 'issuer.profile.empty_description' | t }}</p>
 
           <form [formGroup]="profileForm" (ngSubmit)="submitProfile()" class="issuer-portal__form">
@@ -48,25 +46,23 @@
               <p class="issuer-portal__error">{{ profileError() }}</p>
             }
 
-            <button mat-flat-button color="primary" type="submit" [disabled]="profileForm.invalid || profileSubmitting()">
+            <button class="btn-primary" type="submit" [disabled]="profileForm.invalid || profileSubmitting()">
               @if (profileSubmitting()) {
-                <mat-spinner diameter="20" />
+                <div class="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
               } @else {
                 {{ 'issuer.profile.submit' | t }}
               }
             </button>
           </form>
-        </mat-card-content>
-      </mat-card>
+        </div>
+      </div>
     }
 
     @case ('profile') {
       @if (profile(); as p) {
-        <mat-card class="issuer-portal__card">
-          <mat-card-header>
-            <mat-card-title>{{ 'issuer.profile.view_title' | t }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
+        <div class="card issuer-portal__card">
+          <h3 class="text-xl font-bold mb-4">{{ 'issuer.profile.view_title' | t }}</h3>
+          <div>
             <dl class="issuer-portal__profile-details">
               <dt>{{ 'issuer.profile.legal_name_label' | t }}</dt>
               <dd>{{ p.legal_name }}</dd>
@@ -81,15 +77,13 @@
                 <dd>{{ p.rejection_reason }}</dd>
               }
             </dl>
-          </mat-card-content>
-        </mat-card>
+          </div>
+        </div>
       }
 
-      <mat-card class="issuer-portal__card">
-        <mat-card-header>
-          <mat-card-title>{{ 'issuer.asset_form.title' | t }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
+      <div class="card issuer-portal__card">
+        <h3 class="text-xl font-bold mb-4">{{ 'issuer.asset_form.title' | t }}</h3>
+        <div>
           <p>{{ 'issuer.asset_form.description' | t }}</p>
 
           <form [formGroup]="assetForm" (ngSubmit)="submitAsset()" class="issuer-portal__form">
@@ -122,22 +116,20 @@
               <p class="issuer-portal__error">{{ assetError() }}</p>
             }
 
-            <button mat-flat-button color="primary" type="submit" [disabled]="assetForm.invalid || assetSubmitting()">
+            <button class="btn-primary" type="submit" [disabled]="assetForm.invalid || assetSubmitting()">
               @if (assetSubmitting()) {
-                <mat-spinner diameter="20" />
+                <div class="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
               } @else {
                 {{ 'issuer.asset_form.submit' | t }}
               }
             </button>
           </form>
-        </mat-card-content>
-      </mat-card>
+        </div>
+      </div>
 
-      <mat-card class="issuer-portal__card">
-        <mat-card-header>
-          <mat-card-title>{{ 'issuer.assets.title' | t }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
+      <div class="card issuer-portal__card">
+        <h3 class="text-xl font-bold mb-4">{{ 'issuer.assets.title' | t }}</h3>
+        <div>
           @if (assets().length === 0) {
             <p>{{ 'issuer.assets.empty' | t }}</p>
           } @else {
@@ -182,8 +174,7 @@
                       </app-form-field>
 
                       <button
-                        mat-stroked-button
-                        color="primary"
+                        class="btn-outline"
                         [disabled]="!selectedCustodianFor(asset.id) || attachingAssetId() === asset.id"
                         (click)="attachCustodian(asset)"
                       >
@@ -198,8 +189,8 @@
               <tr mat-row *matRowDef="let row; columns: assetColumns"></tr>
             </table>
           }
-        </mat-card-content>
-      </mat-card>
+        </div>
+      </div>
     }
   }
 </section>

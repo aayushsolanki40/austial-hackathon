@@ -4,70 +4,64 @@
   @switch (state()) {
     @case ('loading') {
       <div class="holding-redeem__loading">
-        <mat-spinner diameter="28" />
+        <div class="spinner"></div>
         <span>{{ 'portfolio.holding_redeem.loading' | t }}</span>
       </div>
     }
     @case ('error') {
       <p class="holding-redeem__error">{{ 'portfolio.holding_redeem.error' | t }}</p>
-      <button mat-stroked-button (click)="load()">{{ 'portfolio.holding_redeem.retry' | t }}</button>
+      <button class="btn-outline" (click)="load()">{{ 'portfolio.holding_redeem.retry' | t }}</button>
     }
     @case ('loaded') {
       @if (holding(); as h) {
         <h1>{{ 'portfolio.holding_redeem.title' | t }} &ndash; {{ h.symbol }}</h1>
 
-        <mat-card class="holding-redeem__card">
-          <mat-card-header>
-            <mat-card-title>{{ 'portfolio.holding_redeem.liquidity_note_title' | t }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
+        <div class="card holding-redeem__card">
+          <h3 class="text-xl font-bold mb-4">{{ 'portfolio.holding_redeem.liquidity_note_title' | t }}</h3>
+          <div>
             <p>{{ 'portfolio.holding_redeem.liquidity_note' | t }}</p>
-          </mat-card-content>
-        </mat-card>
+          </div>
+        </div>
 
-        <mat-card class="holding-redeem__card">
-          <mat-card-content>
-            <p class="holding-redeem__units-held">
-              {{ 'portfolio.holding_redeem.holding_units_label' | t }}: <strong>{{ h.quantity }}</strong>
-            </p>
+        <div class="card holding-redeem__card">
+          <p class="holding-redeem__units-held">
+            {{ 'portfolio.holding_redeem.holding_units_label' | t }}: <strong>{{ h.quantity }}</strong>
+          </p>
 
-            @if (result() === 'submitted') {
-              <p class="holding-redeem__success">{{ 'portfolio.holding_redeem.success_message' | t }}</p>
+          @if (result() === 'submitted') {
+            <p class="holding-redeem__success">{{ 'portfolio.holding_redeem.success_message' | t }}</p>
+          }
+
+          <form [formGroup]="redeemForm" (ngSubmit)="submit()" class="holding-redeem__form">
+            <app-form-field
+              [label]="'portfolio.holding_redeem.units_label' | t"
+              [hint]="'portfolio.holding_redeem.units_hint' | t"
+              [error]="redeemForm.controls.units.touched && redeemForm.controls.units.hasError('max') ? 'portfolio.holding_redeem.units_exceed_error' : undefined">
+              <input type="number" formControlName="units" [max]="h.quantity" min="0" class="form-input"
+                     [class.form-input-error]="redeemForm.controls.units.invalid && redeemForm.controls.units.touched" />
+            </app-form-field>
+
+            @if (submitError()) {
+              <p class="holding-redeem__warning">{{ submitError() }}</p>
             }
 
-            <form [formGroup]="redeemForm" (ngSubmit)="submit()" class="holding-redeem__form">
-              <app-form-field
-                [label]="'portfolio.holding_redeem.units_label' | t"
-                [hint]="'portfolio.holding_redeem.units_hint' | t"
-                [error]="redeemForm.controls.units.touched && redeemForm.controls.units.hasError('max') ? 'portfolio.holding_redeem.units_exceed_error' : undefined">
-                <input type="number" formControlName="units" [max]="h.quantity" min="0" class="form-input"
-                       [class.form-input-error]="redeemForm.controls.units.invalid && redeemForm.controls.units.touched" />
-              </app-form-field>
-
-              @if (submitError()) {
-                <p class="holding-redeem__warning">{{ submitError() }}</p>
+            <button class="btn-primary" type="submit" [disabled]="!canSubmit()">
+              @if (submitting()) {
+                <div class="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              } @else {
+                {{ 'portfolio.holding_redeem.submit_action' | t }}
               }
+            </button>
+          </form>
+        </div>
 
-              <button mat-flat-button color="primary" type="submit" [disabled]="!canSubmit()">
-                @if (submitting()) {
-                  <mat-spinner diameter="20" />
-                } @else {
-                  {{ 'portfolio.holding_redeem.submit_action' | t }}
-                }
-              </button>
-            </form>
-          </mat-card-content>
-        </mat-card>
-
-        <mat-card class="holding-redeem__card">
-          <mat-card-header>
-            <mat-card-title>{{ 'portfolio.holding_redeem.my_requests_title' | t }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
+        <div class="card holding-redeem__card">
+          <h3 class="text-xl font-bold mb-4">{{ 'portfolio.holding_redeem.my_requests_title' | t }}</h3>
+          <div>
             @switch (requestsState()) {
               @case ('loading') {
                 <div class="holding-redeem__loading">
-                  <mat-spinner diameter="24" />
+                  <div class="spinner"></div>
                   <span>{{ 'portfolio.holding_redeem.my_requests_loading' | t }}</span>
                 </div>
               }
@@ -105,7 +99,7 @@
                       <th mat-header-cell *matHeaderCellDef>{{ 'portfolio.holding_redeem.actions_column' | t }}</th>
                       <td mat-cell *matCellDef="let r">
                         @if (r.status === 'REQUESTED') {
-                          <button mat-stroked-button color="warn" [disabled]="cancellingId() === r.id" (click)="cancel(r.id)">
+                          <button class="btn-outline" [disabled]="cancellingId() === r.id" (click)="cancel(r.id)">
                             {{ 'portfolio.holding_redeem.cancel_action' | t }}
                           </button>
                         }
@@ -118,8 +112,8 @@
                 }
               }
             }
-          </mat-card-content>
-        </mat-card>
+          </div>
+        </div>
       }
     }
   }

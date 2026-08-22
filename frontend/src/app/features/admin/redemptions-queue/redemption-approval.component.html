@@ -16,13 +16,13 @@
         @switch (queueState()) {
           @case ('loading') {
             <div class="redemption-approval__loading">
-              <mat-spinner diameter="28" />
+              <div class="spinner"></div>
               <span>{{ 'redemptions.admin.loading' | t }}</span>
             </div>
           }
           @case ('error') {
             <p class="redemption-approval__error">{{ 'redemptions.admin.error' | t }}</p>
-            <button mat-stroked-button (click)="loadQueue()">{{ 'redemptions.admin.retry' | t }}</button>
+            <button class="btn-outline" (click)="loadQueue()">{{ 'redemptions.admin.retry' | t }}</button>
           }
           @case ('loaded') {
             @if (queue().length === 0) {
@@ -79,7 +79,7 @@
                     @switch (r.status) {
                       @case ('REQUESTED') {
                         <div class="redemption-approval__actions">
-                          <button mat-stroked-button color="primary" [disabled]="actioningId() === r.id" (click)="approve(r.id)">
+                          <button class="btn-outline" color="primary" [disabled]="actioningId() === r.id" (click)="approve(r.id)">
                             {{ 'redemptions.admin.approve_action' | t }}
                           </button>
 
@@ -88,8 +88,7 @@
                           </app-form-field>
 
                           <button
-                            mat-stroked-button
-                            color="warn"
+                            class="btn-outline"
                             [disabled]="actioningId() === r.id || !reasonFor(r.id).trim()"
                             (click)="reject(r.id)"
                           >
@@ -98,12 +97,12 @@
                         </div>
                       }
                       @case ('COMPLIANCE_APPROVED') {
-                        <button mat-stroked-button color="primary" [disabled]="actioningId() === r.id" (click)="release(r.id)">
+                        <button class="btn-outline" color="primary" [disabled]="actioningId() === r.id" (click)="release(r.id)">
                           {{ 'redemptions.admin.release_action' | t }}
                         </button>
                       }
                       @case ('CUSTODIAN_RELEASED') {
-                        <button mat-stroked-button color="primary" [disabled]="actioningId() === r.id" (click)="complete(r.id)">
+                        <button class="btn-outline" color="primary" [disabled]="actioningId() === r.id" (click)="complete(r.id)">
                           {{ 'redemptions.admin.complete_action' | t }}
                         </button>
                       }
@@ -125,11 +124,9 @@
 
     <app-tab [label]="'redemptions.admin.distributions_tab_label' | t">
       <div class="redemption-approval__tab-content">
-        <mat-card class="redemption-approval__card">
-          <mat-card-header>
-            <mat-card-title>{{ 'redemptions.admin.create_distribution_title' | t }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
+        <div class="card redemption-approval__card">
+          <h3 class="text-xl font-bold mb-4">{{ 'redemptions.admin.create_distribution_title' | t }}</h3>
+          <div>
             <form [formGroup]="distributionForm" (ngSubmit)="createDistribution()" class="redemption-approval__form">
               <app-form-field
                 [label]="'redemptions.admin.distribution_series_label' | t"
@@ -160,38 +157,34 @@
                 <p class="redemption-approval__error">{{ createError() }}</p>
               }
 
-              <button mat-flat-button color="primary" type="submit" [disabled]="distributionForm.invalid || creating()">
+              <button class="btn-primary" type="submit" [disabled]="distributionForm.invalid || creating()">
                 @if (creating()) {
-                  <mat-spinner diameter="20" />
+                  <div class="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                 } @else {
                   {{ 'redemptions.admin.create_distribution_action' | t }}
                 }
               </button>
             </form>
-          </mat-card-content>
-        </mat-card>
+          </div>
+        </div>
 
         @if (processResult(); as result) {
-          <mat-card class="redemption-approval__card">
-            <mat-card-header>
-              <mat-card-title>{{ 'redemptions.admin.process_result_title' | t }}</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
+          <div class="card redemption-approval__card">
+            <h3 class="text-xl font-bold mb-4">{{ 'redemptions.admin.process_result_title' | t }}</h3>
+            <div>
               <p>{{ 'redemptions.admin.process_result_holder_count' | t }}: {{ result.holder_count }}</p>
               <p>{{ 'redemptions.admin.process_result_total_credited' | t }}: {{ result.total_credited | currency: 'USD' : 'symbol' : '1.2-2' }}</p>
-            </mat-card-content>
-          </mat-card>
+            </div>
+          </div>
         }
 
         @if (processError()) {
           <p class="redemption-approval__error">{{ processError() }}</p>
         }
 
-        <mat-card class="redemption-approval__card">
-          <mat-card-header>
-            <mat-card-title>{{ 'redemptions.admin.distributions_title' | t }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
+        <div class="card redemption-approval__card">
+          <h3 class="text-xl font-bold mb-4">{{ 'redemptions.admin.distributions_title' | t }}</h3>
+          <div>
             <div class="redemption-approval__filter">
               <app-form-field [label]="'redemptions.admin.status_filter_label' | t">
                 <app-select
@@ -204,7 +197,7 @@
             @switch (distributionsState()) {
               @case ('loading') {
                 <div class="redemption-approval__loading">
-                  <mat-spinner diameter="24" />
+                  <div class="spinner"></div>
                   <span>{{ 'redemptions.admin.distributions_loading' | t }}</span>
                 </div>
               }
@@ -245,7 +238,7 @@
                       <th mat-header-cell *matHeaderCellDef>{{ 'redemptions.admin.distribution_actions_column' | t }}</th>
                       <td mat-cell *matCellDef="let d">
                         @if (d.status === 'DRAFT') {
-                          <button mat-stroked-button color="primary" [disabled]="processingId() === d.id" (click)="processDistribution(d.id)">
+                          <button class="btn-outline" color="primary" [disabled]="processingId() === d.id" (click)="processDistribution(d.id)">
                             {{ 'redemptions.admin.process_action' | t }}
                           </button>
                         }
@@ -258,8 +251,8 @@
                 }
               }
             }
-          </mat-card-content>
-        </mat-card>
+          </div>
+        </div>
       </div>
     </app-tab>
   </app-tabs>

@@ -4,21 +4,19 @@
   @switch (state()) {
     @case ('loading') {
       <div class="asset-subscribe__loading">
-        <mat-spinner diameter="28" />
+        <div class="spinner"></div>
         <span>{{ 'marketplace.asset_subscribe.loading' | t }}</span>
       </div>
     }
     @case ('error') {
       <p class="asset-subscribe__error">{{ 'marketplace.asset_subscribe.error' | t }}</p>
-      <button mat-stroked-button (click)="load()">{{ 'marketplace.asset_subscribe.retry' | t }}</button>
+      <button class="btn-outline" (click)="load()">{{ 'marketplace.asset_subscribe.retry' | t }}</button>
     }
     @case ('loaded') {
       @if (result(); as r) {
-        <mat-card class="asset-subscribe__card">
-          <mat-card-header>
-            <mat-card-title>{{ 'marketplace.asset_subscribe.success_title' | t }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
+        <div class="card asset-subscribe__card">
+          <h3 class="text-xl font-bold mb-4">{{ 'marketplace.asset_subscribe.success_title' | t }}</h3>
+          <div>
             <p>{{ 'marketplace.asset_subscribe.success_message' | t }}</p>
             <dl class="asset-subscribe__details">
               <dt>{{ 'marketplace.asset_subscribe.status_label' | t }}</dt>
@@ -27,19 +25,18 @@
               <dt>{{ 'marketplace.asset_subscribe.locked_amount_label' | t }}</dt>
               <dd>{{ r.amount_usd | currency: 'USD' : 'symbol' : '1.2-2' }}</dd>
             </dl>
-            <a mat-flat-button color="primary" routerLink="/portfolio">{{ 'marketplace.asset_subscribe.view_portfolio_action' | t }}</a>
-          </mat-card-content>
-        </mat-card>
+            <a class="btn-primary" routerLink="/portfolio">{{ 'marketplace.asset_subscribe.view_portfolio_action' | t }}</a>
+          </div>
+        </div>
       } @else if (listing()) {
         @if (listing(); as l) {
         <h1>{{ 'marketplace.asset_subscribe.title' | t }} &ndash; {{ l.asset_name }}</h1>
 
-        <mat-card class="asset-subscribe__card">
-          <mat-card-content>
-            <p class="asset-subscribe__balance">
-              {{ 'marketplace.asset_subscribe.available_balance_label' | t }}:
-              <strong>{{ (account()?.available_balance ?? 0) | currency: (account()?.currency ?? 'USD') : 'symbol' : '1.2-2' }}</strong>
-            </p>
+        <div class="card asset-subscribe__card">
+          <p class="asset-subscribe__balance">
+            {{ 'marketplace.asset_subscribe.available_balance_label' | t }}:
+            <strong>{{ (account()?.available_balance ?? 0) | currency: (account()?.currency ?? 'USD') : 'symbol' : '1.2-2' }}</strong>
+          </p>
 
             <form [formGroup]="unitsForm" (ngSubmit)="submit()" class="asset-subscribe__form">
               <app-form-field
@@ -72,16 +69,15 @@
                 <p class="asset-subscribe__warning">{{ submitError() }}</p>
               }
 
-              <button mat-flat-button color="primary" type="submit" [disabled]="!canSubmit()">
+              <button class="btn-primary" type="submit" [disabled]="!canSubmit()">
                 @if (submitting()) {
-                  <mat-spinner diameter="20" />
+                  <div class="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                 } @else {
                   {{ 'marketplace.asset_subscribe.submit_action' | t }}
                 }
               </button>
             </form>
-          </mat-card-content>
-        </mat-card>
+        </div>
         }
       }
     }

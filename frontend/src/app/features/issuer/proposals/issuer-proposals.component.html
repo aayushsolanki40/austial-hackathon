@@ -3,15 +3,13 @@
 
   @if (loading()) {
     <div class="issuer-proposals__loading">
-      <mat-spinner diameter="28" />
+      <div class="spinner"></div>
       <span>{{ 'issuance.issuer_proposals.loading' | t }}</span>
     </div>
   } @else {
-    <mat-card class="issuer-proposals__card">
-      <mat-card-header>
-        <mat-card-title>{{ 'issuance.proposal_form.title' | t }}</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
+    <div class="card issuer-proposals__card">
+      <h3 class="text-xl font-bold mb-4">{{ 'issuance.proposal_form.title' | t }}</h3>
+      <div>
         @if (tokenizationReadyAssets().length === 0) {
           <p class="issuer-proposals__hint">{{ 'issuance.proposal_form.no_tokenization_ready_assets' | t }}</p>
         } @else {
@@ -64,23 +62,21 @@
               <p class="issuer-proposals__error">{{ error() }}</p>
             }
 
-            <button mat-flat-button color="primary" type="submit" [disabled]="proposalForm.invalid || submitting()">
+            <button class="btn-primary" type="submit" [disabled]="proposalForm.invalid || submitting()">
               @if (submitting()) {
-                <mat-spinner diameter="20" />
+                <div class="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
               } @else {
                 {{ 'issuance.proposal_form.submit' | t }}
               }
             </button>
           </form>
         }
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </div>
 
-    <mat-card class="issuer-proposals__card">
-      <mat-card-header>
-        <mat-card-title>{{ 'issuance.issuer_proposals.list_title' | t }}</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
+    <div class="card issuer-proposals__card">
+      <h3 class="text-xl font-bold mb-4">{{ 'issuance.issuer_proposals.list_title' | t }}</h3>
+      <div>
         @if (proposals().length === 0) {
           <p>{{ 'issuance.issuer_proposals.empty' | t }}</p>
         } @else {
@@ -113,7 +109,7 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>{{ 'issuance.issuer_proposals.actions_column' | t }}</th>
               <td mat-cell *matCellDef="let proposal">
-                <a mat-stroked-button [routerLink]="['/issuer', 'proposals', proposal.id]">
+                <a class="btn-outline" [routerLink]="['/issuer', 'proposals', proposal.id]">
                   {{ 'issuance.issuer_proposals.view_action' | t }}
                 </a>
               </td>
@@ -123,7 +119,7 @@
             <tr mat-row *matRowDef="let row; columns: proposalColumns"></tr>
           </table>
         }
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </div>
   }
 </section>

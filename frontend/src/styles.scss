@@ -1,3 +1,22 @@
+// Angular Material v19+ theme imports
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+// Define theme using Material 3 design tokens
+$theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$violet-palette,
+  ),
+));
+
+// M3 themes require selector wrapping
+html {
+  @include mat.all-component-themes($theme);
+}
+
+// Tailwind base imports
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

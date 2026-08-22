@@ -1,8 +1,7 @@
 <section class="valuation-oracle">
   <h1>{{ 'valuation.admin.title' | t }}</h1>
 
-  <mat-card class="valuation-oracle__card">
-    <mat-card-content>
+  <div class="card valuation-oracle__card">
       <div class="valuation-oracle__lookup">
         <app-form-field [label]="'valuation.admin.series_lookup_label' | t">
           <input type="number" [ngModel]="seriesIdLookup()" (ngModelChange)="seriesIdLookup.set($event)" class="form-input" />
@@ -15,7 +14,7 @@
             (selectionChange)="statusFilter.set($event)" />
         </app-form-field>
 
-        <button mat-flat-button color="primary" [disabled]="!seriesIdLookup() || feedsState() === 'loading'" (click)="loadFeeds()">
+        <button class="btn-primary" [disabled]="!seriesIdLookup() || feedsState() === 'loading'" (click)="loadFeeds()">
           {{ 'valuation.admin.series_lookup_action' | t }}
         </button>
       </div>
@@ -23,27 +22,24 @@
       @if (feedsState() === 'idle') {
         <p class="valuation-oracle__hint">{{ 'valuation.admin.series_lookup_hint' | t }}</p>
       }
-    </mat-card-content>
-  </mat-card>
+  </div>
 
   @switch (feedsState()) {
     @case ('loading') {
       <div class="valuation-oracle__loading">
-        <mat-spinner diameter="28" />
+        <div class="spinner"></div>
         <span>{{ 'valuation.admin.loading' | t }}</span>
       </div>
     }
     @case ('error') {
       <p class="valuation-oracle__error">{{ 'valuation.admin.error' | t }}</p>
-      <button mat-stroked-button (click)="loadFeeds()">{{ 'valuation.admin.retry' | t }}</button>
+      <button class="btn-outline" (click)="loadFeeds()">{{ 'valuation.admin.retry' | t }}</button>
     }
     @case ('loaded') {
       @if (currentNav(); as nav) {
-        <mat-card class="valuation-oracle__card">
-          <mat-card-header>
-            <mat-card-title>{{ 'valuation.current_nav.label' | t }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
+        <div class="card valuation-oracle__card">
+          <h3 class="text-xl font-bold mb-4">{{ 'valuation.current_nav.label' | t }}</h3>
+          <div>
             <p class="valuation-oracle__nav-value">{{ nav.nav_per_unit | currency: 'USD' : 'symbol' : '1.2-2' }}</p>
             <p class="valuation-oracle__hint">
               {{ (nav.as_of ? 'valuation.current_nav.feed_source' : 'valuation.current_nav.unit_price_source') | t }}
@@ -51,15 +47,13 @@
                 &middot; {{ 'valuation.current_nav.as_of_label' | t }}: {{ nav.as_of | date: 'medium' }}
               }
             </p>
-          </mat-card-content>
-        </mat-card>
+          </div>
+        </div>
       }
 
-      <mat-card class="valuation-oracle__card">
-        <mat-card-header>
-          <mat-card-title>{{ 'valuation.admin.feed_history_title' | t }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
+      <div class="card valuation-oracle__card">
+        <h3 class="text-xl font-bold mb-4">{{ 'valuation.admin.feed_history_title' | t }}</h3>
+        <div>
           @if (feeds().length === 0) {
             <p>{{ 'valuation.admin.empty' | t }}</p>
           } @else {
@@ -93,7 +87,7 @@
                 <th mat-header-cell *matHeaderCellDef>{{ 'valuation.admin.actions_column' | t }}</th>
                 <td mat-cell *matCellDef="let feed">
                   @if (feed.status === 'QUARANTINED') {
-                    <button mat-stroked-button color="primary" [disabled]="approvingId() === feed.id" (click)="approve(feed.id)">
+                    <button class="btn-outline" color="primary" [disabled]="approvingId() === feed.id" (click)="approve(feed.id)">
                       {{ 'valuation.admin.approve_action' | t }}
                     </button>
                   }
@@ -104,16 +98,14 @@
               <tr mat-row *matRowDef="let row; columns: feedColumns"></tr>
             </table>
           }
-        </mat-card-content>
-      </mat-card>
+        </div>
+      </div>
     }
   }
 
-  <mat-card class="valuation-oracle__card">
-    <mat-card-header>
-      <mat-card-title>{{ 'valuation.admin.submit_feed_title' | t }}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
+  <div class="card valuation-oracle__card">
+    <h3 class="text-xl font-bold mb-4">{{ 'valuation.admin.submit_feed_title' | t }}</h3>
+    <div>
       @if (submitSuccess()) {
         <p class="valuation-oracle__success">{{ 'valuation.admin.submit_success' | t }}</p>
       }
@@ -151,14 +143,14 @@
           <p class="valuation-oracle__error">{{ submitError() }}</p>
         }
 
-        <button mat-flat-button color="primary" type="submit" [disabled]="submitForm.invalid || submitting()">
+        <button class="btn-primary" type="submit" [disabled]="submitForm.invalid || submitting()">
           @if (submitting()) {
-            <mat-spinner diameter="20" />
+            <div class="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
           } @else {
             {{ 'valuation.admin.submit_action' | t }}
           }
         </button>
       </form>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </div>
 </section>

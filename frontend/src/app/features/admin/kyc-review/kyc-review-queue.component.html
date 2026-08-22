@@ -43,8 +43,7 @@
             <td mat-cell *matCellDef="let item">
               <div class="kyc-review__actions">
                 <button
-                  mat-stroked-button
-                  color="primary"
+                  class="btn-outline"
                   [disabled]="actioningId() === item.id"
                   (click)="approve(item)"
                 >
@@ -60,8 +59,7 @@
                 </app-form-field>
 
                 <button
-                  mat-stroked-button
-                  color="warn"
+                  class="btn-outline"
                   [disabled]="actioningId() === item.id || !reasonFor(item.id).trim()"
                   (click)="reject(item)"
                 >

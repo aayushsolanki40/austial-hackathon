@@ -26,13 +26,12 @@
       </app-form-field>
 
       <button
-        mat-flat-button
-        color="primary"
+        class="btn-primary"
         (click)="generateReport()"
         [disabled]="!canGenerate() || generating()"
       >
         @if (generating()) {
-          <mat-spinner diameter="20" class="button-spinner"></mat-spinner>
+          <div class="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
         }
         {{ 'compliance.reports.generate_action' | t }}
       </button>
@@ -85,7 +84,7 @@
             <td mat-cell *matCellDef="let report">
               @if (report.status === 'COMPLETED') {
                 <button
-                  mat-stroked-button
+                  class="btn-outline"
                   (click)="downloadReport(report)"
                   [disabled]="downloadingId() === report.id"
                 >

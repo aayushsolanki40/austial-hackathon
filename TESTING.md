@@ -1,6 +1,6 @@
-# Austial/Swadely Platform Testing Guide
+# Austial/Austial Platform Testing Guide
 
-Complete testing instructions for all 9 build phases of the Swadely RWA tokenization and cross-border payments platform.
+Complete testing instructions for all 9 build phases of the Austial RWA tokenization and cross-border payments platform.
 
 ## 🌐 Production Environment
 

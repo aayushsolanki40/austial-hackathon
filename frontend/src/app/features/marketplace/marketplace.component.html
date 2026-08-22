@@ -29,7 +29,9 @@
     @switch (state()) {
       @case ('loading') {
         <div class="flex flex-col items-center justify-center py-16 animate-fade-in">
-          <span class="spinner border-primary-600 h-12 w-12 mb-4"></span>
+          <img src="assets/images/logo/austial-icon.svg"
+               alt="Loading"
+               class="h-16 animate-pulse mb-4">
           <span class="text-slate-600">{{ 'marketplace.list.loading' | t }}</span>
         </div>
       }

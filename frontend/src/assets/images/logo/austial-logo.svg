@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" fill="none">
+  <!-- Background circle accent -->
+  <circle cx="30" cy="30" r="24" fill="#10b981" opacity="0.1"/>
+
+  <!-- Letter A icon -->
+  <path d="M30 12L42 42H38L35.5 36H24.5L22 42H18L30 12Z" fill="#10b981"/>
+  <path d="M26 32H34L30 22L26 32Z" fill="white"/>
+
+  <!-- Austial text -->
+  <text x="60" y="40" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="28" font-weight="700" fill="#1f2937">
+    Austial
+  </text>
+</svg>

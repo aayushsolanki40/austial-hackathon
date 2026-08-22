@@ -18,7 +18,7 @@ import { TPipe } from '../../../core/i18n/t.pipe';
   template: `
     @if (state === 'loading') {
       <div class="admin-state admin-state--loading">
-        <mat-spinner diameter="28" />
+        <img src="assets/images/logo/austial-icon.svg" alt="Loading" class="h-8 animate-pulse" />
         <span>{{ 'admin.state.loading' | t }}</span>
       </div>
     } @else {

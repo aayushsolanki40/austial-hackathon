@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Background -->
+  <rect width="100" height="100" rx="20" fill="#10b981"/>
+
+  <!-- Letter A -->
+  <path d="M50 25L70 75H62L58 65H42L38 75H30L50 25Z" fill="white"/>
+  <path d="M45 58H55L50 45L45 58Z" fill="#10b981"/>
+</svg>

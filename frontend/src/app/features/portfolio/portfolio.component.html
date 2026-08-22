@@ -8,7 +8,9 @@
     @switch (state()) {
       @case ('loading') {
         <div class="flex flex-col items-center justify-center py-16 animate-fade-in">
-          <span class="spinner border-primary-600 h-12 w-12 mb-4"></span>
+          <img src="assets/images/logo/austial-icon.svg"
+               alt="Loading"
+               class="h-16 animate-pulse mb-4">
           <span class="text-slate-600">{{ 'portfolio.overview.loading' | t }}</span>
         </div>
       }
@@ -137,7 +139,9 @@
             @switch (distributionsState()) {
               @case ('loading') {
                 <div class="card flex items-center justify-center py-8">
-                  <span class="spinner border-primary-600 h-8 w-8 mr-3"></span>
+                  <img src="assets/images/logo/austial-icon.svg"
+                       alt="Loading"
+                       class="h-8 animate-pulse mr-3">
                   <span class="text-slate-600">{{ 'portfolio.distributions.loading' | t }}</span>
                 </div>
               }

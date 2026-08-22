@@ -27,10 +27,12 @@ from src.modules.redemptions.entities.redemption_request import RedemptionReques
 from src.modules.subscriptions.entities.subscription import Subscription
 from src.modules.valuation.entities.valuation_feed import ValuationFeed
 from src.modules.ml.entities.ml_prediction import MlPrediction
+from src.modules.otp.entities.otp_code import OtpCode
 
 ALL_ENTITIES = [
     User,
     RefreshToken,
+    OtpCode,
     InvestorProfile,
     WalletMapping,
     KycSubmission,

@@ -1,4 +1,4 @@
-# Austial/Swadely Quick Start Guide
+# Austial/Austial Quick Start Guide
 
 Get started testing the live production deployment in minutes.
 

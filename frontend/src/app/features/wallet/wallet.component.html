@@ -13,7 +13,9 @@
         @switch (accountState()) {
           @case ('loading') {
             <div class="card flex items-center justify-center py-12">
-              <span class="spinner border-primary-600 h-12 w-12 mr-3"></span>
+              <img src="assets/images/logo/austial-icon.svg"
+                   alt="Loading"
+                   class="h-12 animate-pulse mr-3">
               <span class="text-slate-600">{{ 'wallet.balance.loading' | t }}</span>
             </div>
           }
@@ -144,7 +146,9 @@
         @switch (entriesState()) {
           @case ('loading') {
             <div class="card flex items-center justify-center py-12">
-              <span class="spinner border-primary-600 h-8 w-8 mr-3"></span>
+              <img src="assets/images/logo/austial-icon.svg"
+                   alt="Loading"
+                   class="h-8 animate-pulse mr-3">
               <span class="text-slate-600">{{ 'wallet.history.loading' | t }}</span>
             </div>
           }

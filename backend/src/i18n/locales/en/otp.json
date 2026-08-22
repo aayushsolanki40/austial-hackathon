@@ -1,0 +1,11 @@
+{
+  "route_prefix": "/otp",
+  "generated_success": "OTP generated and sent successfully",
+  "verified_success": "OTP verified successfully",
+  "error": {
+    "invalid_or_expired": "OTP code is invalid or has expired",
+    "expired": "OTP code has expired",
+    "max_attempts_exceeded": "Maximum verification attempts exceeded. Please request a new OTP.",
+    "invalid_code": "Invalid OTP code"
+  }
+}

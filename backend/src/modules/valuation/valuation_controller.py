@@ -39,6 +39,15 @@ class ValuationController:
     async def approve_quarantined_feed(self, request: Req, id: int = Param("id")) -> ValuationFeedResponseDto:
         return await self.valuation_service.approve_quarantined_feed(_current_user_id(request), id)
 
+    @Get("feeds")
+    async def list_all_feeds(
+        self,
+        status: str | None = Query("status", default=None),
+        skip: int = Query("skip", default=0),
+        take: int = Query("take", default=_DEFAULT_PAGE_SIZE),
+    ) -> ValuationFeedListDto:
+        return await self.valuation_service.list_all_feeds(status=status, skip=skip, take=take)
+
     @Get("feeds/token-series/:series_id")
     async def list_feeds_for_series(
         self,

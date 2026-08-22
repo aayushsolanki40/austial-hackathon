@@ -67,6 +67,16 @@ class SubscriptionsController:
 
     # -- compliance-officer/admin-facing: ops actions + allocation -------------------------------
 
+    @Get()
+    @Roles(*_OPS_ROLES)
+    async def list_all_subscriptions(
+        self,
+        status: str | None = Query("status", default=None),
+        skip: int = Query("skip", default=0),
+        take: int = Query("take", default=_DEFAULT_PAGE_SIZE),
+    ) -> SubscriptionListDto:
+        return await self.subscriptions_service.list_all_subscriptions(status=status, skip=skip, take=take)
+
     @Get("token-series/:series_id")
     @Roles(*_OPS_ROLES)
     async def list_subscriptions_for_series(

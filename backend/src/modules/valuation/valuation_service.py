@@ -135,6 +135,13 @@ class ValuationService:
         )
         return _to_dto(feed)
 
+    async def list_all_feeds(self, *, status: str | None, skip: int, take: int) -> ValuationFeedListDto:
+        query = self.valuation_feeds.create_query_builder("f").left_join_and_select("f.token_series", "series")
+        if status:
+            query = query.where_eq("f.status", status, cast_text=True)
+        feeds, total = await query.add_order_by("f.reported_at", "DESC").skip(skip).take(take).get_many_and_count()
+        return ValuationFeedListDto(total=total, items=[_to_dto(f) for f in feeds])
+
     async def list_feeds_for_series(
         self, series_id: int, *, status: str | None, skip: int, take: int
     ) -> ValuationFeedListDto:

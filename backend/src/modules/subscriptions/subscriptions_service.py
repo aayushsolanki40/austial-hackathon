@@ -236,6 +236,17 @@ class SubscriptionsService:
 
     # -- compliance-officer/admin-facing: ops actions + allocation -------------------------------
 
+    async def list_all_subscriptions(self, *, status: str | None, skip: int, take: int) -> SubscriptionListDto:
+        query = (
+            self.subscriptions.create_query_builder("sub")
+            .left_join_and_select("sub.token_series", "series")
+            .left_join_and_select("sub.investor", "investor")
+        )
+        if status:
+            query = query.where_eq("sub.status", status, cast_text=True)
+        subs, total = await query.add_order_by("sub.id", "DESC").skip(skip).take(take).get_many_and_count()
+        return SubscriptionListDto(total=total, items=[_to_dto(s) for s in subs])
+
     async def list_subscriptions_for_series(
         self, series_id: int, *, status: str | None, skip: int, take: int
     ) -> SubscriptionListDto:

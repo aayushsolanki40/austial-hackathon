@@ -101,6 +101,12 @@ class ComplianceController:
 
     # -- Deletion requests (7-year retention) ------------------------------------------------
 
+    @Get("deletion-requests")
+    async def list_deletion_requests(
+        self, skip: int = Query("skip", default=0), take: int = Query("take", default=_DEFAULT_PAGE_SIZE)
+    ) -> dict:
+        return await self.compliance_service.list_deletion_requests(skip=skip, take=take)
+
     @Post("deletion-requests")
     async def queue_deletion(self, request: Req, dto: DeletionRequestDto = Body()) -> dict:
         await self.compliance_service.queue_deletion_request(

@@ -130,7 +130,11 @@ class ComplianceService:
     async def list_alerts(
         self, *, skip: int, take: int, status: str | None = None, assigned_officer_id: int | None = None
     ) -> AmlAlertListDto:
-        query = self.aml_alerts.create_query_builder("a")
+        query = (
+            self.aml_alerts.create_query_builder("a")
+            .left_join_and_select("a.investor", "investor")
+            .left_join_and_select("a.assigned_officer", "officer")
+        )
         if status:
             query = query.where_eq("a.status", status, cast_text=True)
         if assigned_officer_id is not None:
@@ -240,6 +244,33 @@ class ComplianceService:
 
     # -- Deletion requests (7-year retention) -------------------------------------------------
 
+    async def list_deletion_requests(self, *, skip: int, take: int) -> dict:
+        """Lists deletion requests from audit logs.
+
+        Since there's no dedicated ``DeletionRequest`` entity yet, this queries audit logs for
+        entries with action = 'compliance.deletion_request.queued'.
+        """
+        logs, total = await (
+            self.audit_logs.create_query_builder("log")
+            .where("log.action = :action", {"action": "compliance.deletion_request.queued"})
+            .add_order_by("log.occurred_at", "DESC")
+            .skip(skip)
+            .take(take)
+            .get_many_and_count()
+        )
+        items = [
+            {
+                "id": log.id,
+                "entity_type": log.after_state.get("entity_type") if log.after_state else None,
+                "entity_id": log.after_state.get("entity_id") if log.after_state else None,
+                "reason": log.after_state.get("reason") if log.after_state else None,
+                "requested_by_user_id": log.actor_user_id,
+                "occurred_at": log.occurred_at,
+            }
+            for log in logs
+        ]
+        return {"total": total, "items": items}
+
     async def queue_deletion_request(self, entity_type: str, entity_id: int, requested_by: int, reason: str) -> None:
         """Queues a deletion request (7-year retention rule -- doesn't execute immediately).
 
@@ -278,7 +309,7 @@ class ComplianceService:
         return {row["currency"]: str(row["sum"]) for row in grouped}
 
     async def _get_alert_or_raise(self, alert_id: int) -> AmlAlert:
-        alert = await self.aml_alerts.find_one(FindOptions(where={"id": alert_id}))
+        alert = await self.aml_alerts.find_one(FindOptions(where={"id": alert_id}, relations=["investor", "assigned_officer"]))
         if alert is None:
             raise NotFoundException(t("compliance.error.alert_not_found"))
         return alert

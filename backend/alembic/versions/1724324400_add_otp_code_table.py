@@ -1,7 +1,7 @@
 """add otp_code table
 
 Revision ID: 1724324400
-Revises: aa956c6cf516
+Revises: 0c5720210173
 Create Date: 2026-08-22 07:00:00
 
 """
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = '1724324400'
-down_revision: Union[str, None] = 'aa956c6cf516'
+down_revision: Union[str, None] = '0c5720210173'  # After Phase 9 ML predictions
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

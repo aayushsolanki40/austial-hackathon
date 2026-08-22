@@ -265,6 +265,11 @@ resource "aws_instance" "backend" {
     ledger_beneficiary_bank_name      = var.ledger_beneficiary_bank_name
     ledger_beneficiary_account_number = var.ledger_beneficiary_account_number
     ledger_beneficiary_swift_bic      = var.ledger_beneficiary_swift_bic
+    development_mode                  = var.development_mode
+    fixed_otp_code                    = var.fixed_otp_code
+    otp_length                        = var.otp_length
+    otp_ttl_minutes                   = var.otp_ttl_minutes
+    otp_max_attempts                  = var.otp_max_attempts
   })
 
   root_block_device {

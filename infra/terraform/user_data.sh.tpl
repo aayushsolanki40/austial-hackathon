@@ -77,6 +77,11 @@ docker run -d \
   -e LEDGER_BENEFICIARY_BANK_NAME="${ledger_beneficiary_bank_name}" \
   -e LEDGER_BENEFICIARY_ACCOUNT_NUMBER="${ledger_beneficiary_account_number}" \
   -e LEDGER_BENEFICIARY_SWIFT_BIC="${ledger_beneficiary_swift_bic}" \
+  -e DEVELOPMENT_MODE="${development_mode}" \
+  -e FIXED_OTP_CODE="${fixed_otp_code}" \
+  -e OTP_LENGTH=${otp_length} \
+  -e OTP_TTL_MINUTES=${otp_ttl_minutes} \
+  -e OTP_MAX_ATTEMPTS=${otp_max_attempts} \
   "$IMAGE"
 
 docker run -d \
@@ -92,6 +97,11 @@ docker run -d \
   -e LEDGER_BENEFICIARY_BANK_NAME="${ledger_beneficiary_bank_name}" \
   -e LEDGER_BENEFICIARY_ACCOUNT_NUMBER="${ledger_beneficiary_account_number}" \
   -e LEDGER_BENEFICIARY_SWIFT_BIC="${ledger_beneficiary_swift_bic}" \
+  -e DEVELOPMENT_MODE="${development_mode}" \
+  -e FIXED_OTP_CODE="${fixed_otp_code}" \
+  -e OTP_LENGTH=${otp_length} \
+  -e OTP_TTL_MINUTES=${otp_ttl_minutes} \
+  -e OTP_MAX_ATTEMPTS=${otp_max_attempts} \
   "$IMAGE" celery -A src.jobs.celery_app worker --loglevel=info
 
 echo "user-data complete"

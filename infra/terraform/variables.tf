@@ -131,3 +131,35 @@ variable "ledger_beneficiary_swift_bic" {
   type        = string
   default     = "GIFTINBBDEM"
 }
+
+# --- OTP module additions: development mode + fixed OTP config ---------------
+
+variable "development_mode" {
+  description = "Value for the app's DEVELOPMENT_MODE env var. When 'true', OTP generation uses a fixed code (FIXED_OTP_CODE) instead of random, for easier testing."
+  type        = string
+  default     = "true"
+}
+
+variable "fixed_otp_code" {
+  description = "Value for the app's FIXED_OTP_CODE env var -- the hardcoded OTP used when DEVELOPMENT_MODE=true."
+  type        = string
+  default     = "123456"
+}
+
+variable "otp_length" {
+  description = "Value for the app's OTP_LENGTH env var -- number of digits in generated OTP codes."
+  type        = number
+  default     = 6
+}
+
+variable "otp_ttl_minutes" {
+  description = "Value for the app's OTP_TTL_MINUTES env var -- how long an OTP remains valid."
+  type        = number
+  default     = 10
+}
+
+variable "otp_max_attempts" {
+  description = "Value for the app's OTP_MAX_ATTEMPTS env var -- max verification attempts before an OTP is invalidated."
+  type        = number
+  default     = 3
+}

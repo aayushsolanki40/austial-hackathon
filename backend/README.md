@@ -198,8 +198,18 @@ uv run austial generate resource cats   # module + CRUD controller + service + d
 ## Testing
 
 ```bash
-uv run pytest
+uv run pytest                                # run all tests
+uv run pytest --cov=src --cov-report=html    # with coverage report
+uv run pytest tests/unit/                    # unit tests only
+uv run pytest tests/integration/             # integration tests only
+uv run pytest -v -k "test_aml"               # specific test pattern
 ```
+
+**📖 For comprehensive testing instructions covering all 9 build phases, see [`../TESTING.md`](../TESTING.md)** — includes:
+- Phase-by-phase API testing with curl examples
+- KYC, issuance, subscription, compliance, ML workflows
+- Integration testing, load testing, security testing
+- Frontend e2e tests, CI/CD setup
 
 Unit and e2e specs build their providers/app straight from the DI container
 via `austial.testing`, and wire an in-memory SQLite `DataSource` instead of

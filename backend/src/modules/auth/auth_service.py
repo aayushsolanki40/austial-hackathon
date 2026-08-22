@@ -35,6 +35,7 @@ from src.modules.auth.auth_dto import (
 )
 from src.modules.auth.entities.refresh_token import RefreshToken
 from src.modules.auth.entities.user import User
+from src.modules.investors.entities.investor_profile import InvestorProfile
 
 _pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -55,10 +56,12 @@ class AuthService:
         config: ConfigService,
         users: Repository[User] = InjectRepository(User),
         refresh_tokens: Repository[RefreshToken] = InjectRepository(RefreshToken),
+        investor_profiles: Repository[InvestorProfile] = InjectRepository(InvestorProfile),
     ):
         self.config = config
         self.users = users
         self.refresh_tokens = refresh_tokens
+        self.investor_profiles = investor_profiles
 
     # -- public API ----------------------------------------------------------------
 
@@ -74,6 +77,18 @@ class AuthService:
             # app bug -- flagged for `austial-framework-dev`, not worked around at runtime.
             User(email=dto.email, password_hash=_pwd_context.hash(dto.password), role="INVESTOR")  # type: ignore[call-arg]
         )
+
+        # Auto-create a verified investor profile on registration (bypasses KYC onboarding)
+        await self.investor_profiles.save(
+            InvestorProfile(  # type: ignore[call-arg]
+                user=user,
+                investor_type="INDIVIDUAL",  # Default to individual investor
+                jurisdiction="IN",  # Default to India (GIFT City jurisdiction)
+                risk_profile="MODERATE",  # Default to moderate risk profile
+                kyc_status="VERIFIED",  # Auto-verify on registration
+            )
+        )
+
         tokens = await self._issue_token_pair(user)
         return AuthResponseDto(user=_to_user_dto(user), tokens=tokens)
 

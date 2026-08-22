@@ -1,10 +1,7 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTableModule } from '@angular/material/table';
 
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TPipe } from '../../core/i18n/t.pipe';
@@ -15,7 +12,7 @@ type LoadState = 'loading' | 'error' | 'loaded';
 @Component({
   selector: 'app-wallet',
   standalone: true,
-  imports: [CurrencyPipe, DatePipe, MatButtonModule, MatFormFieldModule, MatInputModule, MatProgressSpinnerModule, MatTableModule, TPipe],
+  imports: [CurrencyPipe, DatePipe, MatButtonModule, MatProgressSpinnerModule, TPipe],
   templateUrl: './wallet.component.html',
   styleUrl: './wallet.component.scss',
 })

@@ -36,15 +36,13 @@
             }
 
             <form [formGroup]="redeemForm" (ngSubmit)="submit()" class="holding-redeem__form">
-              <mat-form-field appearance="outline">
-                <mat-label>{{ 'portfolio.holding_redeem.units_label' | t }}</mat-label>
-                <input matInput type="number" formControlName="units" [max]="h.quantity" min="0" />
-                <mat-hint>{{ 'portfolio.holding_redeem.units_hint' | t }}</mat-hint>
-              </mat-form-field>
-
-              @if (redeemForm.controls.units.touched && redeemForm.controls.units.hasError('max')) {
-                <p class="holding-redeem__warning">{{ 'portfolio.holding_redeem.units_exceed_error' | t }}</p>
-              }
+              <app-form-field
+                [label]="'portfolio.holding_redeem.units_label' | t"
+                [hint]="'portfolio.holding_redeem.units_hint' | t"
+                [error]="redeemForm.controls.units.touched && redeemForm.controls.units.hasError('max') ? 'portfolio.holding_redeem.units_exceed_error' : undefined">
+                <input type="number" formControlName="units" [max]="h.quantity" min="0" class="form-input"
+                       [class.form-input-error]="redeemForm.controls.units.invalid && redeemForm.controls.units.touched" />
+              </app-form-field>
 
               @if (submitError()) {
                 <p class="holding-redeem__warning">{{ submitError() }}</p>

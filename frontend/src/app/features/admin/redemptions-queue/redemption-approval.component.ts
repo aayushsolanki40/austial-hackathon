@@ -3,17 +3,17 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
-import { MatTabsModule } from '@angular/material/tabs';
 
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { TPipe } from '../../../core/i18n/t.pipe';
 import { CreateDistributionRequest, DistributionStatus, ProcessDistributionResult, RedemptionStatus } from '../../../core/redemptions/redemptions.models';
 import { RedemptionsService } from '../../../core/redemptions/redemptions.service';
+import { FormFieldComponent } from '../../../shared/components/form-field/form-field.component';
+import { SelectComponent, type SelectOption } from '../../../shared/components/select/select.component';
+import { TabsComponent } from '../../../shared/components/tabs/tabs.component';
+import { TabComponent } from '../../../shared/components/tabs/tab.component';
 
 type LoadState = 'loading' | 'error' | 'loaded';
 
@@ -34,12 +34,12 @@ type LoadState = 'loading' | 'error' | 'loaded';
     ReactiveFormsModule,
     MatButtonModule,
     MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
     MatProgressSpinnerModule,
-    MatSelectModule,
     MatTableModule,
-    MatTabsModule,
+    FormFieldComponent,
+    SelectComponent,
+    TabsComponent,
+    TabComponent,
     TPipe,
   ],
   templateUrl: './redemption-approval.component.html',
@@ -55,6 +55,15 @@ export default class RedemptionApprovalComponent implements OnInit {
   readonly queueState = signal<LoadState>('loading');
   readonly statusFilter = signal<RedemptionStatus | ''>('');
   readonly queue = this.redemptionsService.queue;
+  readonly statusFilterOptions: SelectOption[] = [
+    { value: '', label: this.i18n.t('redemptions.admin.status_filter_all') },
+    { value: 'REQUESTED', label: this.i18n.t('redemptions.status_option.requested') },
+    { value: 'COMPLIANCE_APPROVED', label: this.i18n.t('redemptions.status_option.compliance_approved') },
+    { value: 'CUSTODIAN_RELEASED', label: this.i18n.t('redemptions.status_option.custodian_released') },
+    { value: 'COMPLETED', label: this.i18n.t('redemptions.status_option.completed') },
+    { value: 'REJECTED', label: this.i18n.t('redemptions.status_option.rejected') },
+    { value: 'CANCELLED', label: this.i18n.t('redemptions.status_option.cancelled') },
+  ];
   readonly queueColumns = [
     'id',
     'investor_id',
@@ -74,6 +83,12 @@ export default class RedemptionApprovalComponent implements OnInit {
   readonly distributionsState = signal<LoadState>('loading');
   readonly distributionStatusFilter = signal<DistributionStatus | ''>('');
   readonly distributions = this.redemptionsService.distributions;
+  readonly distributionStatusFilterOptions: SelectOption[] = [
+    { value: '', label: this.i18n.t('redemptions.admin.status_filter_all') },
+    { value: 'DRAFT', label: this.i18n.t('redemptions.distribution_status_option.draft') },
+    { value: 'PROCESSING', label: this.i18n.t('redemptions.distribution_status_option.processing') },
+    { value: 'COMPLETED', label: this.i18n.t('redemptions.distribution_status_option.completed') },
+  ];
   readonly distributionColumns = ['id', 'token_series_id', 'total_amount', 'record_date', 'status', 'actions'];
   readonly processingId = signal<number | null>(null);
   readonly processResult = signal<ProcessDistributionResult | null>(null);

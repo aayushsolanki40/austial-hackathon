@@ -21,24 +21,28 @@
           <p>{{ 'issuer.profile.empty_description' | t }}</p>
 
           <form [formGroup]="profileForm" (ngSubmit)="submitProfile()" class="issuer-portal__form">
-            <mat-form-field appearance="outline">
-              <mat-label>{{ 'issuer.profile.legal_name_label' | t }}</mat-label>
-              <input matInput type="text" formControlName="legal_name" />
-            </mat-form-field>
+            <app-form-field
+              [label]="'issuer.profile.legal_name_label' | t"
+              [error]="profileForm.controls.legal_name.invalid && profileForm.controls.legal_name.touched ? 'Required' : undefined">
+              <input type="text" formControlName="legal_name" class="form-input"
+                     [class.form-input-error]="profileForm.controls.legal_name.invalid && profileForm.controls.legal_name.touched" />
+            </app-form-field>
 
-            <mat-form-field appearance="outline">
-              <mat-label>{{ 'issuer.profile.registration_number_label' | t }}</mat-label>
-              <input matInput type="text" formControlName="registration_number" />
-            </mat-form-field>
+            <app-form-field
+              [label]="'issuer.profile.registration_number_label' | t"
+              [error]="profileForm.controls.registration_number.invalid && profileForm.controls.registration_number.touched ? 'Required' : undefined">
+              <input type="text" formControlName="registration_number" class="form-input"
+                     [class.form-input-error]="profileForm.controls.registration_number.invalid && profileForm.controls.registration_number.touched" />
+            </app-form-field>
 
-            <mat-form-field appearance="outline">
-              <mat-label>{{ 'issuer.profile.registration_jurisdiction_label' | t }}</mat-label>
-              <mat-select formControlName="registration_jurisdiction">
-                @for (option of jurisdictionOptions; track option.value) {
-                  <mat-option [value]="option.value">{{ option.labelKey | t }}</mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
+            <app-form-field
+              [label]="'issuer.profile.registration_jurisdiction_label' | t"
+              [error]="profileForm.controls.registration_jurisdiction.invalid && profileForm.controls.registration_jurisdiction.touched ? 'Required' : undefined">
+              <app-select
+                [options]="jurisdictionOptions"
+                formControlName="registration_jurisdiction"
+                [hasError]="profileForm.controls.registration_jurisdiction.invalid && profileForm.controls.registration_jurisdiction.touched" />
+            </app-form-field>
 
             @if (profileError()) {
               <p class="issuer-portal__error">{{ profileError() }}</p>
@@ -89,25 +93,30 @@
           <p>{{ 'issuer.asset_form.description' | t }}</p>
 
           <form [formGroup]="assetForm" (ngSubmit)="submitAsset()" class="issuer-portal__form">
-            <mat-form-field appearance="outline">
-              <mat-label>{{ 'issuer.asset_form.name_label' | t }}</mat-label>
-              <input matInput type="text" formControlName="name" />
-            </mat-form-field>
+            <app-form-field
+              [label]="'issuer.asset_form.name_label' | t"
+              [error]="assetForm.controls.name.invalid && assetForm.controls.name.touched ? 'Required' : undefined">
+              <input type="text" formControlName="name" class="form-input"
+                     [class.form-input-error]="assetForm.controls.name.invalid && assetForm.controls.name.touched" />
+            </app-form-field>
 
-            <mat-form-field appearance="outline">
-              <mat-label>{{ 'issuer.asset_form.asset_class_label' | t }}</mat-label>
-              <mat-select formControlName="asset_class" (selectionChange)="onAssetClassChange($event.value)">
-                @for (option of assetClassOptions; track option.value) {
-                  <mat-option [value]="option.value">{{ option.labelKey | t }}</mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
+            <app-form-field
+              [label]="'issuer.asset_form.asset_class_label' | t"
+              [error]="assetForm.controls.asset_class.invalid && assetForm.controls.asset_class.touched ? 'Required' : undefined">
+              <app-select
+                [options]="assetClassOptions"
+                formControlName="asset_class"
+                (selectionChange)="onAssetClassChange($event)"
+                [hasError]="assetForm.controls.asset_class.invalid && assetForm.controls.asset_class.touched" />
+            </app-form-field>
 
-            <mat-form-field appearance="outline">
-              <mat-label>{{ 'issuer.asset_form.description_label' | t }}</mat-label>
-              <textarea matInput formControlName="description"></textarea>
-              <mat-hint>{{ descriptionHintKey() | t }}</mat-hint>
-            </mat-form-field>
+            <app-form-field
+              [label]="'issuer.asset_form.description_label' | t"
+              [hint]="descriptionHintKey() | t"
+              [error]="assetForm.controls.description.invalid && assetForm.controls.description.touched ? 'Required' : undefined">
+              <textarea formControlName="description" class="form-input"
+                        [class.form-input-error]="assetForm.controls.description.invalid && assetForm.controls.description.touched"></textarea>
+            </app-form-field>
 
             @if (assetError()) {
               <p class="issuer-portal__error">{{ assetError() }}</p>
@@ -164,17 +173,13 @@
                     <span class="issuer-portal__hint">{{ 'issuer.asset_form.no_verified_custodians' | t }}</span>
                   } @else {
                     <div class="issuer-portal__attach">
-                      <mat-form-field appearance="outline" class="issuer-portal__attach-select">
-                        <mat-label>{{ 'issuer.assets.attach_custodian_label' | t }}</mat-label>
-                        <mat-select
+                      <app-form-field [label]="'issuer.assets.attach_custodian_label' | t" class="issuer-portal__attach-select">
+                        <app-select
+                          [options]="custodianSelectOptions()"
                           [value]="selectedCustodianFor(asset.id)"
-                          (selectionChange)="setAttachCustodianSelection(asset.id, $event.value)"
-                        >
-                          @for (custodian of verifiedCustodians(); track custodian.id) {
-                            <mat-option [value]="custodian.id">{{ custodian.name }}</mat-option>
-                          }
-                        </mat-select>
-                      </mat-form-field>
+                          (selectionChange)="setAttachCustodianSelection(asset.id, $event)"
+                        />
+                      </app-form-field>
 
                       <button
                         mat-stroked-button

@@ -1,13 +1,12 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 
 import { ApiService } from '../../../core/api/api.service';
 import { TPipe } from '../../../core/i18n/t.pipe';
 import { KycReviewQueueItem, KycReviewQueueResponse } from '../admin.models';
 import { AdminStateComponent } from '../shared/admin-state.component';
+import { FormFieldComponent } from '../../../shared/components/form-field/form-field.component';
 
 type LoadState = 'loading' | 'error' | 'loaded';
 
@@ -32,7 +31,7 @@ const PAGE_SIZE = 50;
 @Component({
   selector: 'app-kyc-review-queue',
   standalone: true,
-  imports: [MatTableModule, MatButtonModule, MatFormFieldModule, MatInputModule, AdminStateComponent, TPipe],
+  imports: [MatTableModule, MatButtonModule, AdminStateComponent, FormFieldComponent, TPipe],
   templateUrl: './kyc-review-queue.component.html',
   styleUrl: './kyc-review-queue.component.scss',
 })

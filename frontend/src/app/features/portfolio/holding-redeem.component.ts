@@ -3,8 +3,6 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -13,6 +11,7 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TPipe } from '../../core/i18n/t.pipe';
 import { HoldingsService } from '../../core/holdings/holdings.service';
 import { RedemptionsService } from '../../core/redemptions/redemptions.service';
+import { FormFieldComponent } from '../../shared/components/form-field/form-field.component';
 
 type LoadState = 'loading' | 'error' | 'loaded';
 
@@ -26,10 +25,9 @@ type LoadState = 'loading' | 'error' | 'loaded';
     RouterLink,
     MatButtonModule,
     MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
     MatProgressSpinnerModule,
     MatTableModule,
+    FormFieldComponent,
     TPipe,
   ],
   templateUrl: './holding-redeem.component.html',

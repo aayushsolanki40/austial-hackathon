@@ -1,22 +1,16 @@
 <section class="redemption-approval">
   <h1>{{ 'redemptions.admin.queue_title' | t }}</h1>
 
-  <mat-tab-group>
-    <mat-tab [label]="'redemptions.admin.queue_tab_label' | t">
+  <app-tabs>
+    <app-tab [label]="'redemptions.admin.queue_tab_label' | t">
       <div class="redemption-approval__tab-content">
         <div class="redemption-approval__filter">
-          <mat-form-field appearance="outline">
-            <mat-label>{{ 'redemptions.admin.status_filter_label' | t }}</mat-label>
-            <mat-select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); loadQueue()">
-              <mat-option value="">{{ 'redemptions.admin.status_filter_all' | t }}</mat-option>
-              <mat-option value="REQUESTED">{{ 'redemptions.status_option.requested' | t }}</mat-option>
-              <mat-option value="COMPLIANCE_APPROVED">{{ 'redemptions.status_option.compliance_approved' | t }}</mat-option>
-              <mat-option value="CUSTODIAN_RELEASED">{{ 'redemptions.status_option.custodian_released' | t }}</mat-option>
-              <mat-option value="COMPLETED">{{ 'redemptions.status_option.completed' | t }}</mat-option>
-              <mat-option value="REJECTED">{{ 'redemptions.status_option.rejected' | t }}</mat-option>
-              <mat-option value="CANCELLED">{{ 'redemptions.status_option.cancelled' | t }}</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <app-form-field [label]="'redemptions.admin.status_filter_label' | t">
+            <app-select
+              [options]="statusFilterOptions"
+              [ngModel]="statusFilter()"
+              (selectionChange)="statusFilter.set($event); loadQueue()" />
+          </app-form-field>
         </div>
 
         @switch (queueState()) {
@@ -89,10 +83,9 @@
                             {{ 'redemptions.admin.approve_action' | t }}
                           </button>
 
-                          <mat-form-field appearance="outline" class="redemption-approval__reason">
-                            <mat-label>{{ 'redemptions.admin.reject_reason_label' | t }}</mat-label>
-                            <input matInput [value]="reasonFor(r.id)" (input)="setReason(r.id, $any($event.target).value)" />
-                          </mat-form-field>
+                          <app-form-field [label]="'redemptions.admin.reject_reason_label' | t" class="redemption-approval__reason">
+                            <input [value]="reasonFor(r.id)" (input)="setReason(r.id, $any($event.target).value)" class="form-input" />
+                          </app-form-field>
 
                           <button
                             mat-stroked-button
@@ -128,9 +121,9 @@
           }
         }
       </div>
-    </mat-tab>
+    </app-tab>
 
-    <mat-tab [label]="'redemptions.admin.distributions_tab_label' | t">
+    <app-tab [label]="'redemptions.admin.distributions_tab_label' | t">
       <div class="redemption-approval__tab-content">
         <mat-card class="redemption-approval__card">
           <mat-card-header>
@@ -138,25 +131,30 @@
           </mat-card-header>
           <mat-card-content>
             <form [formGroup]="distributionForm" (ngSubmit)="createDistribution()" class="redemption-approval__form">
-              <mat-form-field appearance="outline">
-                <mat-label>{{ 'redemptions.admin.distribution_series_label' | t }}</mat-label>
-                <input matInput type="number" formControlName="token_series_id" />
-              </mat-form-field>
+              <app-form-field
+                [label]="'redemptions.admin.distribution_series_label' | t"
+                [error]="distributionForm.controls.token_series_id.invalid && distributionForm.controls.token_series_id.touched ? 'Required' : undefined">
+                <input type="number" formControlName="token_series_id" class="form-input"
+                       [class.form-input-error]="distributionForm.controls.token_series_id.invalid && distributionForm.controls.token_series_id.touched" />
+              </app-form-field>
 
-              <mat-form-field appearance="outline">
-                <mat-label>{{ 'redemptions.admin.distribution_amount_label' | t }}</mat-label>
-                <input matInput type="number" formControlName="total_amount" min="0.01" step="0.01" />
-              </mat-form-field>
+              <app-form-field
+                [label]="'redemptions.admin.distribution_amount_label' | t"
+                [error]="distributionForm.controls.total_amount.invalid && distributionForm.controls.total_amount.touched ? 'Required' : undefined">
+                <input type="number" formControlName="total_amount" min="0.01" step="0.01" class="form-input"
+                       [class.form-input-error]="distributionForm.controls.total_amount.invalid && distributionForm.controls.total_amount.touched" />
+              </app-form-field>
 
-              <mat-form-field appearance="outline">
-                <mat-label>{{ 'redemptions.admin.distribution_currency_label' | t }}</mat-label>
-                <input matInput formControlName="currency" />
-              </mat-form-field>
+              <app-form-field [label]="'redemptions.admin.distribution_currency_label' | t">
+                <input formControlName="currency" class="form-input" />
+              </app-form-field>
 
-              <mat-form-field appearance="outline">
-                <mat-label>{{ 'redemptions.admin.distribution_record_date_label' | t }}</mat-label>
-                <input matInput type="date" formControlName="record_date" />
-              </mat-form-field>
+              <app-form-field
+                [label]="'redemptions.admin.distribution_record_date_label' | t"
+                [error]="distributionForm.controls.record_date.invalid && distributionForm.controls.record_date.touched ? 'Required' : undefined">
+                <input type="date" formControlName="record_date" class="form-input"
+                       [class.form-input-error]="distributionForm.controls.record_date.invalid && distributionForm.controls.record_date.touched" />
+              </app-form-field>
 
               @if (createError()) {
                 <p class="redemption-approval__error">{{ createError() }}</p>
@@ -195,15 +193,12 @@
           </mat-card-header>
           <mat-card-content>
             <div class="redemption-approval__filter">
-              <mat-form-field appearance="outline">
-                <mat-label>{{ 'redemptions.admin.status_filter_label' | t }}</mat-label>
-                <mat-select [ngModel]="distributionStatusFilter()" (ngModelChange)="distributionStatusFilter.set($event); loadDistributions()">
-                  <mat-option value="">{{ 'redemptions.admin.status_filter_all' | t }}</mat-option>
-                  <mat-option value="DRAFT">{{ 'redemptions.distribution_status_option.draft' | t }}</mat-option>
-                  <mat-option value="PROCESSING">{{ 'redemptions.distribution_status_option.processing' | t }}</mat-option>
-                  <mat-option value="COMPLETED">{{ 'redemptions.distribution_status_option.completed' | t }}</mat-option>
-                </mat-select>
-              </mat-form-field>
+              <app-form-field [label]="'redemptions.admin.status_filter_label' | t">
+                <app-select
+                  [options]="distributionStatusFilterOptions"
+                  [ngModel]="distributionStatusFilter()"
+                  (selectionChange)="distributionStatusFilter.set($event); loadDistributions()" />
+              </app-form-field>
             </div>
 
             @switch (distributionsState()) {
@@ -266,6 +261,6 @@
           </mat-card-content>
         </mat-card>
       </div>
-    </mat-tab>
-  </mat-tab-group>
+    </app-tab>
+  </app-tabs>
 </section>

@@ -51,14 +51,13 @@
                   {{ 'admin.kyc_review.approve_action' | t }}
                 </button>
 
-                <mat-form-field appearance="outline" class="kyc-review__reason">
-                  <mat-label>{{ 'admin.kyc_review.reject_reason_label' | t }}</mat-label>
+                <app-form-field [label]="'admin.kyc_review.reject_reason_label' | t" class="kyc-review__reason">
                   <input
-                    matInput
                     [value]="reasonFor(item.id)"
                     (input)="setReason(item.id, $any($event.target).value)"
+                    class="form-input"
                   />
-                </mat-form-field>
+                </app-form-field>
 
                 <button
                   mat-stroked-button

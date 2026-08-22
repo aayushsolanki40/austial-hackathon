@@ -4,8 +4,6 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
@@ -14,6 +12,7 @@ import { TPipe } from '../../core/i18n/t.pipe';
 import { LedgerService } from '../../core/ledger/ledger.service';
 import { MarketplaceService } from '../../core/marketplace/marketplace.service';
 import { SubscriptionsService } from '../../core/subscriptions/subscriptions.service';
+import { FormFieldComponent } from '../../shared/components/form-field/form-field.component';
 
 type LoadState = 'loading' | 'error' | 'loaded';
 
@@ -40,10 +39,9 @@ type LoadState = 'loading' | 'error' | 'loaded';
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
-    MatFormFieldModule,
-    MatInputModule,
     MatProgressSpinnerModule,
     TPipe,
+    FormFieldComponent,
   ],
   templateUrl: './asset-subscribe.component.html',
   styleUrl: './asset-subscribe.component.scss',

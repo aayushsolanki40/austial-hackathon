@@ -13,42 +13,42 @@
       </div>
     } @else {
       <div class="card animate-slide-up">
-        <mat-stepper
-          linear
+        <app-stepper
+          [linear]="true"
           [selectedIndex]="selectedIndex()"
           (selectedIndexChange)="selectedIndex.set($event)"
           class="bg-transparent shadow-none"
         >
-          <mat-step [completed]="profileDone()" [label]="'kyc.step.profile' | t">
+          <app-step [completed]="profileDone()" [label]="'kyc.step.profile' | t">
             <div class="py-6">
               <app-kyc-profile-step (completed)="onProfileCompleted()" />
             </div>
-          </mat-step>
+          </app-step>
 
-          <mat-step [completed]="documentsDone()" [label]="'kyc.step.documents' | t">
+          <app-step [completed]="documentsDone()" [label]="'kyc.step.documents' | t">
             <div class="py-6">
               <app-kyc-document-upload-step (completed)="onDocumentsCompleted()" />
             </div>
-          </mat-step>
+          </app-step>
 
-          <mat-step [completed]="livenessDone()" [label]="'kyc.step.liveness' | t">
+          <app-step [completed]="livenessDone()" [label]="'kyc.step.liveness' | t">
             <div class="py-6">
               <app-kyc-liveness-step (completed)="onLivenessCompleted()" />
             </div>
-          </mat-step>
+          </app-step>
 
-          <mat-step [completed]="disclosureDone()" [label]="'kyc.step.disclosure' | t">
+          <app-step [completed]="disclosureDone()" [label]="'kyc.step.disclosure' | t">
             <div class="py-6">
               <app-kyc-risk-disclosure-step (completed)="onDisclosureCompleted()" />
             </div>
-          </mat-step>
+          </app-step>
 
-          <mat-step [completed]="disclosureDone()" [label]="'kyc.step.status' | t">
+          <app-step [completed]="disclosureDone()" [label]="'kyc.step.status' | t">
             <div class="py-6">
               <app-kyc-status-step />
             </div>
-          </mat-step>
-        </mat-stepper>
+          </app-step>
+        </app-stepper>
       </div>
     }
   </div>

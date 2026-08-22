@@ -2,18 +2,16 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
-import { MatNativeDateModule } from '@angular/material/core';
+import { Dialog } from '@angular/cdk/dialog';
 
 import { ComplianceService } from '../../../core/compliance/compliance.service';
 import type { AuditEntityType, AuditLogEntry } from '../../../core/compliance/compliance.models';
+import type { SelectOption } from '../../../shared/components/select/select.component';
 import { TPipe } from '../../../core/i18n/t.pipe';
 import { AdminStateComponent } from '../shared/admin-state.component';
+import { FormFieldComponent } from '../../../shared/components/form-field/form-field.component';
+import { SelectComponent } from '../../../shared/components/select/select.component';
 import { AuditLogDetailsDialogComponent } from './audit-log-details-dialog.component';
 
 type LoadState = 'loading' | 'error' | 'loaded';
@@ -30,29 +28,25 @@ type LoadState = 'loading' | 'error' | 'loaded';
     CommonModule,
     MatTableModule,
     MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatDialogModule,
     AdminStateComponent,
     TPipe,
     FormsModule,
+    FormFieldComponent,
+    SelectComponent,
   ],
   templateUrl: './audit-log-viewer.component.html',
   styleUrl: './audit-log-viewer.component.scss',
 })
 export default class AuditLogViewerComponent implements OnInit {
   private readonly complianceService = inject(ComplianceService);
-  private readonly dialog = inject(MatDialog);
+  private readonly dialog = inject(Dialog);
 
   readonly state = signal<LoadState>('loading');
   readonly entries = signal<AuditLogEntry[]>([]);
 
   readonly entityTypeFilter = signal<AuditEntityType | ''>('');
-  readonly dateFromFilter = signal<Date | null>(null);
-  readonly dateToFilter = signal<Date | null>(null);
+  readonly dateFromFilter = signal<string>('');
+  readonly dateToFilter = signal<string>('');
   readonly actorFilter = signal('');
 
   readonly displayedColumns = [
@@ -77,6 +71,11 @@ export default class AuditLogViewerComponent implements OnInit {
     'AML_ALERT',
   ];
 
+  readonly entityTypeSelectOptions: SelectOption[] = [
+    { value: '', label: 'All Entities' },
+    ...this.entityTypeOptions.map(type => ({ value: type, label: type })),
+  ];
+
   ngOnInit(): void {
     this.load();
   }
@@ -88,10 +87,10 @@ export default class AuditLogViewerComponent implements OnInit {
       filters.entity_type = this.entityTypeFilter();
     }
     if (this.dateFromFilter()) {
-      filters.from = this.formatDate(this.dateFromFilter()!);
+      filters.from = new Date(this.dateFromFilter()).toISOString();
     }
     if (this.dateToFilter()) {
-      filters.to = this.formatDate(this.dateToFilter()!);
+      filters.to = new Date(this.dateToFilter()).toISOString();
     }
     if (this.actorFilter().trim()) {
       filters.actor = this.actorFilter().trim();
@@ -112,20 +111,15 @@ export default class AuditLogViewerComponent implements OnInit {
 
   clearFilters(): void {
     this.entityTypeFilter.set('');
-    this.dateFromFilter.set(null);
-    this.dateToFilter.set(null);
+    this.dateFromFilter.set('');
+    this.dateToFilter.set('');
     this.actorFilter.set('');
     this.load();
   }
 
   openDetailsDialog(entry: AuditLogEntry): void {
     this.dialog.open(AuditLogDetailsDialogComponent, {
-      width: '800px',
       data: { entry },
     });
-  }
-
-  private formatDate(date: Date): string {
-    return date.toISOString();
   }
 }

@@ -2,19 +2,17 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
-import { MatNativeDateModule } from '@angular/material/core';
 
 import { ComplianceService } from '../../../core/compliance/compliance.service';
 import type { ComplianceReport, ComplianceReportType, ReportStatus } from '../../../core/compliance/compliance.models';
+import { I18nService } from '../../../core/i18n/i18n.service';
 import { TPipe } from '../../../core/i18n/t.pipe';
 import { AdminStateComponent } from '../shared/admin-state.component';
 import { StatusBadgeComponent } from '../shared/status-badge.component';
+import { FormFieldComponent } from '../../../shared/components/form-field/form-field.component';
+import { SelectComponent, type SelectOption } from '../../../shared/components/select/select.component';
 
 type LoadState = 'loading' | 'error' | 'loaded';
 
@@ -29,14 +27,11 @@ type LoadState = 'loading' | 'error' | 'loaded';
     CommonModule,
     MatTableModule,
     MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
     MatProgressSpinnerModule,
     AdminStateComponent,
     StatusBadgeComponent,
+    FormFieldComponent,
+    SelectComponent,
     TPipe,
     FormsModule,
   ],
@@ -45,6 +40,7 @@ type LoadState = 'loading' | 'error' | 'loaded';
 })
 export default class ReportGeneratorComponent implements OnInit {
   private readonly complianceService = inject(ComplianceService);
+  private readonly i18n = inject(I18nService);
 
   readonly state = signal<LoadState>('loading');
   readonly reports = signal<ComplianceReport[]>([]);
@@ -52,8 +48,8 @@ export default class ReportGeneratorComponent implements OnInit {
   readonly downloadingId = signal<number | null>(null);
 
   readonly reportType = signal<ComplianceReportType>('QUARTERLY_IFSCA');
-  readonly periodStart = signal<Date | null>(null);
-  readonly periodEnd = signal<Date | null>(null);
+  readonly periodStart = signal<string>('');
+  readonly periodEnd = signal<string>('');
 
   readonly displayedColumns = [
     'report_type',
@@ -64,7 +60,7 @@ export default class ReportGeneratorComponent implements OnInit {
     'actions',
   ];
 
-  readonly reportTypeOptions: { value: ComplianceReportType; label: string }[] = [
+  readonly reportTypeOptions: SelectOption[] = [
     { value: 'QUARTERLY_IFSCA', label: 'Quarterly IFSCA Report' },
     { value: 'ANNUAL_FINANCIALS', label: 'Annual Financials' },
   ];
@@ -91,22 +87,22 @@ export default class ReportGeneratorComponent implements OnInit {
   generateReport(): void {
     if (!this.canGenerate() || this.generating()) return;
 
-    const start = this.periodStart()!;
-    const end = this.periodEnd()!;
+    const start = this.periodStart();
+    const end = this.periodEnd();
 
     this.generating.set(true);
     this.complianceService
       .generateReport({
         report_type: this.reportType(),
-        period_start: this.formatDate(start),
-        period_end: this.formatDate(end),
+        period_start: start,
+        period_end: end,
       })
       .subscribe({
         next: (newReport) => {
           this.generating.set(false);
           this.reports.update((reports) => [newReport, ...reports]);
-          this.periodStart.set(null);
-          this.periodEnd.set(null);
+          this.periodStart.set('');
+          this.periodEnd.set('');
         },
         error: () => this.generating.set(false),
       });
@@ -147,9 +143,5 @@ export default class ReportGeneratorComponent implements OnInit {
   getReportTypeLabel(reportType: ComplianceReportType): string {
     const option = this.reportTypeOptions.find((opt) => opt.value === reportType);
     return option ? option.label : reportType;
-  }
-
-  private formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
   }
 }

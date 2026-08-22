@@ -5,28 +5,25 @@
     <h2>{{ 'compliance.reports.generate_section_title' | t }}</h2>
 
     <div class="form-row">
-      <mat-form-field>
-        <mat-label>{{ 'compliance.reports.report_type_label' | t }}</mat-label>
-        <mat-select [(ngModel)]="reportType">
-          @for (option of reportTypeOptions; track option.value) {
-            <mat-option [value]="option.value">{{ option.label }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+      <app-form-field [label]="'compliance.reports.report_type_label' | t">
+        <app-select
+          [options]="reportTypeOptions"
+          [(ngModel)]="reportType" />
+      </app-form-field>
 
-      <mat-form-field>
-        <mat-label>{{ 'compliance.reports.period_start_label' | t }}</mat-label>
-        <input matInput [matDatepicker]="startPicker" [(ngModel)]="periodStart" />
-        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-        <mat-datepicker #startPicker></mat-datepicker>
-      </mat-form-field>
+      <app-form-field [label]="'compliance.reports.period_start_label' | t">
+        <input
+          type="date"
+          [(ngModel)]="periodStart"
+          class="form-input" />
+      </app-form-field>
 
-      <mat-form-field>
-        <mat-label>{{ 'compliance.reports.period_end_label' | t }}</mat-label>
-        <input matInput [matDatepicker]="endPicker" [(ngModel)]="periodEnd" />
-        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-        <mat-datepicker #endPicker></mat-datepicker>
-      </mat-form-field>
+      <app-form-field [label]="'compliance.reports.period_end_label' | t">
+        <input
+          type="date"
+          [(ngModel)]="periodEnd"
+          class="form-input" />
+      </app-form-field>
 
       <button
         mat-flat-button

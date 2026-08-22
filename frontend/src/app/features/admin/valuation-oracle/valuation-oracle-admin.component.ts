@@ -3,16 +3,15 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { TPipe } from '../../../core/i18n/t.pipe';
 import { SubmitValuationFeedRequest, ValuationFeedStatus } from '../../../core/valuation/valuation.models';
 import { ValuationService } from '../../../core/valuation/valuation.service';
+import { FormFieldComponent } from '../../../shared/components/form-field/form-field.component';
+import { SelectComponent, type SelectOption } from '../../../shared/components/select/select.component';
 
 type LoadState = 'idle' | 'loading' | 'error' | 'loaded';
 
@@ -32,11 +31,10 @@ type LoadState = 'idle' | 'loading' | 'error' | 'loaded';
     ReactiveFormsModule,
     MatButtonModule,
     MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
     MatProgressSpinnerModule,
-    MatSelectModule,
     MatTableModule,
+    FormFieldComponent,
+    SelectComponent,
     TPipe,
   ],
   templateUrl: './valuation-oracle-admin.component.html',
@@ -54,6 +52,12 @@ export default class ValuationOracleAdminComponent {
   readonly feeds = this.valuationService.seriesFeeds;
   readonly currentNav = this.valuationService.currentNav;
   readonly feedColumns = ['reported_at', 'nav_per_unit', 'source', 'anomaly_score', 'status', 'actions'];
+
+  readonly statusFilterOptions: SelectOption[] = [
+    { value: '', label: this.i18n.t('valuation.admin.status_filter_all') },
+    { value: 'PUBLISHED', label: this.i18n.t('valuation.feed_status_option.published') },
+    { value: 'QUARANTINED', label: this.i18n.t('valuation.feed_status_option.quarantined') },
+  ];
 
   readonly approvingId = signal<number | null>(null);
 

@@ -2,10 +2,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 
@@ -15,23 +12,9 @@ import { ASSET_CLASS_DESCRIPTION_HINTS, ASSET_CLASS_OPTIONS } from '../../../cor
 import { Asset, AssetClass, CreateAssetRequest } from '../../../core/issuer/issuer.models';
 import { IssuerService } from '../../../core/issuer/issuer.service';
 import { CustodianService } from '../../../core/custodian/custodian.service';
+import { FormFieldComponent } from '../../../shared/components/form-field/form-field.component';
+import { SelectComponent, type SelectOption } from '../../../shared/components/select/select.component';
 
-interface SelectOption {
-  value: string;
-  labelKey: string;
-}
-
-/** Re-uses `kyc.jurisdiction_option.*` -- the same closed set of jurisdiction labels
- * already shipped for the investor onboarding wizard applies equally to an issuer's
- * jurisdiction of registration, so this reads that existing i18n module rather than
- * duplicating the same five country labels under `issuer.*`. */
-const JURISDICTION_OPTIONS: SelectOption[] = [
-  { value: 'IN', labelKey: 'kyc.jurisdiction_option.in' },
-  { value: 'AE', labelKey: 'kyc.jurisdiction_option.ae' },
-  { value: 'SG', labelKey: 'kyc.jurisdiction_option.sg' },
-  { value: 'GB', labelKey: 'kyc.jurisdiction_option.gb' },
-  { value: 'US', labelKey: 'kyc.jurisdiction_option.us' },
-];
 
 type ViewState = 'loading' | 'create-profile' | 'profile';
 
@@ -60,11 +43,10 @@ type ViewState = 'loading' | 'create-profile' | 'profile';
     RouterLink,
     MatButtonModule,
     MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
     MatProgressSpinnerModule,
-    MatSelectModule,
     MatTableModule,
+    FormFieldComponent,
+    SelectComponent,
     TPipe,
   ],
   templateUrl: './issuer-portal.component.html',
@@ -81,9 +63,24 @@ export default class IssuerPortalComponent implements OnInit {
   readonly assets = this.issuerService.assets;
   readonly verifiedCustodians = this.custodianService.verifiedCustodians;
 
-  readonly jurisdictionOptions = JURISDICTION_OPTIONS;
-  readonly assetClassOptions = ASSET_CLASS_OPTIONS;
+  readonly jurisdictionOptions: SelectOption[] = [
+    { value: 'IN', label: this.i18n.t('kyc.jurisdiction_option.in') },
+    { value: 'AE', label: this.i18n.t('kyc.jurisdiction_option.ae') },
+    { value: 'SG', label: this.i18n.t('kyc.jurisdiction_option.sg') },
+    { value: 'GB', label: this.i18n.t('kyc.jurisdiction_option.gb') },
+    { value: 'US', label: this.i18n.t('kyc.jurisdiction_option.us') },
+  ];
+
+  readonly assetClassOptions: SelectOption[] = ASSET_CLASS_OPTIONS.map(opt => ({
+    value: opt.value,
+    label: this.i18n.t(opt.labelKey)
+  }));
+
   readonly assetColumns = ['name', 'asset_class', 'status', 'created_at', 'actions'];
+
+  readonly custodianSelectOptions = computed<SelectOption[]>(() =>
+    this.verifiedCustodians().map(c => ({ value: c.id, label: c.name }))
+  );
 
   readonly selectedAssetClass = signal<AssetClass>('SECURITY');
   readonly descriptionHintKey = computed(() => ASSET_CLASS_DESCRIPTION_HINTS[this.selectedAssetClass()]);

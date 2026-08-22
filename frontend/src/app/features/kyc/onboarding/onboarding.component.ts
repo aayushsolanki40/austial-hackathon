@@ -1,9 +1,10 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { MatStepperModule } from '@angular/material/stepper';
 import { Router } from '@angular/router';
 
 import { TPipe } from '../../../core/i18n/t.pipe';
 import { KycService } from '../../../core/kyc/kyc.service';
+import { StepperComponent } from '../../../shared/components/stepper/stepper.component';
+import { StepComponent } from '../../../shared/components/stepper/step.component';
 import { ONBOARDING_STEP_INDEX, resolveInitialStep } from './onboarding-step.util';
 import { DocumentUploadStepComponent } from './steps/document-upload-step/document-upload-step.component';
 import { KycStatusStepComponent } from './steps/kyc-status-step/kyc-status-step.component';
@@ -33,7 +34,8 @@ import { RiskDisclosureStepComponent } from './steps/risk-disclosure-step/risk-d
   selector: 'app-onboarding',
   standalone: true,
   imports: [
-    MatStepperModule,
+    StepperComponent,
+    StepComponent,
     TPipe,
     ProfileStepComponent,
     DocumentUploadStepComponent,

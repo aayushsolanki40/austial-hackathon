@@ -4,19 +4,16 @@
   <mat-card class="valuation-oracle__card">
     <mat-card-content>
       <div class="valuation-oracle__lookup">
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'valuation.admin.series_lookup_label' | t }}</mat-label>
-          <input matInput type="number" [ngModel]="seriesIdLookup()" (ngModelChange)="seriesIdLookup.set($event)" />
-        </mat-form-field>
+        <app-form-field [label]="'valuation.admin.series_lookup_label' | t">
+          <input type="number" [ngModel]="seriesIdLookup()" (ngModelChange)="seriesIdLookup.set($event)" class="form-input" />
+        </app-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'valuation.admin.status_filter_label' | t }}</mat-label>
-          <mat-select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
-            <mat-option value="">{{ 'valuation.admin.status_filter_all' | t }}</mat-option>
-            <mat-option value="PUBLISHED">{{ 'valuation.feed_status_option.published' | t }}</mat-option>
-            <mat-option value="QUARANTINED">{{ 'valuation.feed_status_option.quarantined' | t }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <app-form-field [label]="'valuation.admin.status_filter_label' | t">
+          <app-select
+            [options]="statusFilterOptions"
+            [ngModel]="statusFilter()"
+            (selectionChange)="statusFilter.set($event)" />
+        </app-form-field>
 
         <button mat-flat-button color="primary" [disabled]="!seriesIdLookup() || feedsState() === 'loading'" (click)="loadFeeds()">
           {{ 'valuation.admin.series_lookup_action' | t }}
@@ -122,25 +119,33 @@
       }
 
       <form [formGroup]="submitForm" (ngSubmit)="submitFeed()" class="valuation-oracle__form">
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'valuation.admin.submit_series_label' | t }}</mat-label>
-          <input matInput type="number" formControlName="token_series_id" />
-        </mat-form-field>
+        <app-form-field
+          [label]="'valuation.admin.submit_series_label' | t"
+          [error]="submitForm.controls.token_series_id.invalid && submitForm.controls.token_series_id.touched ? 'Required' : undefined">
+          <input type="number" formControlName="token_series_id" class="form-input"
+                 [class.form-input-error]="submitForm.controls.token_series_id.invalid && submitForm.controls.token_series_id.touched" />
+        </app-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'valuation.admin.submit_nav_label' | t }}</mat-label>
-          <input matInput type="number" formControlName="nav_per_unit" min="0.00000001" step="0.00000001" />
-        </mat-form-field>
+        <app-form-field
+          [label]="'valuation.admin.submit_nav_label' | t"
+          [error]="submitForm.controls.nav_per_unit.invalid && submitForm.controls.nav_per_unit.touched ? 'Required' : undefined">
+          <input type="number" formControlName="nav_per_unit" min="0.00000001" step="0.00000001" class="form-input"
+                 [class.form-input-error]="submitForm.controls.nav_per_unit.invalid && submitForm.controls.nav_per_unit.touched" />
+        </app-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'valuation.admin.submit_source_label' | t }}</mat-label>
-          <input matInput formControlName="source" />
-        </mat-form-field>
+        <app-form-field
+          [label]="'valuation.admin.submit_source_label' | t"
+          [error]="submitForm.controls.source.invalid && submitForm.controls.source.touched ? 'Required' : undefined">
+          <input formControlName="source" class="form-input"
+                 [class.form-input-error]="submitForm.controls.source.invalid && submitForm.controls.source.touched" />
+        </app-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'valuation.admin.submit_reported_at_label' | t }}</mat-label>
-          <input matInput type="datetime-local" formControlName="reported_at" />
-        </mat-form-field>
+        <app-form-field
+          [label]="'valuation.admin.submit_reported_at_label' | t"
+          [error]="submitForm.controls.reported_at.invalid && submitForm.controls.reported_at.touched ? 'Required' : undefined">
+          <input type="datetime-local" formControlName="reported_at" class="form-input"
+                 [class.form-input-error]="submitForm.controls.reported_at.invalid && submitForm.controls.reported_at.touched" />
+        </app-form-field>
 
         @if (submitError()) {
           <p class="valuation-oracle__error">{{ submitError() }}</p>

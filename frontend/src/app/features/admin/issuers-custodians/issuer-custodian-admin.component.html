@@ -56,15 +56,19 @@
     <form [formGroup]="createCustodianForm" (ngSubmit)="createCustodian()" class="issuer-custodian-admin__create-form">
       <h3>{{ 'custodian.create_form.title' | t }}</h3>
 
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'custodian.create_form.name_label' | t }}</mat-label>
-        <input matInput type="text" formControlName="name" />
-      </mat-form-field>
+      <app-form-field
+        [label]="'custodian.create_form.name_label' | t"
+        [error]="createCustodianForm.controls.name.invalid && createCustodianForm.controls.name.touched ? 'Required' : undefined">
+        <input type="text" formControlName="name" class="form-input"
+               [class.form-input-error]="createCustodianForm.controls.name.invalid && createCustodianForm.controls.name.touched" />
+      </app-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'custodian.create_form.registration_no_label' | t }}</mat-label>
-        <input matInput type="text" formControlName="ifsca_registration_no" />
-      </mat-form-field>
+      <app-form-field
+        [label]="'custodian.create_form.registration_no_label' | t"
+        [error]="createCustodianForm.controls.ifsca_registration_no.invalid && createCustodianForm.controls.ifsca_registration_no.touched ? 'Required' : undefined">
+        <input type="text" formControlName="ifsca_registration_no" class="form-input"
+               [class.form-input-error]="createCustodianForm.controls.ifsca_registration_no.invalid && createCustodianForm.controls.ifsca_registration_no.touched" />
+      </app-form-field>
 
       @if (createError()) {
         <p class="issuer-custodian-admin__error">{{ createError() }}</p>
@@ -124,10 +128,9 @@
                     {{ 'admin.issuers.approve_action' | t }}
                   </button>
 
-                  <mat-form-field appearance="outline" class="issuer-custodian-admin__reason">
-                    <mat-label>{{ 'admin.issuers.reject_reason_label' | t }}</mat-label>
-                    <input matInput [value]="reasonFor(issuer.id)" (input)="setReason(issuer.id, $any($event.target).value)" />
-                  </mat-form-field>
+                  <app-form-field [label]="'admin.issuers.reject_reason_label' | t" class="issuer-custodian-admin__reason">
+                    <input [value]="reasonFor(issuer.id)" (input)="setReason(issuer.id, $any($event.target).value)" class="form-input" />
+                  </app-form-field>
 
                   <button
                     mat-stroked-button

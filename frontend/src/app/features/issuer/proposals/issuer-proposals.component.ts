@@ -2,10 +2,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 
@@ -14,6 +11,8 @@ import { TPipe } from '../../../core/i18n/t.pipe';
 import { IssuerService } from '../../../core/issuer/issuer.service';
 import { CreateProposalRequest } from '../../../core/issuance/issuance.models';
 import { IssuanceService } from '../../../core/issuance/issuance.service';
+import { FormFieldComponent } from '../../../shared/components/form-field/form-field.component';
+import { SelectComponent, type SelectOption } from '../../../shared/components/select/select.component';
 
 /**
  * Issuer-facing proposal list + creation form -- Phase 4's "an issuer creates a
@@ -34,11 +33,10 @@ import { IssuanceService } from '../../../core/issuance/issuance.service';
     RouterLink,
     MatButtonModule,
     MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
     MatProgressSpinnerModule,
-    MatSelectModule,
     MatTableModule,
+    FormFieldComponent,
+    SelectComponent,
     TPipe,
   ],
   templateUrl: './issuer-proposals.component.html',
@@ -54,6 +52,9 @@ export default class IssuerProposalsComponent implements OnInit {
   readonly proposals = this.issuanceService.myProposals;
   readonly assets = this.issuerService.assets;
   readonly tokenizationReadyAssets = computed(() => this.assets().filter((asset) => asset.tokenization_ready));
+  readonly assetSelectOptions = computed<SelectOption[]>(() =>
+    this.tokenizationReadyAssets().map(a => ({ value: a.id, label: a.name }))
+  );
 
   readonly proposalColumns = ['asset', 'status', 'total_units', 'unit_price_usd', 'created_at', 'actions'];
 

@@ -42,11 +42,14 @@
             </p>
 
             <form [formGroup]="unitsForm" (ngSubmit)="submit()" class="asset-subscribe__form">
-              <mat-form-field appearance="outline">
-                <mat-label>{{ 'marketplace.asset_subscribe.units_label' | t }}</mat-label>
-                <input matInput type="number" formControlName="units" [min]="l.min_subscription_units" />
-                <mat-hint>{{ 'marketplace.asset_subscribe.min_units_hint' | t }}: {{ l.min_subscription_units }}</mat-hint>
-              </mat-form-field>
+              <app-form-field
+                [label]="'marketplace.asset_subscribe.units_label' | t"
+                [hint]="('marketplace.asset_subscribe.min_units_hint' | t) + ': ' + l.min_subscription_units"
+                [error]="unitsForm.controls.units.invalid && unitsForm.controls.units.touched ? ('marketplace.asset_subscribe.units_required' | t) : undefined">
+                <input type="number" formControlName="units" [min]="l.min_subscription_units"
+                       class="form-input"
+                       [class.form-input-error]="unitsForm.controls.units.invalid && unitsForm.controls.units.touched" />
+              </app-form-field>
 
               <p class="asset-subscribe__amount">
                 {{ 'marketplace.asset_subscribe.amount_label' | t }}:

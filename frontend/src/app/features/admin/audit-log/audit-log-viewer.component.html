@@ -2,34 +2,29 @@
   <h1>{{ 'compliance.audit_log.title' | t }}</h1>
 
   <div class="filters">
-    <mat-form-field>
-      <mat-label>{{ 'compliance.audit_log.entity_type_filter' | t }}</mat-label>
-      <mat-select [(ngModel)]="entityTypeFilter">
-        <mat-option value="">{{ 'compliance.audit_log.all_entities' | t }}</mat-option>
-        @for (type of entityTypeOptions; track type) {
-          <mat-option [value]="type">{{ type }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+    <app-form-field [label]="'compliance.audit_log.entity_type_filter' | t">
+      <app-select
+        [options]="entityTypeSelectOptions"
+        [(ngModel)]="entityTypeFilter" />
+    </app-form-field>
 
-    <mat-form-field>
-      <mat-label>{{ 'compliance.audit_log.date_from_filter' | t }}</mat-label>
-      <input matInput [matDatepicker]="fromPicker" [(ngModel)]="dateFromFilter" />
-      <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
-      <mat-datepicker #fromPicker></mat-datepicker>
-    </mat-form-field>
+    <app-form-field [label]="'compliance.audit_log.date_from_filter' | t">
+      <input
+        type="date"
+        [(ngModel)]="dateFromFilter"
+        class="form-input" />
+    </app-form-field>
 
-    <mat-form-field>
-      <mat-label>{{ 'compliance.audit_log.date_to_filter' | t }}</mat-label>
-      <input matInput [matDatepicker]="toPicker" [(ngModel)]="dateToFilter" />
-      <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
-      <mat-datepicker #toPicker></mat-datepicker>
-    </mat-form-field>
+    <app-form-field [label]="'compliance.audit_log.date_to_filter' | t">
+      <input
+        type="date"
+        [(ngModel)]="dateToFilter"
+        class="form-input" />
+    </app-form-field>
 
-    <mat-form-field>
-      <mat-label>{{ 'compliance.audit_log.actor_filter' | t }}</mat-label>
-      <input matInput [(ngModel)]="actorFilter" placeholder="Email or name" />
-    </mat-form-field>
+    <app-form-field [label]="'compliance.audit_log.actor_filter' | t">
+      <input type="text" [(ngModel)]="actorFilter" placeholder="Email or name" class="form-input" />
+    </app-form-field>
 
     <button mat-flat-button color="primary" (click)="applyFilters()">
       {{ 'compliance.audit_log.apply_filters_action' | t }}

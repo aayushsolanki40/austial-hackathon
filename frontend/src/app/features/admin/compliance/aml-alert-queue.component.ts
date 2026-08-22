@@ -3,13 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
+import { Dialog } from '@angular/cdk/dialog';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { ComplianceService } from '../../../core/compliance/compliance.service';
@@ -36,14 +31,9 @@ const PAGE_SIZE = 50;
   standalone: true,
   imports: [
     CommonModule,
-    MatTableModule,
     MatButtonModule,
-    MatFormFieldModule,
     MatIconModule,
-    MatInputModule,
-    MatSelectModule,
     MatCheckboxModule,
-    MatDialogModule,
     AdminStateComponent,
     StatusBadgeComponent,
     TPipe,
@@ -55,7 +45,7 @@ const PAGE_SIZE = 50;
 export default class AmlAlertQueueComponent implements OnInit {
   private readonly complianceService = inject(ComplianceService);
   private readonly authService = inject(AuthService);
-  private readonly dialog = inject(MatDialog);
+  private readonly dialog = inject(Dialog);
 
   readonly state = signal<LoadState>('loading');
   readonly alerts = signal<AmlAlert[]>([]);
@@ -154,12 +144,14 @@ export default class AmlAlertQueueComponent implements OnInit {
   }
 
   openResolveDialog(alert: AmlAlert): void {
-    const dialogRef = this.dialog.open(ResolveAlertDialogComponent, {
-      width: '500px',
-      data: { alert },
-    });
+    const dialogRef = this.dialog.open<{ status: 'DISMISSED' | 'ESCALATED'; notes: string } | undefined>(
+      ResolveAlertDialogComponent,
+      {
+        data: { alert },
+      }
+    );
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.closed.subscribe((result) => {
       if (!result) return;
 
       this.actioningId.set(alert.id);

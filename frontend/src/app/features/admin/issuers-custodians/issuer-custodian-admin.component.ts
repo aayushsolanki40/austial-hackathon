@@ -1,8 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 
 import { ApiService } from '../../../core/api/api.service';
@@ -11,6 +9,7 @@ import { TPipe } from '../../../core/i18n/t.pipe';
 import { CustodianService } from '../../../core/custodian/custodian.service';
 import { AdminIssuerListItem, IssuerReviewQueueResponse } from '../admin.models';
 import { AdminStateComponent } from '../shared/admin-state.component';
+import { FormFieldComponent } from '../../../shared/components/form-field/form-field.component';
 
 type LoadState = 'loading' | 'error' | 'loaded';
 
@@ -41,7 +40,7 @@ const ISSUER_PAGE_SIZE = 50;
 @Component({
   selector: 'app-issuer-custodian-admin',
   standalone: true,
-  imports: [ReactiveFormsModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatTableModule, AdminStateComponent, TPipe],
+  imports: [ReactiveFormsModule, MatButtonModule, MatTableModule, AdminStateComponent, FormFieldComponent, TPipe],
   templateUrl: './issuer-custodian-admin.component.html',
   styleUrl: './issuer-custodian-admin.component.scss',
 })

@@ -154,3 +154,12 @@
     @apply bg-blue-500;
   }
 }
+
+/* CDK Dialog overlay styles */
+.cdk-overlay-backdrop {
+  @apply bg-black/50 backdrop-blur-sm;
+}
+
+.cdk-overlay-pane {
+  @apply flex items-center justify-center p-4;
+}

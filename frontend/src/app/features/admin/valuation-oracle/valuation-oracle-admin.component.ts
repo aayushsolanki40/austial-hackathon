@@ -116,8 +116,12 @@ export default class ValuationOracleAdminComponent {
       if (this.loadedSeriesId() === request.token_series_id) {
         this.loadFeeds();
       }
-    } catch {
-      this.submitError.set(this.i18n.t('valuation.admin.submit_error'));
+    } catch (error: any) {
+      const message =
+        error?.userMessage ||
+        error?.error?.message ||
+        this.i18n.t('valuation.admin.submit_error');
+      this.submitError.set(message);
     } finally {
       this.submitting.set(false);
     }

@@ -130,8 +130,12 @@ export default class IssuerPortalComponent implements OnInit {
       await this.issuerService.createProfile(this.profileForm.getRawValue());
       this.viewState.set('profile');
       await Promise.all([this.issuerService.listAssets(), this.custodianService.list()]);
-    } catch {
-      this.profileError.set(this.i18n.t('issuer.error.generic'));
+    } catch (error: any) {
+      const message =
+        error?.userMessage ||
+        error?.error?.message ||
+        this.i18n.t('issuer.error.generic');
+      this.profileError.set(message);
     } finally {
       this.profileSubmitting.set(false);
     }
@@ -164,8 +168,12 @@ export default class IssuerPortalComponent implements OnInit {
         asset_class: 'SECURITY',
       });
       this.selectedAssetClass.set('SECURITY');
-    } catch {
-      this.assetError.set(this.i18n.t('issuer.error.generic'));
+    } catch (error: any) {
+      const message =
+        error?.userMessage ||
+        error?.error?.message ||
+        this.i18n.t('issuer.error.generic');
+      this.assetError.set(message);
     } finally {
       this.assetSubmitting.set(false);
     }
@@ -189,8 +197,12 @@ export default class IssuerPortalComponent implements OnInit {
     this.assetError.set(null);
     try {
       await this.issuerService.attachCustodian(asset.id, custodianId);
-    } catch {
-      this.assetError.set(this.i18n.t('issuer.error.generic'));
+    } catch (error: any) {
+      const message =
+        error?.userMessage ||
+        error?.error?.message ||
+        this.i18n.t('issuer.error.generic');
+      this.assetError.set(message);
     } finally {
       this.attachingAssetId.set(null);
     }

@@ -140,8 +140,12 @@ export default class AssetSubscribeComponent implements OnInit {
       // Refresh the account so the newly locked funds show up in `available_balance`/
       // `locked_balance` immediately.
       await this.ledger.fetchAccount();
-    } catch {
-      this.submitError.set(this.i18n.t('marketplace.asset_subscribe.submit_error'));
+    } catch (error: any) {
+      const message =
+        error?.userMessage ||
+        error?.error?.message ||
+        this.i18n.t('marketplace.asset_subscribe.submit_error');
+      this.submitError.set(message);
     } finally {
       this.submitting.set(false);
     }

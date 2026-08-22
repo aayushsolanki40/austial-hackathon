@@ -103,8 +103,12 @@ export class LivenessStepComponent implements OnDestroy {
       await this.kyc.uploadToPresignedUrl(presigned.upload_url, blob, SELFIE_CONTENT_TYPE);
       await this.kyc.confirmDocumentUpload(submissionId, { document_type: 'SELFIE', object_key: presigned.object_key });
       this.completed.emit();
-    } catch {
-      this.errorMessage.set(this.i18n.t('kyc.liveness_error.submit_failed'));
+    } catch (error: any) {
+      const message =
+        error?.userMessage ||
+        error?.error?.message ||
+        this.i18n.t('kyc.liveness_error.submit_failed');
+      this.errorMessage.set(message);
     } finally {
       this.submitting.set(false);
     }

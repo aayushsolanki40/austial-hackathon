@@ -58,6 +58,10 @@ export class DocumentUploadStepComponent {
     this.slots.every((slot) => this.uploadsSignal()[slot.type]?.status === 'uploaded')
   );
 
+  readonly anyUploading = computed(() =>
+    this.slots.some((slot) => this.uploadsSignal()[slot.type]?.status === 'uploading')
+  );
+
   constructor() {
     // Resuming a DRAFT submission that already has some documents uploaded -- reflect
     // that server-recorded state instead of showing every slot as freshly empty.
@@ -106,9 +110,8 @@ export class DocumentUploadStepComponent {
   }
 
   continue(): void {
-    if (this.allUploaded()) {
-      this.completed.emit();
-    }
+    // Allow continuing without documents (documents are now optional)
+    this.completed.emit();
   }
 
   private setState(type: KycDocumentType, state: DocumentUploadState): void {

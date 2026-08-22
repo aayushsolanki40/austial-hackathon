@@ -43,7 +43,7 @@
     </div>
   }
 
-  <button mat-flat-button color="primary" type="button" [disabled]="!allUploaded()" (click)="continue()">
+  <button mat-flat-button color="primary" type="button" [disabled]="anyUploading()" (click)="continue()">
     {{ 'kyc.documents.continue' | t }}
   </button>
 </div>

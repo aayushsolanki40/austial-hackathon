@@ -130,8 +130,12 @@ export class ProfileStepComponent {
       });
 
       this.completed.emit();
-    } catch {
-      this.errorMessage.set(this.i18n.t('kyc.error.generic'));
+    } catch (error: any) {
+      const message =
+        error?.userMessage ||
+        error?.error?.message ||
+        this.i18n.t('kyc.error.generic');
+      this.errorMessage.set(message);
     } finally {
       this.submitting.set(false);
     }

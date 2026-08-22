@@ -109,8 +109,12 @@ export default class IssuerProposalsComponent implements OnInit {
         subscription_start_at: '',
         subscription_end_at: '',
       });
-    } catch {
-      this.error.set(this.i18n.t('issuance.error.generic'));
+    } catch (error: any) {
+      const message =
+        error?.userMessage ||
+        error?.error?.message ||
+        this.i18n.t('issuance.error.generic');
+      this.error.set(message);
     } finally {
       this.submitting.set(false);
     }

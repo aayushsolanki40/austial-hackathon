@@ -109,8 +109,12 @@ export default class HoldingRedeemComponent implements OnInit {
       this.result.set('submitted');
       this.redeemForm.reset({ units: null });
       await this.loadRequests();
-    } catch {
-      this.submitError.set(this.i18n.t('portfolio.holding_redeem.submit_error'));
+    } catch (error: any) {
+      const message =
+        error?.userMessage ||
+        error?.error?.message ||
+        this.i18n.t('portfolio.holding_redeem.submit_error');
+      this.submitError.set(message);
     } finally {
       this.submitting.set(false);
     }

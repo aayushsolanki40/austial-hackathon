@@ -53,11 +53,12 @@ export default class LoginComponent {
       await this.auth.login(this.form.getRawValue());
       const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo') ?? '/';
       await this.router.navigateByUrl(redirectTo);
-    } catch {
-      // Backend already returns a translated, user-safe message on 401 -- but the frontend
-      // doesn't depend on HTTP error body shape being stable, so it falls back to its own
-      // i18n-driven generic message here.
-      this.errorMessage.set(this.i18n.t('auth.error.generic'));
+    } catch (error: any) {
+      const message =
+        error?.userMessage ||
+        error?.error?.message ||
+        this.i18n.t('auth.error.generic');
+      this.errorMessage.set(message);
     } finally {
       this.submitting.set(false);
     }

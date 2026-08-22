@@ -105,8 +105,12 @@ export default class IssuerCustodianAdminComponent implements OnInit {
     try {
       await this.custodianService.create(this.createCustodianForm.getRawValue());
       this.createCustodianForm.reset({ name: '', ifsca_registration_no: '' });
-    } catch {
-      this.createError.set(this.i18n.t('custodian.error.generic'));
+    } catch (error: any) {
+      const message =
+        error?.userMessage ||
+        error?.error?.message ||
+        this.i18n.t('custodian.error.generic');
+      this.createError.set(message);
     } finally {
       this.createSubmitting.set(false);
     }

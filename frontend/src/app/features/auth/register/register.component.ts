@@ -54,8 +54,12 @@ export default class RegisterComponent {
     try {
       await this.auth.register(this.form.getRawValue());
       await this.router.navigateByUrl('/onboarding');
-    } catch {
-      this.errorMessage.set(this.i18n.t('auth.error.generic'));
+    } catch (error: any) {
+      const message =
+        error?.userMessage ||
+        error?.error?.message ||
+        this.i18n.t('auth.error.generic');
+      this.errorMessage.set(message);
     } finally {
       this.submitting.set(false);
     }

@@ -14,17 +14,22 @@ export const routes: Routes = [
   { path: 'login', loadComponent: () => import('./features/auth/login/login.component') },
   { path: 'register', loadComponent: () => import('./features/auth/register/register.component') },
 
-  // KYC onboarding (auth required)
+  // KYC onboarding (auth + INVESTOR role required -- `KycController`/`InvestorsController`
+  // handlers this wizard calls, e.g. `POST /investors/profile`, are all `@Roles("INVESTOR")`
+  // on the backend; a non-investor account reaching this wizard would 403 on submit).
   {
     path: 'onboarding',
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard(['INVESTOR'])],
     loadChildren: () => import('./features/kyc/kyc.routes'),
   },
 
-  // Authenticated app routes (auth + KYC verified required)
+  // Authenticated app routes (auth + INVESTOR role + KYC verified required -- marketplace
+  // subscribe/portfolio/wallet/holdings all call `@Roles("INVESTOR")`-only endpoints
+  // (`subscriptions`/`holdings`/`ledger`/`redemptions` investor-facing routes), and
+  // `kycVerifiedGuard` itself calls the `INVESTOR`-only `GET /investors/profile`).
   {
     path: 'app',
-    canActivate: [authGuard, kycVerifiedGuard],
+    canActivate: [authGuard, roleGuard(['INVESTOR']), kycVerifiedGuard],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'marketplace' },
       { path: 'marketplace', loadComponent: () => import('./features/marketplace/marketplace.component') },

@@ -8,8 +8,13 @@ import AdminShellComponent from './admin-shell/admin-shell.component';
  * parent `/admin` route is already gated to `roleGuard(['COMPLIANCE_OFFICER',
  * 'ADMIN'])` in `app.routes.ts`; `users` (role/account changes -- an
  * access-control action, not a compliance one) is tightened further to
- * ADMIN-only here. Every section besides `dashboard`/`users` is a static
- * placeholder that lights up as its owning phase ships.
+ * ADMIN-only here. `kyc-review`/`issuers-custodians` are tightened the other
+ * way, to COMPLIANCE_OFFICER-only: their backing endpoints
+ * (`KycController`'s `review-queue`/`approve`/`reject`,
+ * `IssuersController`'s `review-queue`/`approve`/`reject`) are
+ * `@Roles("COMPLIANCE_OFFICER")` only on the backend, unlike every other
+ * section here which is shared `(COMPLIANCE_OFFICER, ADMIN)` -- an ADMIN
+ * reaching these pages would 403 on every call.
  */
 export default [
   {
@@ -23,9 +28,14 @@ export default [
         canActivate: [roleGuard(['ADMIN'])],
         loadComponent: () => import('./users/user-management.component'),
       },
-      { path: 'kyc-review', loadComponent: () => import('./kyc-review/kyc-review-queue.component') },
+      {
+        path: 'kyc-review',
+        canActivate: [roleGuard(['COMPLIANCE_OFFICER'])],
+        loadComponent: () => import('./kyc-review/kyc-review-queue.component'),
+      },
       {
         path: 'issuers-custodians',
+        canActivate: [roleGuard(['COMPLIANCE_OFFICER'])],
         loadComponent: () => import('./issuers-custodians/issuer-custodian-admin.component'),
       },
       {

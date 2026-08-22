@@ -17,13 +17,23 @@ interface AdminNavLink {
    * COMPLIANCE_OFFICER + ADMIN). Hiding the link for a role that would just get bounced
    * by `roleGuard(['ADMIN'])` on `admin/users` avoids a dead-end nav item. */
   adminOnly?: boolean;
+  /** `kyc-review`/`issuers-custodians` are COMPLIANCE_OFFICER-only (backend `@Roles(...)`
+   * on their review/approve/reject endpoints excludes ADMIN, unlike every other shared
+   * admin section) -- gated the same way as `adminOnly` above, just for the other role,
+   * so an ADMIN doesn't see a link that would 403 on every call. */
+  complianceOnly?: boolean;
 }
 
 const NAV_LINKS: AdminNavLink[] = [
   { path: 'dashboard', labelKey: 'admin.nav.dashboard', icon: 'dashboard' },
   { path: 'users', labelKey: 'admin.nav.users', icon: 'group', adminOnly: true },
-  { path: 'kyc-review', labelKey: 'admin.nav.kyc_review', icon: 'fact_check' },
-  { path: 'issuers-custodians', labelKey: 'admin.nav.issuers_custodians', icon: 'domain' },
+  { path: 'kyc-review', labelKey: 'admin.nav.kyc_review', icon: 'fact_check', complianceOnly: true },
+  {
+    path: 'issuers-custodians',
+    labelKey: 'admin.nav.issuers_custodians',
+    icon: 'domain',
+    complianceOnly: true,
+  },
   { path: 'issuance-pipeline', labelKey: 'admin.nav.issuance_pipeline', icon: 'view_kanban' },
   { path: 'valuation-oracle', labelKey: 'admin.nav.valuation_oracle', icon: 'monitoring' },
   { path: 'redemptions', labelKey: 'admin.nav.redemptions', icon: 'undo' },
@@ -57,7 +67,17 @@ export default class AdminShellComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
-  readonly navLinks = computed(() => NAV_LINKS.filter((link) => !link.adminOnly || this.auth.role() === 'ADMIN'));
+  readonly navLinks = computed(() =>
+    NAV_LINKS.filter((link) => {
+      if (link.adminOnly && this.auth.role() !== 'ADMIN') {
+        return false;
+      }
+      if (link.complianceOnly && this.auth.role() !== 'COMPLIANCE_OFFICER') {
+        return false;
+      }
+      return true;
+    })
+  );
 
   async logout(): Promise<void> {
     await this.auth.logout();

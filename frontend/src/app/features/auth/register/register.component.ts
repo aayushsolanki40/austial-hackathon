@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService } from '../../../core/auth/auth.service';
+import { postAuthRedirectUrl } from '../../../core/auth/post-auth-redirect';
 import { TPipe } from '../../../core/i18n/t.pipe';
 import { I18nService } from '../../../core/i18n/i18n.service';
 
@@ -53,7 +54,13 @@ export default class RegisterComponent {
 
     try {
       await this.auth.register(this.form.getRawValue());
-      await this.router.navigateByUrl('/onboarding');
+      // `POST /auth/register` (`backend/src/modules/auth/auth_service.py`) always creates
+      // an `INVESTOR`-role account today -- ISSUER/COMPLIANCE_OFFICER/ADMIN accounts only
+      // exist via `PATCH /admin/users/:id/role`, there's no self-service role picker here.
+      // Still route off the *actual* decoded role rather than hardcoding `/onboarding` so
+      // this stays correct if that ever changes, and matches the same role-aware redirect
+      // used post-login.
+      await this.router.navigateByUrl(postAuthRedirectUrl(this.auth.role(), { justRegistered: true }));
     } catch (error: any) {
       const message =
         error?.userMessage ||

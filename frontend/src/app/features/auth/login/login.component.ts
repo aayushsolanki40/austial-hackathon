@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService } from '../../../core/auth/auth.service';
+import { postAuthRedirectUrl } from '../../../core/auth/post-auth-redirect';
 import { TPipe } from '../../../core/i18n/t.pipe';
 import { I18nService } from '../../../core/i18n/i18n.service';
 
@@ -51,7 +52,11 @@ export default class LoginComponent {
 
     try {
       await this.auth.login(this.form.getRawValue());
-      const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo') ?? '/';
+      // Prefer an explicit `redirectTo` (e.g. `roleGuard`/`authGuard` bounced an
+      // unauthenticated deep link here) over the role-based default -- the deep link is
+      // itself guarded, so it's already been confirmed valid for whatever role this
+      // account turns out to have.
+      const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo') ?? postAuthRedirectUrl(this.auth.role());
       await this.router.navigateByUrl(redirectTo);
     } catch (error: any) {
       const message =

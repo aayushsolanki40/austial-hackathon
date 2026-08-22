@@ -22,6 +22,18 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
     PYTHONPATH=/app
 
+# System packages for opencv-python and pytesseract (Phase 9 ML dependencies).
+# opencv-python needs libGL and other imaging libs; pytesseract needs tesseract-ocr binary.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender1 \
+    libgomp1 \
+    libgl1 \
+    tesseract-ocr \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY vendor ./vendor
 
 # Install the vendored austial-py wheels (order doesn't matter, pip resolves
@@ -38,6 +50,12 @@ RUN pip install --no-cache-dir ./vendor/*.whl \
     "celery[redis]>=5.4.0" \
     "redis>=5.0.0" \
     "boto3>=1.34.0" \
+    "reportlab>=4.2.0" \
+    "scikit-learn>=1.5" \
+    "xgboost>=2.1" \
+    "joblib>=1.4" \
+    "pytesseract>=0.3.13" \
+    "opencv-python>=4.10" \
     && rm -rf ./vendor
 
 COPY alembic ./alembic

@@ -11,12 +11,15 @@ from typing import Any
 from austial.common import Controller, Get, Query, UseGuards
 from austial.orm import InjectRepository, Repository
 
+from src.modules.auth.decorators.roles_decorator import Roles
+from src.modules.auth.guards.jwt_auth_guard import JwtAuthGuard
 from src.modules.auth.guards.roles_guard import RolesGuard
 from src.modules.ml.entities.ml_prediction import MlPrediction
 
 
 @Controller("ml")
-@UseGuards(RolesGuard(["ADMIN"]))
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles("ADMIN")
 class MlController:
     def __init__(
         self,
@@ -60,9 +63,9 @@ class MlController:
     @Get("predictions")
     async def list_predictions(
         self,
-        model_name: str | None = Query(None),
-        entity_type: str | None = Query(None),
-        limit: int = Query(100),
+        model_name: str | None = Query(default=None),
+        entity_type: str | None = Query(default=None),
+        limit: int = Query(default=100),
     ) -> dict[str, Any]:
         """Query ML predictions for debugging/audit.
 

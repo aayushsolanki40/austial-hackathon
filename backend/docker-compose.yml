@@ -1,4 +1,4 @@
-# Local dev stack for the Swadely backend -- Postgres, Redis, the API, and a
+# Local dev stack for the Austial backend -- Postgres, Redis, the API, and a
 # Celery worker, all as sibling containers (mirrors the real deployment shape
 # on the single cost-capped EC2 host: no managed RDS/ElastiCache here, just
 # plain containers -- see `infra/terraform/README.md` for the live-AWS
@@ -19,15 +19,15 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: swadely
+      POSTGRES_USER: austial
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
-      POSTGRES_DB: swadely_dev
+      POSTGRES_DB: austial_dev
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U swadely -d swadely_dev"]
+      test: ["CMD-SHELL", "pg_isready -U austial -d austial_dev"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -49,7 +49,7 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql+asyncpg://swadely:${POSTGRES_PASSWORD:-changeme}@postgres:5432/swadely_dev
+      DATABASE_URL: postgresql+asyncpg://austial:${POSTGRES_PASSWORD:-changeme}@postgres:5432/austial_dev
       REDIS_URL: redis://redis:6379/0
     ports:
       - "8000:8000"
@@ -66,7 +66,7 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql+asyncpg://swadely:${POSTGRES_PASSWORD:-changeme}@postgres:5432/swadely_dev
+      DATABASE_URL: postgresql+asyncpg://austial:${POSTGRES_PASSWORD:-changeme}@postgres:5432/austial_dev
       REDIS_URL: redis://redis:6379/0
     depends_on:
       postgres:

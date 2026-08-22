@@ -1,4 +1,4 @@
-"""Minimal i18n loader for api.swadely.com.
+"""Minimal i18n loader for api.austial.com.
 
 Per the workspace convention: user-facing/business strings live in i18n JSON
 locale files, not inline in source. As the app grows into multiple domain

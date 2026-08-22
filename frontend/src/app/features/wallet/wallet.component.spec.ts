@@ -42,7 +42,7 @@ function fundingInstruction(overrides: Partial<FundingInstruction> = {}): Fundin
     expires_at: null,
     confirmed_at: null,
     created_at: '2026-01-01T00:00:00Z',
-    beneficiary_name: 'Swadely Client Funds Account',
+    beneficiary_name: 'Austial Client Funds Account',
     beneficiary_bank_name: 'GIFT City IBU Bank',
     beneficiary_account_number: '000123456789',
     beneficiary_swift_bic: 'GIFTINBBXXX',

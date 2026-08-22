@@ -12,7 +12,7 @@ from moto import mock_aws
 
 from src.storage.object_storage_service import ObjectStorageService
 
-_BUCKET = "swadely-documents-test"
+_BUCKET = "austial-documents-test"
 _REGION = "us-east-1"
 
 

@@ -1,6 +1,6 @@
 {
-  "title": "api.swadely.com",
+  "title": "api.austial.com",
   "version": "0.1.0",
-  "description": "Swadely's GIFT City (IFSCA-regulated) backend -- cross-border payments and real-world-asset tokenization on a shared core of KYC, wallet, and permissioned-DLT ledger services.",
-  "hello_message": "Hello from api.swadely.com, built with Austial!"
+  "description": "Austial's GIFT City (IFSCA-regulated) backend -- cross-border payments and real-world-asset tokenization on a shared core of KYC, wallet, and permissioned-DLT ledger services.",
+  "hello_message": "Hello from api.austial.com, built with Austial!"
 }

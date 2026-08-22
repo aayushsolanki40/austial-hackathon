@@ -1,25 +1,43 @@
-<mat-sidenav-container class="admin-shell">
-  <mat-sidenav mode="side" opened class="admin-shell__sidenav">
-    <div class="admin-shell__brand">{{ 'admin.shell.title' | t }}</div>
-    <mat-nav-list>
+<mat-sidenav-container class="h-screen">
+  <mat-sidenav mode="side" opened class="w-64 bg-gradient-to-b from-slate-900 to-slate-800 border-r-0">
+    <!-- Sidebar Brand -->
+    <div class="p-6 border-b border-slate-700">
+      <h2 class="text-xl font-bold text-white">{{ 'admin.shell.title' | t }}</h2>
+      <p class="text-xs text-slate-400 mt-1">Administrative Portal</p>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="p-4 space-y-1">
       @for (link of navLinks(); track link.path) {
-        <a mat-list-item [routerLink]="link.path" routerLinkActive="admin-shell__link--active">
-          <mat-icon matListItemIcon>{{ link.icon }}</mat-icon>
-          <span matListItemTitle>{{ link.labelKey | t }}</span>
+        <a
+          [routerLink]="link.path"
+          routerLinkActive="bg-primary-600 text-white shadow-lg"
+          class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition-all duration-200 group"
+        >
+          <mat-icon class="!w-5 !h-5 !text-xl">{{ link.icon }}</mat-icon>
+          <span class="font-medium">{{ link.labelKey | t }}</span>
         </a>
       }
-    </mat-nav-list>
+    </nav>
   </mat-sidenav>
 
-  <mat-sidenav-content>
-    <mat-toolbar color="primary" class="admin-shell__toolbar">
-      <span>{{ 'admin.shell.title' | t }}</span>
-      <span class="admin-shell__spacer"></span>
-      <button mat-button (click)="logout()">{{ 'app.nav.logout' | t }}</button>
-    </mat-toolbar>
+  <mat-sidenav-content class="bg-slate-50">
+    <!-- Top Toolbar -->
+    <header class="bg-white border-b border-slate-200 px-6 py-4 shadow-sm sticky top-0 z-10">
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-slate-900">{{ 'admin.shell.title' | t }}</h1>
+        <button
+          class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
+          (click)="logout()"
+        >
+          {{ 'app.nav.logout' | t }}
+        </button>
+      </div>
+    </header>
 
-    <div class="admin-shell__content">
+    <!-- Main Content Area -->
+    <main class="p-6">
       <router-outlet />
-    </div>
+    </main>
   </mat-sidenav-content>
 </mat-sidenav-container>

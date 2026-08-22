@@ -65,4 +65,15 @@ export default class MarketplaceComponent implements OnInit {
   setAssetClassFilter(value: AssetClass | null): void {
     this.selectedAssetClass.set(value);
   }
+
+  getAssetImage(assetClass: AssetClass): string {
+    const imageMap: Record<AssetClass, string> = {
+      REAL_ESTATE: 'assets/images/assets/real-estate.jpg',
+      SECURITY: 'assets/images/assets/securities.jpg',
+      COMMODITY: 'assets/images/assets/commodities.jpg',
+      INFRASTRUCTURE: 'assets/images/assets/infrastructure.jpg',
+      IP: 'assets/images/assets/intellectual-property.jpg',
+    };
+    return imageMap[assetClass] || 'assets/images/assets/real-estate.jpg';
+  }
 }

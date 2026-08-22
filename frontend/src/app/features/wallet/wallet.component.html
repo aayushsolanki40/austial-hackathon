@@ -1,169 +1,216 @@
-<section class="wallet">
-  <h1>{{ 'wallet.overview.title' | t }}</h1>
-
-  <section class="wallet__section">
-    <h2>{{ 'wallet.balance.title' | t }}</h2>
-
-    @switch (accountState()) {
-      @case ('loading') {
-        <div class="wallet__loading">
-          <mat-spinner diameter="28" />
-          <span>{{ 'wallet.balance.loading' | t }}</span>
-        </div>
-      }
-      @case ('error') {
-        <div class="wallet__error">
-          <p>{{ 'wallet.balance.error' | t }}</p>
-          <button mat-stroked-button (click)="loadAccount()">{{ 'wallet.balance.retry' | t }}</button>
-        </div>
-      }
-      @case ('loaded') {
-        <dl class="wallet__balance">
-          <div class="wallet__balance-item">
-            <dt>{{ 'wallet.balance.available_label' | t }}</dt>
-            <dd>{{ account()!.available_balance | currency: account()!.currency : 'symbol' : '1.2-2' }}</dd>
-          </div>
-          <div class="wallet__balance-item">
-            <dt>{{ 'wallet.balance.locked_label' | t }}</dt>
-            <dd>{{ account()!.locked_balance | currency: account()!.currency : 'symbol' : '1.2-2' }}</dd>
-          </div>
-        </dl>
-        <p class="wallet__hint">{{ 'wallet.balance.locked_hint' | t }}</p>
-      }
-    }
-  </section>
-
-  <section class="wallet__section">
-    <h2>{{ 'wallet.funding.title' | t }}</h2>
-    <p>{{ 'wallet.funding.intro' | t }}</p>
-
-    <div class="wallet__funding-request">
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'wallet.funding.amount_label' | t }}</mat-label>
-        <input matInput type="number" min="0" step="0.01" [value]="amountInput()" (input)="setAmount($any($event.target).value)" />
-      </mat-form-field>
-
-      <button mat-flat-button color="primary" [disabled]="requestingFunding()" (click)="requestFundingInstruction()">
-        {{ (requestingFunding() ? 'wallet.funding.requesting' : 'wallet.funding.request_action') | t }}
-      </button>
+<section class="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8 animate-fade-in">
+      <h1>{{ 'wallet.overview.title' | t }}</h1>
     </div>
 
-    @if (requestError()) {
-      <p class="wallet__error-text">{{ requestError() }}</p>
-    }
+    <div class="space-y-8">
+      <!-- Balance Section -->
+      <section class="animate-slide-up">
+        <h2 class="mb-4">{{ 'wallet.balance.title' | t }}</h2>
 
-    @if (fundingInstruction(); as instruction) {
-      <div class="wallet__funding-instruction">
-        <div class="wallet__funding-instruction-header">
-          <strong>{{ 'wallet.funding.reference_code_label' | t }}: {{ instruction.reference_code }}</strong>
-          <span class="wallet__status-badge">{{ ('wallet.funding_status_option.' + instruction.status.toLowerCase()) | t }}</span>
-        </div>
-        <p class="wallet__hint">{{ 'wallet.funding.reference_code_hint' | t }}</p>
-
-        <dl class="wallet__wire-details">
-          <div>
-            <dt>{{ 'wallet.funding.amount_label_display' | t }}</dt>
-            <dd>{{ instruction.amount | currency: instruction.currency : 'symbol' : '1.2-2' }}</dd>
-          </div>
-          <div>
-            <dt>{{ 'wallet.funding.beneficiary_name_label' | t }}</dt>
-            <dd>{{ instruction.beneficiary_name }}</dd>
-          </div>
-          <div>
-            <dt>{{ 'wallet.funding.beneficiary_bank_label' | t }}</dt>
-            <dd>{{ instruction.beneficiary_bank_name }}</dd>
-          </div>
-          <div>
-            <dt>{{ 'wallet.funding.beneficiary_account_number_label' | t }}</dt>
-            <dd>{{ instruction.beneficiary_account_number }}</dd>
-          </div>
-          <div>
-            <dt>{{ 'wallet.funding.beneficiary_swift_label' | t }}</dt>
-            <dd>{{ instruction.beneficiary_swift_bic }}</dd>
-          </div>
-          @if (instruction.expires_at) {
-            <div>
-              <dt>{{ 'wallet.funding.expires_at_label' | t }}</dt>
-              <dd>{{ instruction.expires_at | date: 'medium' }}</dd>
+        @switch (accountState()) {
+          @case ('loading') {
+            <div class="card flex items-center justify-center py-12">
+              <span class="spinner border-primary-600 h-12 w-12 mr-3"></span>
+              <span class="text-slate-600">{{ 'wallet.balance.loading' | t }}</span>
             </div>
           }
-          <div>
-            <dt>{{ 'wallet.funding.requested_at_label' | t }}</dt>
-            <dd>{{ instruction.created_at | date: 'medium' }}</dd>
-          </div>
-        </dl>
+          @case ('error') {
+            <div class="bg-red-50 border-2 border-red-200 rounded-xl p-8 text-center">
+              <p class="text-red-700 mb-4">{{ 'wallet.balance.error' | t }}</p>
+              <button class="btn-outline" (click)="loadAccount()">{{ 'wallet.balance.retry' | t }}</button>
+            </div>
+          }
+          @case ('loaded') {
+            <div class="bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl shadow-2xl p-8 text-white">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <p class="text-primary-100 text-sm font-medium mb-2">{{ 'wallet.balance.available_label' | t }}</p>
+                  <p class="text-4xl font-bold">{{ account()!.available_balance | currency: account()!.currency : 'symbol' : '1.2-2' }}</p>
+                </div>
+                <div>
+                  <p class="text-primary-100 text-sm font-medium mb-2">{{ 'wallet.balance.locked_label' | t }}</p>
+                  <p class="text-4xl font-bold">{{ account()!.locked_balance | currency: account()!.currency : 'symbol' : '1.2-2' }}</p>
+                </div>
+              </div>
+              <p class="mt-4 text-primary-100 text-sm">{{ 'wallet.balance.locked_hint' | t }}</p>
+            </div>
+          }
+        }
+      </section>
 
-        <button mat-stroked-button [disabled]="checkingStatus()" (click)="checkFundingStatus()">
-          {{ (checkingStatus() ? 'wallet.funding.checking_status' : 'wallet.funding.check_status_action') | t }}
-        </button>
-      </div>
-    }
-  </section>
+      <!-- Funding Section -->
+      <section class="animate-slide-up">
+        <div class="card">
+          <h2 class="mb-4">{{ 'wallet.funding.title' | t }}</h2>
+          <p class="text-slate-600 mb-6">{{ 'wallet.funding.intro' | t }}</p>
 
-  <section class="wallet__section">
-    <h2>{{ 'wallet.history.title' | t }}</h2>
-
-    @switch (entriesState()) {
-      @case ('loading') {
-        <div class="wallet__loading">
-          <mat-spinner diameter="28" />
-          <span>{{ 'wallet.history.loading' | t }}</span>
-        </div>
-      }
-      @case ('error') {
-        <div class="wallet__error">
-          <p>{{ 'wallet.history.error' | t }}</p>
-          <button mat-stroked-button (click)="loadEntries()">{{ 'wallet.history.retry' | t }}</button>
-        </div>
-      }
-      @case ('loaded') {
-        @if (entries().length === 0) {
-          <p>{{ 'wallet.history.empty' | t }}</p>
-        } @else {
-          <table mat-table [dataSource]="entries()" class="wallet__table">
-            <ng-container matColumnDef="created_at">
-              <th mat-header-cell *matHeaderCellDef>{{ 'wallet.history.date_column' | t }}</th>
-              <td mat-cell *matCellDef="let entry">{{ entry.created_at | date: 'medium' }}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="entry_type">
-              <th mat-header-cell *matHeaderCellDef>{{ 'wallet.history.type_column' | t }}</th>
-              <td mat-cell *matCellDef="let entry" [class.wallet__entry-type--credit]="isCreditEntry(entry.entry_type)" [class.wallet__entry-type--debit]="!isCreditEntry(entry.entry_type)">
-                {{ entry.entry_type }}
-              </td>
-            </ng-container>
-
-            <ng-container matColumnDef="amount">
-              <th mat-header-cell *matHeaderCellDef>{{ 'wallet.history.amount_column' | t }}</th>
-              <td mat-cell *matCellDef="let entry">{{ entry.amount | currency: entry.currency : 'symbol' : '1.2-2' }}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="balance_after">
-              <th mat-header-cell *matHeaderCellDef>{{ 'wallet.history.balance_after_column' | t }}</th>
-              <td mat-cell *matCellDef="let entry">{{ entry.balance_after | currency: entry.currency : 'symbol' : '1.2-2' }}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="reference">
-              <th mat-header-cell *matHeaderCellDef>{{ 'wallet.history.reference_column' | t }}</th>
-              <td mat-cell *matCellDef="let entry">{{ entry.reference_type }}{{ entry.reference_id != null ? ' #' + entry.reference_id : '' }}</td>
-            </ng-container>
-
-            <tr mat-header-row *matHeaderRowDef="entryColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: entryColumns"></tr>
-          </table>
-
-          <div class="wallet__pagination">
-            <span>
-              {{ 'wallet.history.showing_label' | t }} {{ rangeStart }}-{{ rangeEnd }} {{ 'wallet.history.of_label' | t }}
-              {{ entriesTotal() }} {{ 'wallet.history.entries_label' | t }}
-            </span>
-            <div class="wallet__pagination-actions">
-              <button mat-stroked-button [disabled]="!hasPreviousPage" (click)="previousPage()">{{ 'wallet.history.previous_page' | t }}</button>
-              <button mat-stroked-button [disabled]="!hasNextPage" (click)="nextPage()">{{ 'wallet.history.next_page' | t }}</button>
+          <div class="flex flex-col sm:flex-row gap-4 mb-4">
+            <div class="flex-1">
+              <label class="form-label">{{ 'wallet.funding.amount_label' | t }}</label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                class="form-input"
+                [value]="amountInput()"
+                (input)="setAmount($any($event.target).value)"
+                placeholder="0.00"
+              />
+            </div>
+            <div class="flex items-end">
+              <button
+                class="btn-primary"
+                [disabled]="requestingFunding()"
+                (click)="requestFundingInstruction()"
+              >
+                {{ (requestingFunding() ? 'wallet.funding.requesting' : 'wallet.funding.request_action') | t }}
+              </button>
             </div>
           </div>
+
+          @if (requestError()) {
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg mb-4">
+              <p class="text-sm text-red-700">{{ requestError() }}</p>
+            </div>
+          }
+
+          @if (fundingInstruction(); as instruction) {
+            <div class="mt-6 p-6 bg-slate-50 rounded-xl border-2 border-slate-200">
+              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+                <div>
+                  <p class="text-sm text-slate-600 mb-1">{{ 'wallet.funding.reference_code_label' | t }}</p>
+                  <p class="text-2xl font-bold text-slate-900">{{ instruction.reference_code }}</p>
+                </div>
+                <span class="badge badge-info mt-2 sm:mt-0">
+                  {{ ('wallet.funding_status_option.' + instruction.status.toLowerCase()) | t }}
+                </span>
+              </div>
+              <p class="text-sm text-slate-600 mb-6 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                {{ 'wallet.funding.reference_code_hint' | t }}
+              </p>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="p-4 bg-white rounded-lg">
+                  <p class="text-xs text-slate-500 mb-1">{{ 'wallet.funding.amount_label_display' | t }}</p>
+                  <p class="text-lg font-semibold text-slate-900">{{ instruction.amount | currency: instruction.currency : 'symbol' : '1.2-2' }}</p>
+                </div>
+                <div class="p-4 bg-white rounded-lg">
+                  <p class="text-xs text-slate-500 mb-1">{{ 'wallet.funding.beneficiary_name_label' | t }}</p>
+                  <p class="text-lg font-semibold text-slate-900">{{ instruction.beneficiary_name }}</p>
+                </div>
+                <div class="p-4 bg-white rounded-lg">
+                  <p class="text-xs text-slate-500 mb-1">{{ 'wallet.funding.beneficiary_bank_label' | t }}</p>
+                  <p class="text-lg font-semibold text-slate-900">{{ instruction.beneficiary_bank_name }}</p>
+                </div>
+                <div class="p-4 bg-white rounded-lg">
+                  <p class="text-xs text-slate-500 mb-1">{{ 'wallet.funding.beneficiary_account_number_label' | t }}</p>
+                  <p class="text-lg font-semibold text-slate-900">{{ instruction.beneficiary_account_number }}</p>
+                </div>
+                <div class="p-4 bg-white rounded-lg">
+                  <p class="text-xs text-slate-500 mb-1">{{ 'wallet.funding.beneficiary_swift_label' | t }}</p>
+                  <p class="text-lg font-semibold text-slate-900">{{ instruction.beneficiary_swift_bic }}</p>
+                </div>
+                @if (instruction.expires_at) {
+                  <div class="p-4 bg-white rounded-lg">
+                    <p class="text-xs text-slate-500 mb-1">{{ 'wallet.funding.expires_at_label' | t }}</p>
+                    <p class="text-lg font-semibold text-slate-900">{{ instruction.expires_at | date: 'medium' }}</p>
+                  </div>
+                }
+                <div class="p-4 bg-white rounded-lg">
+                  <p class="text-xs text-slate-500 mb-1">{{ 'wallet.funding.requested_at_label' | t }}</p>
+                  <p class="text-lg font-semibold text-slate-900">{{ instruction.created_at | date: 'medium' }}</p>
+                </div>
+              </div>
+
+              <button
+                class="btn-outline"
+                [disabled]="checkingStatus()"
+                (click)="checkFundingStatus()"
+              >
+                {{ (checkingStatus() ? 'wallet.funding.checking_status' : 'wallet.funding.check_status_action') | t }}
+              </button>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Transaction History Section -->
+      <section class="animate-slide-up">
+        <h2 class="mb-4">{{ 'wallet.history.title' | t }}</h2>
+
+        @switch (entriesState()) {
+          @case ('loading') {
+            <div class="card flex items-center justify-center py-12">
+              <span class="spinner border-primary-600 h-8 w-8 mr-3"></span>
+              <span class="text-slate-600">{{ 'wallet.history.loading' | t }}</span>
+            </div>
+          }
+          @case ('error') {
+            <div class="bg-red-50 border-2 border-red-200 rounded-xl p-8 text-center">
+              <p class="text-red-700 mb-4">{{ 'wallet.history.error' | t }}</p>
+              <button class="btn-outline" (click)="loadEntries()">{{ 'wallet.history.retry' | t }}</button>
+            </div>
+          }
+          @case ('loaded') {
+            @if (entries().length === 0) {
+              <div class="card text-center py-12">
+                <p class="text-slate-600">{{ 'wallet.history.empty' | t }}</p>
+              </div>
+            } @else {
+              <div class="table-container">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>{{ 'wallet.history.date_column' | t }}</th>
+                      <th>{{ 'wallet.history.type_column' | t }}</th>
+                      <th>{{ 'wallet.history.amount_column' | t }}</th>
+                      <th>{{ 'wallet.history.balance_after_column' | t }}</th>
+                      <th>{{ 'wallet.history.reference_column' | t }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (entry of entries(); track entry.id) {
+                      <tr>
+                        <td>{{ entry.created_at | date: 'medium' }}</td>
+                        <td>
+                          @if (isCreditEntry(entry.entry_type)) {
+                            <span class="badge badge-success">{{ entry.entry_type }}</span>
+                          } @else {
+                            <span class="badge badge-error">{{ entry.entry_type }}</span>
+                          }
+                        </td>
+                        <td class="font-semibold" [class.text-green-600]="isCreditEntry(entry.entry_type)" [class.text-red-600]="!isCreditEntry(entry.entry_type)">
+                          {{ entry.amount | currency: entry.currency : 'symbol' : '1.2-2' }}
+                        </td>
+                        <td>{{ entry.balance_after | currency: entry.currency : 'symbol' : '1.2-2' }}</td>
+                        <td class="text-sm text-slate-500">{{ entry.reference_type }}{{ entry.reference_id != null ? ' #' + entry.reference_id : '' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4 px-4">
+                <p class="text-sm text-slate-600">
+                  {{ 'wallet.history.showing_label' | t }} {{ rangeStart }}-{{ rangeEnd }} {{ 'wallet.history.of_label' | t }}
+                  {{ entriesTotal() }} {{ 'wallet.history.entries_label' | t }}
+                </p>
+                <div class="flex gap-2">
+                  <button class="btn-outline py-2 px-4" [disabled]="!hasPreviousPage" (click)="previousPage()">
+                    {{ 'wallet.history.previous_page' | t }}
+                  </button>
+                  <button class="btn-outline py-2 px-4" [disabled]="!hasNextPage" (click)="nextPage()">
+                    {{ 'wallet.history.next_page' | t }}
+                  </button>
+                </div>
+              </div>
+            }
+          }
         }
-      }
-    }
-  </section>
+      </section>
+    </div>
+  </div>
 </section>

@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="assets/swadely-logo.png" alt="Swadely" width="360" />
+  <img src="assets/austial-logo.png" alt="Austial" width="360" />
 
-  <h3>Swadely Backend API</h3>
+  <h3>Austial Backend API</h3>
   <p>Cross-border payments &amp; real-world-asset tokenization, built for GIFT City / IFSCA.</p>
 
   <p>
@@ -35,7 +35,7 @@
 
 ## About
 
-`api.swadely.com` is the production backend for **Swadely**, a GIFT City
+`api.austial.com` is the production backend for **Austial**, a GIFT City
 (India IFSC/IFSCA-regulated) cross-border payments and real-world-asset (RWA)
 tokenization platform. It's built as a consumer application on top of
 [Austial](https://github.com/), a NestJS-style, batteries-included web
@@ -249,5 +249,5 @@ husky + lint-staged setup.
 
 ## License
 
-Proprietary -- © Swadely. All rights reserved. Not licensed for external use,
+Proprietary -- © Austial. All rights reserved. Not licensed for external use,
 reproduction, or distribution without prior written permission.

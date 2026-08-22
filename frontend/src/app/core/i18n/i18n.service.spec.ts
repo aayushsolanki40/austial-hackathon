@@ -11,7 +11,7 @@ describe('I18nService', () => {
   });
 
   it('resolves a flat top-level key', () => {
-    expect(service.t('app.title')).toBe('Swadely');
+    expect(service.t('app.title')).toBe('Austial');
   });
 
   it('resolves a one-level-nested key as module.key.subkey', () => {

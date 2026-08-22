@@ -1,5 +1,8 @@
-<section class="admin-dashboard">
-  <h1>{{ 'admin.dashboard.title' | t }}</h1>
+<section class="animate-fade-in">
+  <div class="mb-8">
+    <h1>{{ 'admin.dashboard.title' | t }}</h1>
+    <p class="text-slate-600 mt-2">Platform overview and key metrics</p>
+  </div>
 
   @switch (state()) {
     @case ('loading') {
@@ -10,27 +13,51 @@
     }
     @case ('loaded') {
       @if (summary(); as summary) {
-        <div class="admin-dashboard__kpis">
-          <mat-card>
-            <mat-card-title>{{ summary.aum_usd | number: '1.0-2' }}</mat-card-title>
-            <mat-card-subtitle>{{ 'admin.dashboard.aum_label' | t }}</mat-card-subtitle>
-          </mat-card>
-          <mat-card>
-            <mat-card-title>{{ summary.investor_count }}</mat-card-title>
-            <mat-card-subtitle>{{ 'admin.dashboard.investor_count_label' | t }}</mat-card-subtitle>
-          </mat-card>
-          <mat-card>
-            <mat-card-title>{{ summary.active_issuances }}</mat-card-title>
-            <mat-card-subtitle>{{ 'admin.dashboard.active_issuances_label' | t }}</mat-card-subtitle>
-          </mat-card>
-          <mat-card>
-            <mat-card-title>{{ summary.pending_kyc_count }}</mat-card-title>
-            <mat-card-subtitle>{{ 'admin.dashboard.pending_kyc_label' | t }}</mat-card-subtitle>
-          </mat-card>
-          <mat-card>
-            <mat-card-title>{{ summary.open_aml_alert_count }}</mat-card-title>
-            <mat-card-subtitle>{{ 'admin.dashboard.open_aml_alerts_label' | t }}</mat-card-subtitle>
-          </mat-card>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 animate-slide-up">
+          <!-- AUM Card -->
+          <div class="bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl shadow-lg p-6 text-white hover:shadow-2xl transition-shadow">
+            <div class="flex items-center justify-between mb-2">
+              <mat-icon class="!text-3xl opacity-75">account_balance</mat-icon>
+            </div>
+            <p class="text-3xl font-bold mb-1">{{ summary.aum_usd | number: '1.0-2' }}</p>
+            <p class="text-primary-100 text-sm font-medium">{{ 'admin.dashboard.aum_label' | t }}</p>
+          </div>
+
+          <!-- Investors Card -->
+          <div class="bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-xl shadow-lg p-6 text-white hover:shadow-2xl transition-shadow">
+            <div class="flex items-center justify-between mb-2">
+              <mat-icon class="!text-3xl opacity-75">people</mat-icon>
+            </div>
+            <p class="text-3xl font-bold mb-1">{{ summary.investor_count }}</p>
+            <p class="text-secondary-100 text-sm font-medium">{{ 'admin.dashboard.investor_count_label' | t }}</p>
+          </div>
+
+          <!-- Active Issuances Card -->
+          <div class="bg-gradient-to-br from-accent-500 to-accent-600 rounded-xl shadow-lg p-6 text-white hover:shadow-2xl transition-shadow">
+            <div class="flex items-center justify-between mb-2">
+              <mat-icon class="!text-3xl opacity-75">business_center</mat-icon>
+            </div>
+            <p class="text-3xl font-bold mb-1">{{ summary.active_issuances }}</p>
+            <p class="text-accent-100 text-sm font-medium">{{ 'admin.dashboard.active_issuances_label' | t }}</p>
+          </div>
+
+          <!-- Pending KYC Card -->
+          <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white hover:shadow-2xl transition-shadow">
+            <div class="flex items-center justify-between mb-2">
+              <mat-icon class="!text-3xl opacity-75">verified_user</mat-icon>
+            </div>
+            <p class="text-3xl font-bold mb-1">{{ summary.pending_kyc_count }}</p>
+            <p class="text-blue-100 text-sm font-medium">{{ 'admin.dashboard.pending_kyc_label' | t }}</p>
+          </div>
+
+          <!-- AML Alerts Card -->
+          <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl shadow-lg p-6 text-white hover:shadow-2xl transition-shadow">
+            <div class="flex items-center justify-between mb-2">
+              <mat-icon class="!text-3xl opacity-75">warning</mat-icon>
+            </div>
+            <p class="text-3xl font-bold mb-1">{{ summary.open_aml_alert_count }}</p>
+            <p class="text-red-100 text-sm font-medium">{{ 'admin.dashboard.open_aml_alerts_label' | t }}</p>
+          </div>
         </div>
       }
     }

@@ -1,60 +1,105 @@
-<section class="marketplace">
-  <h1>{{ 'marketplace.list.title' | t }}</h1>
-  <p class="marketplace__intro">{{ 'marketplace.list.intro' | t }}</p>
+<section class="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8 animate-fade-in">
+      <h1 class="mb-2">{{ 'marketplace.list.title' | t }}</h1>
+      <p class="text-lg text-slate-600 leading-relaxed">{{ 'marketplace.list.intro' | t }}</p>
+    </div>
 
-  <mat-form-field appearance="outline" class="marketplace__filter">
-    <mat-label>{{ 'marketplace.list.filter_label' | t }}</mat-label>
-    <mat-select [value]="selectedAssetClass()" (selectionChange)="setAssetClassFilter($event.value)">
-      <mat-option [value]="null">{{ 'marketplace.list.filter_all_option' | t }}</mat-option>
-      @for (option of assetClassOptions; track option.value) {
-        <mat-option [value]="option.value">{{ option.labelKey | t }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
-
-  @switch (state()) {
-    @case ('loading') {
-      <div class="marketplace__loading">
-        <mat-spinner diameter="28" />
-        <span>{{ 'marketplace.list.loading' | t }}</span>
-      </div>
-    }
-    @case ('error') {
-      <div class="marketplace__error">
-        <p>{{ 'marketplace.list.error' | t }}</p>
-        <button mat-stroked-button (click)="load()">{{ 'marketplace.list.retry' | t }}</button>
-      </div>
-    }
-    @case ('loaded') {
-      @if (listings().length === 0) {
-        <p>{{ 'marketplace.list.empty' | t }}</p>
-      } @else {
-        <div class="marketplace__grid">
-          @for (listing of listings(); track listing.id) {
-            <mat-card class="marketplace__card">
-              <mat-card-header>
-                <mat-card-title>{{ listing.asset_name }}</mat-card-title>
-                <mat-card-subtitle>{{ ('asset.class_option.' + listing.asset_class.toLowerCase()) | t }}</mat-card-subtitle>
-              </mat-card-header>
-              <mat-card-content>
-                <dl class="marketplace__card-details">
-                  <dt>{{ 'marketplace.list.unit_price_label' | t }}</dt>
-                  <dd>{{ listing.unit_price_usd | currency: 'USD' : 'symbol' : '1.2-2' }}</dd>
-
-                  <dt>{{ 'marketplace.list.min_subscription_label' | t }}</dt>
-                  <dd>{{ listing.min_subscription_units }}</dd>
-
-                  <dt>{{ 'marketplace.list.window_label' | t }}</dt>
-                  <dd>{{ listing.subscription_start_at | date: 'mediumDate' }} &ndash; {{ listing.subscription_end_at | date: 'mediumDate' }}</dd>
-                </dl>
-              </mat-card-content>
-              <mat-card-actions>
-                <a mat-flat-button color="primary" [routerLink]="['/assets', listing.id]">{{ 'marketplace.list.view_action' | t }}</a>
-              </mat-card-actions>
-            </mat-card>
+    <!-- Filter Section -->
+    <div class="mb-8 animate-slide-up">
+      <div class="bg-white rounded-xl shadow-md p-4 sm:p-6">
+        <label class="block text-sm font-semibold text-slate-700 mb-3">
+          {{ 'marketplace.list.filter_label' | t }}
+        </label>
+        <select
+          class="w-full sm:w-64 px-4 py-3 rounded-lg border-2 border-slate-300 focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition-all duration-200 outline-none bg-white"
+          [value]="selectedAssetClass()"
+          (change)="setAssetClassFilter($any($event.target).value)"
+        >
+          <option [value]="null">{{ 'marketplace.list.filter_all_option' | t }}</option>
+          @for (option of assetClassOptions; track option.value) {
+            <option [value]="option.value">{{ option.labelKey | t }}</option>
           }
+        </select>
+      </div>
+    </div>
+
+    <!-- Content States -->
+    @switch (state()) {
+      @case ('loading') {
+        <div class="flex flex-col items-center justify-center py-16 animate-fade-in">
+          <span class="spinner border-primary-600 h-12 w-12 mb-4"></span>
+          <span class="text-slate-600">{{ 'marketplace.list.loading' | t }}</span>
         </div>
       }
+      @case ('error') {
+        <div class="bg-red-50 border-2 border-red-200 rounded-xl p-8 text-center animate-fade-in">
+          <p class="text-red-700 mb-4">{{ 'marketplace.list.error' | t }}</p>
+          <button class="btn-outline" (click)="load()">{{ 'marketplace.list.retry' | t }}</button>
+        </div>
+      }
+      @case ('loaded') {
+        @if (listings().length === 0) {
+          <div class="bg-slate-100 rounded-xl p-12 text-center animate-fade-in">
+            <p class="text-slate-600 text-lg">{{ 'marketplace.list.empty' | t }}</p>
+          </div>
+        } @else {
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+            @for (listing of listings(); track listing.id) {
+              <div class="card hover:scale-105 transition-transform duration-300 flex flex-col overflow-hidden">
+                <!-- Asset Image -->
+                <img
+                  [src]="getAssetImage(listing.asset_class)"
+                  [alt]="listing.asset_name"
+                  class="w-full h-48 object-cover"
+                  loading="lazy"
+                />
+
+                <!-- Card Header -->
+                <div class="p-6">
+                <div class="mb-4 pb-4 border-b border-slate-200">
+                  <h3 class="text-xl font-bold text-slate-900 mb-1">{{ listing.asset_name }}</h3>
+                  <span class="badge badge-info">
+                    {{ ('asset.class_option.' + listing.asset_class.toLowerCase()) | t }}
+                  </span>
+                </div>
+
+                <!-- Card Content -->
+                <div class="flex-grow space-y-3 text-sm mb-4">
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-500 font-medium">{{ 'marketplace.list.unit_price_label' | t }}</span>
+                    <span class="text-slate-900 font-bold text-lg">{{ listing.unit_price_usd | currency: 'USD' : 'symbol' : '1.2-2' }}</span>
+                  </div>
+
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-500 font-medium">{{ 'marketplace.list.min_subscription_label' | t }}</span>
+                    <span class="text-slate-900 font-semibold">{{ listing.min_subscription_units }}</span>
+                  </div>
+
+                  <div class="pt-2">
+                    <span class="text-slate-500 font-medium block mb-1">{{ 'marketplace.list.window_label' | t }}</span>
+                    <span class="text-slate-700 text-xs">
+                      {{ listing.subscription_start_at | date: 'mediumDate' }} &ndash; {{ listing.subscription_end_at | date: 'mediumDate' }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Card Actions -->
+                <div class="mt-auto pt-4 border-t border-slate-200">
+                  <a
+                    class="btn-primary w-full text-center"
+                    [routerLink]="['/assets', listing.id]"
+                  >
+                    {{ 'marketplace.list.view_action' | t }}
+                  </a>
+                </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      }
     }
-  }
+  </div>
 </section>

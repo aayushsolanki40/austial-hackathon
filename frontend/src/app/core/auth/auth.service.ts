@@ -15,8 +15,8 @@ import {
 } from './auth.models';
 import { decodeAccessToken, isTokenExpired } from './jwt.util';
 
-const ACCESS_TOKEN_STORAGE_KEY = 'swadely.auth.access_token';
-const REFRESH_TOKEN_STORAGE_KEY = 'swadely.auth.refresh_token';
+const ACCESS_TOKEN_STORAGE_KEY = 'austial.auth.access_token';
+const REFRESH_TOKEN_STORAGE_KEY = 'austial.auth.refresh_token';
 
 /**
  * Signal-based auth state + calls to the backend's `/auth/*` endpoints

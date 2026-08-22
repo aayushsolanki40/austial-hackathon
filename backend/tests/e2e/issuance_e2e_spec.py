@@ -39,7 +39,7 @@ from src.modules.issuance.issuance_module import IssuanceModule
 from src.modules.issuers.entities.issuer import Issuer
 from src.modules.issuers.issuers_module import IssuersModule
 
-_BUCKET = "swadely-documents-issuance-e2e-test"
+_BUCKET = "austial-documents-issuance-e2e-test"
 _REGION = "us-east-1"
 
 

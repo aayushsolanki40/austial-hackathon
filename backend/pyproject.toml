@@ -1,5 +1,5 @@
 [project]
-name = "api.swadely.com"
+name = "api.austial.com"
 version = "0.1.0"
 description = "Generated with the Austial CLI (`austial new`)."
 requires-python = ">=3.11"

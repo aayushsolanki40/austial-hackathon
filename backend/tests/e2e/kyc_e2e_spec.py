@@ -32,7 +32,7 @@ from src.modules.kyc.entities.kyc_submission import KycSubmission
 from src.modules.kyc.entities.risk_disclosure_consent import RiskDisclosureConsent
 from src.modules.kyc.kyc_module import KycModule
 
-_BUCKET = "swadely-documents-kyc-e2e-test"
+_BUCKET = "austial-documents-kyc-e2e-test"
 _REGION = "us-east-1"
 
 

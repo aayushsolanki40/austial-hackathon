@@ -1,34 +1,55 @@
-<section class="onboarding">
-  <h1>{{ 'kyc.onboarding.title' | t }}</h1>
+<section class="min-h-screen bg-gradient-to-br from-slate-50 to-primary-50 py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-8 animate-fade-in">
+      <h1 class="mb-2">{{ 'kyc.onboarding.title' | t }}</h1>
+      <p class="text-slate-600">Complete the steps below to verify your identity</p>
+    </div>
 
-  @if (!ready()) {
-    <p>{{ 'kyc.onboarding.loading' | t }}</p>
-  } @else {
-    <mat-stepper
-      linear
-      [selectedIndex]="selectedIndex()"
-      (selectedIndexChange)="selectedIndex.set($event)"
-      class="onboarding__stepper"
-    >
-      <mat-step [completed]="profileDone()" [label]="'kyc.step.profile' | t">
-        <app-kyc-profile-step (completed)="onProfileCompleted()" />
-      </mat-step>
+    @if (!ready()) {
+      <div class="card flex items-center justify-center py-16">
+        <span class="spinner border-primary-600 h-12 w-12 mr-3"></span>
+        <span class="text-slate-600">{{ 'kyc.onboarding.loading' | t }}</span>
+      </div>
+    } @else {
+      <div class="card animate-slide-up">
+        <mat-stepper
+          linear
+          [selectedIndex]="selectedIndex()"
+          (selectedIndexChange)="selectedIndex.set($event)"
+          class="bg-transparent shadow-none"
+        >
+          <mat-step [completed]="profileDone()" [label]="'kyc.step.profile' | t">
+            <div class="py-6">
+              <app-kyc-profile-step (completed)="onProfileCompleted()" />
+            </div>
+          </mat-step>
 
-      <mat-step [completed]="documentsDone()" [label]="'kyc.step.documents' | t">
-        <app-kyc-document-upload-step (completed)="onDocumentsCompleted()" />
-      </mat-step>
+          <mat-step [completed]="documentsDone()" [label]="'kyc.step.documents' | t">
+            <div class="py-6">
+              <app-kyc-document-upload-step (completed)="onDocumentsCompleted()" />
+            </div>
+          </mat-step>
 
-      <mat-step [completed]="livenessDone()" [label]="'kyc.step.liveness' | t">
-        <app-kyc-liveness-step (completed)="onLivenessCompleted()" />
-      </mat-step>
+          <mat-step [completed]="livenessDone()" [label]="'kyc.step.liveness' | t">
+            <div class="py-6">
+              <app-kyc-liveness-step (completed)="onLivenessCompleted()" />
+            </div>
+          </mat-step>
 
-      <mat-step [completed]="disclosureDone()" [label]="'kyc.step.disclosure' | t">
-        <app-kyc-risk-disclosure-step (completed)="onDisclosureCompleted()" />
-      </mat-step>
+          <mat-step [completed]="disclosureDone()" [label]="'kyc.step.disclosure' | t">
+            <div class="py-6">
+              <app-kyc-risk-disclosure-step (completed)="onDisclosureCompleted()" />
+            </div>
+          </mat-step>
 
-      <mat-step [completed]="disclosureDone()" [label]="'kyc.step.status' | t">
-        <app-kyc-status-step />
-      </mat-step>
-    </mat-stepper>
-  }
+          <mat-step [completed]="disclosureDone()" [label]="'kyc.step.status' | t">
+            <div class="py-6">
+              <app-kyc-status-step />
+            </div>
+          </mat-step>
+        </mat-stepper>
+      </div>
+    }
+  </div>
 </section>

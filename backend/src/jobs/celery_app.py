@@ -45,7 +45,7 @@ _broker_url = os.environ.get("CELERY_BROKER_URL", _redis_url)
 _result_backend = os.environ.get("CELERY_RESULT_BACKEND", _redis_url)
 
 celery_app = Celery(
-    "swadely",
+    "austial",
     broker=_broker_url,
     backend=_result_backend,
     include=["src.jobs.tasks", "src.jobs.kyc_tasks", "src.jobs.compliance_tasks"],

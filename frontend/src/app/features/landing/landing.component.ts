@@ -85,7 +85,7 @@ import { RouterLink } from '@angular/router';
           <div class="relative pb-[56.25%] h-0 overflow-hidden rounded-2xl shadow-2xl mb-8">
             <iframe
               class="absolute top-0 left-0 w-full h-full"
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+              src="https://www.youtube.com/embed/28QU5MDF3r8"
               title="Austial Platform Demo"
               frameborder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

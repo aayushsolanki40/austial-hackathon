@@ -344,7 +344,9 @@ Thank you."
 ```typescript
 // frontend/src/app/features/landing/landing.component.ts
 // Line ~95 (in video iframe src):
-src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE"
+src="https://www.youtube.com/embed/28QU5MDF3r8"
+
+// Video Link: https://youtu.be/28QU5MDF3r8
 
 // Then rebuild:
 cd frontend
